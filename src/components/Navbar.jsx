@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import {
     Bell,
@@ -13,11 +13,13 @@ import {
     Code2,
     Wallet2,
     Globe,
+    Cpu,
     Database,
     FileSearch,
     LineChart,
     Wrench,
     Users2,
+    Shield,
     ShieldCheck,
     ArrowLeft,
     AlertCircle,
@@ -26,19 +28,24 @@ import {
     Newspaper,
     HelpCircle,
     Layers as LayersIcon,
-    Share2
+    Share2,
+    TrendingUp,
+    Radar
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
+import useModeStore from '../store/modeStore';
 import './Navbar.css';
 
 const Navbar = () => {
     const { user, userData, logout } = useAuth();
+    const { isMobileOpen, setIsMobileOpen } = useModeStore();
     const location = useLocation();
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
+    const [isToolsOpen, setIsToolsOpen] = useState(false);
 
     const dropdownRef = useRef(null);
     const hamburgerRef = useRef(null);
@@ -69,15 +76,15 @@ const Navbar = () => {
 
     const navItems = [
         { title: 'Terminal', icon: <Globe size={18} />, path: '/' },
+        { title: 'Command Center', icon: <Cpu size={18} />, path: '/dashboard' },
         { title: 'Encyclopedia', icon: <Database size={18} />, path: '/encyclopedia' },
         { title: 'Protocol Research', icon: <FileSearch size={18} />, path: '/research' },
         { title: 'Blockchain Hub', icon: <LayersIcon size={18} />, path: '/blockchain-hub' },
-        { title: 'Intelligence Hub', icon: <LineChart size={18} />, path: '/intelligence' },
+        { title: 'Mempool Intel', icon: <Activity size={18} />, path: '/mempool' },
         { title: 'Analysis Tools', icon: <Wrench size={18} />, path: '/tools' },
-        { title: 'Peer Review', icon: <Users2 size={18} />, path: '/community' },
+        { title: 'Strategic Hub', icon: <Users2 size={18} />, path: '/community' },
         { title: 'Trust Center', icon: <ShieldCheck size={18} />, path: '/trust' },
         { title: 'News', icon: <Newspaper size={18} />, path: '/news' },
-        { title: 'Blockchain', icon: <HelpCircle size={18} />, path: '/blockchain-hub' },
         { title: 'About Us', icon: <Info size={18} />, path: '/about' },
         { title: 'Settings', icon: <Settings size={18} />, path: '/settings' },
     ];
@@ -106,56 +113,90 @@ const Navbar = () => {
     return (
         <header className="navbar glass">
             <div className="navbar-left">
-                <div className="hamburger-container" ref={hamburgerRef}>
-                    <button className="menu-btn visible" onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}>
-                        <Menu size={24} />
-                    </button>
-                    {isHamburgerOpen && (
-                        <div className="hamburger-dropdown glass active">
-                            {navItems.map((item) => (
-                                item.path.includes('#') ? (
-                                    <HashLink
-                                        key={item.path}
-                                        to={item.path}
-                                        className="hamburger-item"
-                                        onClick={() => setIsHamburgerOpen(false)}
-                                    >
-                                        {item.icon}
-                                        <span>{item.title}</span>
-                                    </HashLink>
-                                ) : (
-                                    <NavLink
-                                        key={item.path}
-                                        to={item.path}
-                                        className="hamburger-item"
-                                        onClick={() => setIsHamburgerOpen(false)}
-                                    >
-                                        {item.icon}
-                                        <span>{item.title}</span>
-                                    </NavLink>
-                                )
-                            ))}
-                        </div>
-                    )}
-                </div>
-                <div className="nav-brand">
+                <button
+                    className="menu-btn lg:hidden"
+                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                >
+                    <Menu size={24} />
+                </button>
+                <Link to="/" className="nav-brand">
                     <img src={logo} alt="CryptoWorld Logo" className="logo-circular-nav" />
                     <span className="brand-text-nav">Crypto World</span>
-                </div>
+                </Link>
             </div>
 
-            <div className="navbar-center">
-            </div>
 
             <div className="navbar-right">
-                <nav className="nav-links-desktop">
+                <nav className="nav-links-desktop lg:flex hidden">
                     <NavLink to="/blockchain-hub" className="nav-link-btn">Blockchain</NavLink>
+                    <NavLink to="/mempool" className="nav-link-btn">Mempool</NavLink>
+
+                    <div
+                        className="tools-dropdown-container"
+                        onMouseEnter={() => setIsToolsOpen(true)}
+                        onMouseLeave={() => setIsToolsOpen(false)}
+                    >
+                        <NavLink
+                            to="/tools"
+                            className={({ isActive }) =>
+                                `nav-link-btn ${isActive || location.pathname.startsWith('/tools') ? 'active' : ''}`
+                            }
+                        >
+                            <span>Tools</span>
+                            <ChevronDown size={14} className={`dropdown-arrow ms-1 ${isToolsOpen ? 'rotate' : ''}`} />
+                        </NavLink>
+
+                        {isToolsOpen && (
+                            <div className="tools-dropdown-menu glass">
+                                <Link to="/tools/sentinel" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                    <ShieldCheck size={16} className="text-emerald-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">AI Sentinel</span>
+                                        <span className="tools-item-desc">Autonomous wallet & liquidity surveillance</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/whale-watch" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                    <Radar size={16} className="text-rose-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Whale Watch</span>
+                                        <span className="tools-item-desc">Live high-value transaction surveillance</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/market" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                    <TrendingUp size={16} className="text-indigo-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Market Intelligence</span>
+                                        <span className="tools-item-desc">Aggregate market & prediction data</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/signals" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                    <Activity size={16} className="text-emerald-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">On-Chain Signals</span>
+                                        <span className="tools-item-desc">Real-time whale & TVL tracking</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/security" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                    <Shield size={16} className="text-rose-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Security & Risk</span>
+                                        <span className="tools-item-desc">Live audit & threat detection</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/visualizer" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                    <Share2 size={16} className="text-indigo-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Investigation Visualizer</span>
+                                        <span className="tools-item-desc">Advanced wallet relationship mapping</span>
+                                    </div>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+
                     <NavLink to="/news" className="nav-link-btn">News</NavLink>
                     <NavLink to="/about" className="nav-link-btn">About Us</NavLink>
                 </nav>
-
-
-
                 <div className="icon-group">
 
                     <div className="notification-container" ref={notificationRef}>
@@ -217,6 +258,9 @@ const Navbar = () => {
                                             <p className="user-email">{user?.email}</p>
                                         </div>
                                         <div className="dropdown-divider"></div>
+                                        <button className="dropdown-item" onClick={() => handleNavigate('/dashboard')}>
+                                            <Cpu size={16} /> Command Center
+                                        </button>
                                         <button className="dropdown-item" onClick={() => handleNavigate('/profile')}>
                                             <User size={16} /> Profile
                                         </button>

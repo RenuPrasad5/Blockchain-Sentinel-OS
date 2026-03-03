@@ -174,7 +174,7 @@ const Encyclopedia = () => {
 
     return (
         <div className={`library encyclopedia fade-in mode-${mode.toLowerCase()}`}>
-            <header className="page-header encyclopedia-header-slim">
+            <div className="page-header encyclopedia-header-slim">
                 <div className="workspace-tools-left">
                     <h1>World Encyclopedia <span>Knowledge Node v3.0</span></h1>
                 </div>
@@ -184,7 +184,7 @@ const Encyclopedia = () => {
                         <input type="text" placeholder={`Search ${mode} repository...`} />
                     </div>
                 </div>
-            </header>
+            </div>
 
             <div className="library-layout">
                 <aside className="library-sidebar">
@@ -223,11 +223,7 @@ const Encyclopedia = () => {
                 <main className="library-main long-reading">
                     <article className="topic-content glass">
                         <div className="content-header-integrated">
-                            <div className="header-nav">
-                                <button className="back-link" onClick={() => navigate(-1)}>
-                                    <ArrowLeft size={16} />
-                                    <span>Back to Terminal</span>
-                                </button>
+                            <div className="header-nav" style={{ justifyContent: 'flex-end' }}>
                                 <div className="header-status">
                                     <div className={`mode-pill ${mode.toLowerCase()}`}>
                                         <Target size={12} /> {mode} intelligence

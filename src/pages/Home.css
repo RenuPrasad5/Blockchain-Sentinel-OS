@@ -92,6 +92,20 @@ nav,
     }
 }
 
+/* Button Glow Effect */
+.btn-glow-indigo {
+    position: relative;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.btn-glow-indigo:hover {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.7);
+    transform: translateY(-2px);
+}
+
+
+
 /* Responsiveness overrides */
 @media (max-width: 1024px) {
     .lg\:col-span-12 {

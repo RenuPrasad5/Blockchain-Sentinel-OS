@@ -10,22 +10,86 @@ import RoadmapSection from '../components/RoadmapSection';
 import SupportSection from '../components/SupportSection';
 import './Home.css';
 
-const GradientText = ({ text }) => {
-    // Fulfilling the "Apply gradient" requirement WITHOUT using background-clip:text
-    // Using SVG for strictly compliant gradient text
-    return (
-        <svg viewBox="0 0 420 60" className="inline-block h-[1.15em] align-baseline overflow-visible" style={{ width: '420px' }}>
-            <defs>
-                <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style={{ stopColor: '#818cf8', stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: '#f472b6', stopOpacity: 1 }} />
-                </linearGradient>
-            </defs>
-            <text x="0" y="45" fill="url(#text-grad)" className="font-extrabold text-[52px]">
-                {text}
-            </text>
-        </svg>
-    );
+const BlockchainNetwork = () => {
+    const canvasRef = React.useRef(null);
+
+    React.useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let particles = [];
+
+        const resize = () => {
+            const parent = canvas.parentElement;
+            canvas.width = window.innerWidth;
+            canvas.height = parent.offsetHeight;
+            initParticles();
+        };
+
+        const initParticles = () => {
+            particles = [];
+            const count = Math.floor((canvas.width * canvas.height) / 15000);
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    size: Math.random() * 2 + 1
+                });
+            }
+        };
+
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw edges
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        const opacity = (1 - dist / 150) * 0.15;
+                        ctx.strokeStyle = `rgba(129, 140, 248, ${opacity})`;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw nodes
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.fillStyle = `rgba(129, 140, 248, 0.4)`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            animationFrameId = requestAnimationFrame(draw);
+        };
+
+        window.addEventListener('resize', resize);
+        resize();
+        draw();
+
+        return () => {
+            window.removeEventListener('resize', resize);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, []);
+
+    return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none opacity-40 z-0" />;
 };
 
 const Home = () => {
@@ -33,6 +97,8 @@ const Home = () => {
         <div className="home-container bg-[#020617]">
             {/* Institutional Research Hero */}
             <section className="relative w-full min-h-screen flex items-center justify-center pt-20 pb-20 overflow-hidden bg-[#020617]">
+                <BlockchainNetwork />
+
                 {/* Visual Glow */}
                 <div className="absolute top-1/2 right-[10%] -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
 
@@ -44,57 +110,57 @@ const Home = () => {
                             {/* Badge */}
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 mb-8 transition-all duration-300">
                                 <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_#6366f1]"></span>
-                                <span className="text-xs font-semibold text-indigo-400/90 tracking-widest">
-                                    Institutional Research Interface v4.0
+                                <span className="text-xs font-semibold text-indigo-400/90 tracking-widest uppercase">
+                                    Real-Time Intelligence OS v1.0
                                 </span>
                             </div>
 
                             {/* Heading */}
-                            <div className="mb-8">
-                                <h1 className="text-white text-[56px] font-[900] leading-[1.1] tracking-tight m-0">
-                                    The Operating System for<br />
-                                    <svg width="600" height="70" className="inline-block overflow-visible align-top mt-1">
+                            <div className="mb-6">
+                                <h1 className="text-white text-[48px] lg:text-[52px] font-[950] leading-[1.15] tracking-tight m-0 uppercase">
+                                    The Neural Engine<br />
+                                    <svg width="850" height="75" className="inline-block overflow-visible align-top mt-1">
                                         <defs>
                                             <linearGradient id="cryptoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                                                 <stop offset="0%" style={{ stopColor: '#818cf8', stopOpacity: 1 }} />
                                                 <stop offset="100%" style={{ stopColor: '#f472b6', stopOpacity: 1 }} />
                                             </linearGradient>
                                         </defs>
-                                        <text x="0" y="55" fill="url(#cryptoGrad)" style={{ fontWeight: 950, fontSize: '56px', fontFamily: 'inherit' }}>Crypto Knowledge</text>
+                                        <text x="0" y="60" fill="url(#cryptoGrad)" style={{ fontWeight: 950, fontSize: '52px', fontFamily: 'inherit' }}>For On-Chain Intelligence</text>
                                     </svg>
                                 </h1>
                             </div>
 
                             {/* Description */}
-                            <p className="text-slate-400/90 text-[19px] leading-[1.6] max-w-[580px] mb-12 font-medium">
-                                A high-fidelity research ecosystem for professionals. Access structured intelligence, protocol breakdowns, and institutional-grade analysis tools.
+                            <p className="text-slate-400/90 text-[18px] leading-[1.6] max-w-[580px] mb-8 font-medium">
+                                A high-fidelity surveillance ecosystem for professionals. Access structured forensic mapping, autonomous whale tracking, and institutional-grade analysis tools.
                             </p>
 
                             {/* CTA Buttons */}
-                            <div className="flex items-center gap-6 mb-20">
-                                <Link to="/encyclopedia" className="flex items-center gap-3 px-8 py-4 rounded-xl bg-[#6366f1] text-white font-bold text-lg hover:bg-[#4f46e5] transition-all duration-300 shadow-[0_8px_25px_rgba(99,102,241,0.4)]">
-                                    Access Encyclopedia <ArrowRight size={22} strokeWidth={2.5} />
+                            <div className="flex items-center gap-6 mb-16">
+                                <Link to="/dashboard" className="flex items-center gap-3 px-8 py-4 rounded-xl bg-[#6366f1] text-white font-bold text-lg hover:bg-[#4f46e5] transition-all duration-300 shadow-[0_8px_25px_rgba(99,102,241,0.4)] btn-glow-indigo">
+                                    Launch Command Center <ArrowRight size={22} strokeWidth={2.5} />
                                 </Link>
-                                <Link to="/research" className="flex items-center gap-2 px-8 py-4 rounded-xl border border-white/10 bg-white/5 text-white font-bold text-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-md">
-                                    Research Terminal
+                                <Link to="/tools" className="flex items-center gap-2 px-8 py-4 rounded-xl border border-white/10 bg-white/5 text-white font-bold text-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-md">
+                                    Intelligence Sectors
                                 </Link>
                             </div>
 
                             {/* Stats */}
                             <div className="flex items-center gap-16 border-t border-white/5 pt-10">
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-white text-[28px] font-black leading-none">25k+</span>
-                                    <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">Knowledge Nodes</span>
+                                    <span className="text-white text-[28px] font-black leading-none">$4.2B</span>
+                                    <span className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">24h Volume Tracked</span>
                                 </div>
                                 <div className="w-[1px] h-10 bg-white/10"></div>
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-white text-[28px] font-black leading-none">1,200+</span>
-                                    <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">Protocol Audits</span>
+                                    <span className="text-white text-[28px] font-black leading-none">1,840</span>
+                                    <span className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">Active Sentinels</span>
                                 </div>
                                 <div className="w-[1px] h-10 bg-white/10"></div>
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-white text-[28px] font-black leading-none">99.9%</span>
-                                    <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">Data Integrity</span>
+                                    <span className="text-white text-[28px] font-black leading-none">&lt;12ms</span>
+                                    <span className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">Data Latency</span>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +207,8 @@ const Home = () => {
             </section>
 
             {/* The Pillars of Intelligence Section */}
-            <section className="learning-matrix-section bg-[#020617] py-32 px-8">
+            <section className="learning-matrix-section relative bg-[#020617] py-32 px-8 overflow-hidden">
+                <BlockchainNetwork />
                 <div className="container max-w-[1440px] mx-auto">
                     <div className="flex flex-col mb-20 border-b border-white/5 pb-12">
                         <div className="mb-6">
@@ -165,13 +232,11 @@ const Home = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
                         {/* Matrix Cards (Keeping existing structure but cleaning for design) */}
                         {[
                             { title: 'Knowledge', desc: 'Deep structured encyclopedia of crypto, blockchain, and decentralized architectures.', link: '/encyclopedia' },
                             { title: 'Research', desc: 'Granular protocol breakdowns, tokenomics models, and risk architecture analysis.', link: '/research' },
-                            { title: 'Tools', desc: 'Interactive simulators, comparison engines, and quantitative modeling tools.', link: '/tools' },
-                            { title: 'Intelligence', desc: 'Real-time market insights, sentiment tracking, and contextual trend reports.', link: '/intelligence' },
                             { title: 'Community', desc: 'Peer review systems, expert validation, and collaborative article improvement.', link: '/community' },
                             { title: 'Trust Layer', desc: 'Immutable source references, editor verification, and community truth scores.', link: '/trust' }
                         ].map((item, idx) => (

@@ -3,7 +3,8 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './AboutUs.css';
-import founderImg from '../assets/images/founder.jpg';
+import architectImg from '../assets/images/founder.jpg';
+import leadImg from '../assets/images/co-founder.png';
 
 const TerminalIntro = ({ onComplete }) => {
     const [lines, setLines] = useState([]);
@@ -64,10 +65,30 @@ const SectionReveal = ({ children, className }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className={className}
+            className={`section-dense ${className}`}
         >
             {children}
         </motion.div>
+    );
+};
+
+const LiveStat = ({ value, suffix = "+", label }) => {
+    const [count, setCount] = useState(parseInt(value.replace(/\D/g, '')));
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCount(prev => prev + Math.floor(Math.random() * 2));
+        }, 45000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const displayValue = value.includes('K') ? `${count}K${suffix}` : `${count}${suffix}`;
+
+    return (
+        <div className="stat-unit">
+            <span className="stat-value flicker-text">{displayValue}</span>
+            <span className="stat-desc">{label}</span>
+        </div>
     );
 };
 
@@ -86,12 +107,7 @@ const AboutUs = () => {
     return (
         <div className="about-us-page">
             {/* Header with Back Button */}
-            <div className="about-page-header">
-                <button className="back-to-terminal-btn" onClick={() => navigate('/')}>
-                    <ArrowLeft size={16} />
-                    Back to Terminal
-                </button>
-            </div>
+
 
             <AnimatePresence>
                 {showIntro && <TerminalIntro onComplete={() => setShowIntro(false)} />}
@@ -112,7 +128,7 @@ const AboutUs = () => {
                     animate={{ opacity: 1, filter: "blur(0px)" }}
                     transition={{ duration: 1.5, delay: 0.2 }}
                 >
-                    The Architecture of<br />Digital Truth.
+                    Architecture of<br />Digital Truth.
                 </motion.h1>
                 <motion.p
                     className="hero-subtitle"
@@ -185,31 +201,34 @@ const AboutUs = () => {
                             className="timeline-progress-line"
                             style={{ height: lineHeight }}
                         />
-                        <div className="journey-item">
+                        <div className="journey-item group">
                             <SectionReveal className="journey-item-reveal">
                                 <div className="journey-year">2024</div>
                                 <div className="journey-content">
                                     <h3>Genesis Proto-Node</h3>
                                     <p>Launched as a specialized research hub for internal protocol auditing and data normalization.</p>
                                 </div>
+                                <div className="timeline-tooltip glass">Initial Alpha Node Deployed</div>
                             </SectionReveal>
                         </div>
-                        <div className="journey-item">
+                        <div className="journey-item group">
                             <SectionReveal className="journey-item-reveal">
                                 <div className="journey-year">2025</div>
                                 <div className="journey-content">
                                     <h3>Ecosystem Expansion</h3>
                                     <p>Opened our neural knowledge graph to the public, providing institutional-grade tools to retail analysts.</p>
                                 </div>
+                                <div className="timeline-tooltip glass">Successfully indexed 5M+ transactions across 4 chains</div>
                             </SectionReveal>
                         </div>
-                        <div className="journey-item">
+                        <div className="journey-item group">
                             <SectionReveal className="journey-item-reveal">
                                 <div className="journey-year">PRESENT</div>
                                 <div className="journey-content">
                                     <h3>The Master Terminal</h3>
                                     <p>Evolved into a complete crypto education ecosystem, mapping the architectural future of finance.</p>
                                 </div>
+                                <div className="timeline-tooltip glass">Real-Time Core v1.0 Live</div>
                             </SectionReveal>
                         </div>
                     </div>
@@ -238,35 +257,51 @@ const AboutUs = () => {
                 </div>
             </SectionReveal>
 
-            {/* About Me */}
-            <section className="about-me-section">
-                <div className="me-grid">
+            {/* Founders Section */}
+            <section className="about-founders-section">
+                <div className="section-header-centered">
+                    <div className="section-label">OS_DEVELOPMENT_TEAM</div>
+                    <h2 className="section-title">Behind the Code</h2>
+                </div>
+
+                <div className="founders-grid">
+                    {/* Card 1: Founder */}
                     <motion.div
-                        className="me-visual"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1 }}
-                        viewport={{ once: true }}
+                        className="founder-card"
+                        whileHover={{ y: -8 }}
                     >
-                        <div className="founder-image-placeholder">
-                            <img src={founderImg} alt="Founder" className="founder-image" />
-                            <div className="founder-glow"></div>
+                        <div className="card-top-label">FOUNDER</div>
+                        <div className="founder-visual">
+                            <div className="founder-image-box">
+                                <img src={architectImg} alt="System Architect" className="founder-img portrait-founder" />
+                                <div className="founder-overlay-glow"></div>
+                            </div>
+                            <span className="founder-role-tag">LEAD_ENGINEER</span>
                         </div>
-                        <span className="founder-tag">SYSTEM_ARCHITECT</span>
+                        <div className="founder-info">
+                            <h3>System Architect</h3>
+                            <p>"Focused on the Neuro Knowledge Graph and Multi-Chain Forensic mapping. I build the infrastructure that translates blockchain noise into human-readable digital truth."</p>
+                        </div>
                     </motion.div>
-                    <SectionReveal className="me-text">
-                        <div className="section-label">BEHIND THE CODE</div>
-                        <h2>The About Me Narrative</h2>
-                        <p>
-                            Founded by a collective of security researchers and financial engineers,
-                            CryptoWorld was born from a singular frustration: the lack of clear,
-                            uncompromised intelligence in the blockchain space.
-                        </p>
-                        <p>
-                            We are builders first. Our philosophy is rooted in the belief that the
-                            next financial layer should be open, transparent, and—most importantly—comprehensible.
-                        </p>
-                    </SectionReveal>
+
+                    {/* Card 2: Co-Founder */}
+                    <motion.div
+                        className="founder-card"
+                        whileHover={{ y: -8 }}
+                    >
+                        <div className="card-top-label">CO-FOUNDER</div>
+                        <div className="founder-visual">
+                            <div className="founder-image-box">
+                                <img src={leadImg} alt="Intelligence Lead" className="founder-img" />
+                                <div className="founder-overlay-glow"></div>
+                            </div>
+                            <span className="founder-role-tag">INTEL_OPS</span>
+                        </div>
+                        <div className="founder-info">
+                            <h3>Intelligence & Operations Lead</h3>
+                            <p>"Building our 'Whale Watch Intent' Engine and forging partnerships with institutional users. I ensure our intelligence solves real-world compliance and risk pain points."</p>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
@@ -301,18 +336,9 @@ const AboutUs = () => {
             {/* Achievements & Achievements */}
             <SectionReveal className="about-achievements-section">
                 <div className="achievements-stat-grid">
-                    <div className="stat-unit">
-                        <span className="stat-value">50K+</span>
-                        <span className="stat-desc">Analyzed Protocols</span>
-                    </div>
-                    <div className="stat-unit">
-                        <span className="stat-value">120+</span>
-                        <span className="stat-desc">Research Partners</span>
-                    </div>
-                    <div className="stat-unit">
-                        <span className="stat-value">1M+</span>
-                        <span className="stat-desc">Query Requests</span>
-                    </div>
+                    <LiveStat value="50K+" label="Analyzed Protocols" />
+                    <LiveStat value="1,200+" label="Active Sentinels" />
+                    <LiveStat value="1M+" label="Query Requests" />
                 </div>
                 <div className="testimonials-grid">
                     <div className="testimonial-card">
@@ -348,11 +374,11 @@ const AboutUs = () => {
                     <h2>Ready to explore the architecture?</h2>
                     <p>Join the thousands of analysts who are building the future with CryptoWorld.</p>
                     <motion.button
-                        className="cta-btn-premium"
+                        className="cta-btn-premium glow-button"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate('/community')}
-                    >Access Intelligence Terminal</motion.button>
+                        onClick={() => navigate('/dashboard')}
+                    >Launch Command Center →</motion.button>
                 </motion.div>
             </SectionReveal>
 

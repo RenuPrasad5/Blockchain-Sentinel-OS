@@ -92,7 +92,7 @@ const ProtocolResearch = () => {
 
     return (
         <div className={`protocol-workspace fade-in mode-${mode.toLowerCase()} full-width-terminal`}>
-            <header className="page-header research-terminal-header-slim">
+            <div className="page-header research-terminal-header-slim">
                 <div className="workspace-tools-left">
                     <h1>Research Terminal <span>v5.0</span></h1>
                 </div>
@@ -107,7 +107,7 @@ const ProtocolResearch = () => {
                         />
                     </div>
                 </div>
-            </header>
+            </div>
 
             <div className="workspace-grid terminal-layout">
                 {/* 1. RESEARCH DOMAINS (LEFT) */}

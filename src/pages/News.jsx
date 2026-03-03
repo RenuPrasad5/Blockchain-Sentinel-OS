@@ -16,9 +16,11 @@ import {
     ArrowLeft
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useWebSocket } from '../context/WebSocketContext';
 import './News.css';
 
 const News = () => {
+    const { lastMessage, subscribe, unsubscribe } = useWebSocket();
     const navigate = useNavigate();
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -39,12 +41,10 @@ const News = () => {
     const fetchNews = async () => {
         setLoading(true);
         try {
-            // Using CryptoCompare public API (No key required for modest usage)
             const response = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN');
             const data = await response.json();
 
             if (data.Data) {
-                // Enforce "Professional" feel by adding metadata
                 const processedNews = data.Data.map(item => ({
                     ...item,
                     impact: calculateImpact(item),
@@ -62,10 +62,21 @@ const News = () => {
 
     useEffect(() => {
         fetchNews();
-        // Refresh every 5 minutes
-        const interval = setInterval(fetchNews, 300000);
-        return () => clearInterval(interval);
-    }, []);
+        subscribe('news_updates', { type: 'SUBSCRIBE', channel: 'news' });
+        return () => unsubscribe('news_updates');
+    }, [subscribe, unsubscribe]);
+
+    useEffect(() => {
+        if (lastMessage && lastMessage.type === 'news') {
+            const newItem = {
+                ...lastMessage.data,
+                impact: calculateImpact(lastMessage.data),
+                category: lastMessage.data.categories?.split('|')[0] || 'GENERAL'
+            };
+            setNews(prev => [newItem, ...prev].slice(0, 100));
+            setLastRefreshed(new Date());
+        }
+    }, [lastMessage]);
 
     const calculateImpact = (item) => {
         // Artificial logic to simulate "Terminal Intelligence" 
@@ -85,12 +96,8 @@ const News = () => {
 
     return (
         <div className="news-terminal">
-            {/* Header with Back Button */}
-            <div className="news-page-header">
-                <button className="back-to-terminal-btn" onClick={() => navigate('/')}>
-                    <ArrowLeft size={16} />
-                    Back to Terminal
-                </button>
+            {/* Top status bar matches terminal aesthetic */}
+            <div className="terminal-sub-header">
                 <div className="terminal-status-indicator">
                     <span className="pulse-dot-small"></span>
                     LIVE INTEL FEED ACTIVE

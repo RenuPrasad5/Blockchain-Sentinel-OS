@@ -1,12 +1,15 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Library from './pages/Library';
 import Market from './pages/Market';
 import Tools from './pages/Tools';
-import Community from './pages/Community';
+import MarketIntel from './pages/tools/MarketIntel';
+import ChainSignals from './pages/tools/ChainSignals';
+import SecurityRisk from './pages/tools/SecurityRisk';
+import Visualizer from './pages/tools/Visualizer';
+import StrategicDiscussionHub from './pages/Community';
 import Premium from './pages/Premium';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
@@ -21,6 +24,14 @@ import HelpCenter from './pages/HelpCenter';
 import BlockchainHub from './pages/BlockchainHub';
 import BlockchainEcosystem from './pages/BlockchainEcosystem';
 import Settings from './pages/Settings';
+import GlobalAlert from './components/ui/GlobalAlert';
+import MempoolHub from './pages/MempoolHub';
+import { startMempoolStream } from './services/mempoolStream';
+import useModeStore from './store/modeStore';
+import CyberScanOverlay from './components/tools/CyberScanOverlay';
+import WhaleWatch from './pages/tools/WhaleWatch';
+import AISentinel from './pages/tools/AISentinel';
+import Sidebar from './components/Sidebar';
 import './App.css';
 
 import ProtectedRoute from './components/ProtectedRoute';
@@ -28,15 +39,25 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isHome = location.pathname === '/';
 
-  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem'];
+  React.useEffect(() => {
+    const unwatch = startMempoolStream();
+    return () => unwatch();
+  }, []);
+
+  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel'];
   const isFullWidth = fullWidthPaths.includes(location.pathname);
+  const isAuthPage = ['/login', '/register'].includes(location.pathname);
+
+  const { isScanning } = useModeStore();
 
   return (
     <div className="app-container">
+      {isScanning && <CyberScanOverlay />}
+      {!isAuthPage && <Sidebar />}
       <main className="main-content">
-        {!['/login', '/register'].includes(location.pathname) && <Navbar />}
+        {!isAuthPage && <Navbar />}
+        <GlobalAlert />
 
         <div className={isFullWidth ? 'full-width-layout' : 'page-wrapper container'}>
           <Routes>
@@ -47,7 +68,13 @@ function App() {
             <Route path="/market" element={<Market />} />
             <Route path="/intelligence" element={<Market />} />
             <Route path="/tools" element={<Tools />} />
-            <Route path="/community" element={<Community />} />
+            <Route path="/tools/market" element={<MarketIntel />} />
+            <Route path="/tools/signals" element={<ChainSignals />} />
+            <Route path="/tools/security" element={<SecurityRisk />} />
+            <Route path="/tools/visualizer" element={<Visualizer />} />
+            <Route path="/tools/whale-watch" element={<WhaleWatch />} />
+            <Route path="/tools/sentinel" element={<AISentinel />} />
+            <Route path="/community" element={<StrategicDiscussionHub />} />
             <Route path="/trust" element={<Premium />} />
             <Route
               path="/profile"
@@ -80,6 +107,7 @@ function App() {
             <Route path="/help-center" element={<HelpCenter />} />
             <Route path="/blockchain-hub" element={<BlockchainHub />} />
             <Route path="/blockchain-ecosystem" element={<BlockchainEcosystem />} />
+            <Route path="/mempool" element={<MempoolHub />} />
           </Routes>
         </div>
       </main>

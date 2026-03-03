@@ -19,6 +19,11 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Fallback: If Firebase takes too long, stop loading anyway
+        const timeout = setTimeout(() => {
+            if (loading) setLoading(false);
+        }, 3000);
+
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
             try {
@@ -37,10 +42,14 @@ export const AuthProvider = ({ children }) => {
                 setUserData(null);
             } finally {
                 setLoading(false);
+                clearTimeout(timeout);
             }
         });
 
-        return () => unsubscribe();
+        return () => {
+            unsubscribe();
+            clearTimeout(timeout);
+        };
     }, []);
 
     const signup = async (email, password, profileData) => {

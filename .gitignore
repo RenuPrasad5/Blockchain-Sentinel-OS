@@ -23,3 +23,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Temporary & Internal
+repomix-output.xml
+implementation_plan.md

@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { TrendingUp, BarChart2, Activity, Globe, Layers, Search, ArrowUpDown, Bell, Info } from 'lucide-react';
+import { TrendingUp, BarChart2, Activity, Globe, Layers, Search, ArrowUpDown, Bell, Info, Eye } from 'lucide-react';
+import { useWebSocket } from '../../context/WebSocketContext';
+import { alchemyManager } from '../../utils/AlchemyManager';
+import useModeStore from '../../store/modeStore';
+import { Utils } from "alchemy-sdk";
 
 const MarketSkeleton = () => (
     <div className="animate-in fade-in duration-500">
@@ -12,15 +16,87 @@ const MarketSkeleton = () => (
     </div>
 );
 
-const MarketTerminal = () => {
+const MarketTerminal = ({ onInvestigate }) => {
+    const { status, lastMessage, subscribe, unsubscribe } = useWebSocket();
+    const { mode } = useModeStore();
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: 'mkt', direction: 'desc' });
+    const [assets, setAssets] = useState([]);
+    const [liveHashes, setLiveHashes] = useState([]);
+    const [flashKpis, setFlashKpis] = useState({
+        'Market Cap': { val: 3.14, trend: 'up', flash: false },
+        'BTC Dominance': { val: 56.4, trend: 'neutral', flash: false },
+        'Stable Float': { val: 162, trend: 'up', flash: false },
+        'Volume (24h)': { val: 84.2, trend: 'up', flash: false },
+    });
 
     useEffect(() => {
         const timer = setTimeout(() => setLoading(false), 800);
         return () => clearTimeout(timer);
     }, []);
+
+    // KPI Price-Flash Simulation
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const keys = Object.keys(flashKpis);
+            const key = keys[Math.floor(Math.random() * keys.length)];
+            const change = (Math.random() * 0.1 - 0.05);
+
+            setFlashKpis(prev => ({
+                ...prev,
+                [key]: {
+                    ...prev[key],
+                    val: prev[key].val + change,
+                    trend: change >= 0 ? 'up' : 'down',
+                    flash: true
+                }
+            }));
+
+            setTimeout(() => {
+                setFlashKpis(prev => ({
+                    ...prev,
+                    [key]: { ...prev[key], flash: false }
+                }));
+            }, 1000);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [flashKpis]);
+
+    // Alchemy Live Stream Listener
+    useEffect(() => {
+        const cleanup = alchemyManager.onPendingTransaction(async (tx) => {
+            if (mode === 'Analyst') {
+                setLiveHashes(prev => [{ hash: tx.hash, timestamp: Date.now() }, ...prev].slice(0, 15));
+            } else if (mode === 'Investor') {
+                const details = await alchemyManager.getTransactionDetails(tx.hash);
+                if (details && details.value) {
+                    const valueEth = parseFloat(Utils.formatEther(details.value));
+                    if (valueEth > 10) {
+                        setLiveHashes(prev => [{ hash: tx.hash, value: valueEth, timestamp: Date.now() }, ...prev].slice(0, 15));
+                    }
+                }
+            }
+        });
+        return () => cleanup();
+    }, [mode]);
+
+    // Subscribe to price updates
+    useEffect(() => {
+        subscribe('market_prices', { type: 'SUBSCRIBE', channel: 'ticker', symbols: ['BTC', 'ETH', 'SOL', 'SUI', 'ARB'] });
+        return () => unsubscribe('market_prices');
+    }, [subscribe, unsubscribe]);
+
+    // Handle incoming messages
+    useEffect(() => {
+        if (lastMessage && lastMessage.type === 'ticker') {
+            setAssets(prev => prev.map(asset =>
+                asset.symbol === lastMessage.symbol
+                    ? { ...asset, price: lastMessage.price, chg: lastMessage.chg }
+                    : asset
+            ));
+        }
+    }, [lastMessage]);
 
     const initialAssets = useMemo(() => [
         { name: 'Bitcoin', symbol: 'BTC', price: 94231, chg: 2.4, vol: '32B', mkt: 1800000000000, momentum: 72 },
@@ -28,27 +104,11 @@ const MarketTerminal = () => {
         { name: 'Solana', symbol: 'SOL', price: 184.20, chg: 5.6, vol: '4.2B', mkt: 82000000000, momentum: 85 },
         { name: 'Sui', symbol: 'SUI', price: 3.42, chg: 12.1, vol: '840M', mkt: 9000000000, momentum: 94 },
         { name: 'Arbitrum', symbol: 'ARB', price: 0.94, chg: 0.5, vol: '240M', mkt: 4000000000, momentum: 55 },
-        { name: 'XRP', symbol: 'XRP', price: 2.14, chg: -2.3, vol: '1.2B', mkt: 120000000000, momentum: 38 },
-        { name: 'Cardano', symbol: 'ADA', price: 0.82, chg: -1.8, vol: '450M', mkt: 32000000000, momentum: 41 },
-        { name: 'Avalanche', symbol: 'AVAX', price: 42.15, chg: 3.2, vol: '680M', mkt: 18000000000, momentum: 64 },
-        { name: 'Polkadot', symbol: 'DOT', price: 8.42, chg: -0.5, vol: '180M', mkt: 12000000000, momentum: 45 },
-        { name: 'Chainlink', symbol: 'LINK', price: 18.50, chg: 1.2, vol: '320M', mkt: 11000000000, momentum: 58 },
-        { name: 'Polygon', symbol: 'POL', price: 0.52, chg: -3.1, vol: '120M', mkt: 5000000000, momentum: 32 },
-        { name: 'Near', symbol: 'NEAR', price: 6.84, chg: 4.5, vol: '290M', mkt: 8000000000, momentum: 71 },
-        { name: 'Optimism', symbol: 'OP', price: 2.15, chg: 0.8, vol: '150M', mkt: 2800000000, momentum: 52 },
-        { name: 'Aptos', symbol: 'APT', price: 12.40, chg: 6.2, vol: '410M', mkt: 6000000000, momentum: 78 },
-        { name: 'Pepe', symbol: 'PEPE', price: 0.000012, chg: 8.4, vol: '1.1B', mkt: 5000000000, momentum: 89 },
-        { name: 'Shiba Inu', symbol: 'SHIB', price: 0.000024, chg: -1.5, vol: '380M', mkt: 14000000000, momentum: 46 },
-        { name: 'Litecoin', symbol: 'LTC', price: 92.50, chg: -0.2, vol: '480M', mkt: 7000000000, momentum: 49 },
-        { name: 'Bitcoin Cash', symbol: 'BCH', price: 442.10, chg: -2.8, vol: '210M', mkt: 8800000000, momentum: 37 },
-        { name: 'Render', symbol: 'RENDER', price: 7.15, chg: 2.1, vol: '140M', mkt: 3800000000, momentum: 61 },
-        { name: 'Worldcoin', symbol: 'WLD', price: 2.45, chg: -4.5, vol: '280M', mkt: 1800000000, momentum: 31 },
-        { name: 'Celestia', symbol: 'TIA', price: 6.24, chg: -5.1, vol: '120M', mkt: 1500000000, momentum: 28 },
-        { name: 'Bonk', symbol: 'BONK', price: 0.000032, chg: 14.5, vol: '850M', mkt: 2400000000, momentum: 96 },
-        { name: 'Jupiter', symbol: 'JUP', price: 1.15, chg: 3.8, vol: '220M', mkt: 1600000000, momentum: 65 },
-        { name: 'Pyth', symbol: 'PYTH', price: 0.48, chg: 2.4, vol: '85M', mkt: 1200000000, momentum: 59 },
-        { name: 'Bittensor', symbol: 'TAO', price: 482.50, chg: -0.8, vol: '95M', mkt: 3500000000, momentum: 47 }
     ], []);
+
+    useEffect(() => {
+        setAssets(initialAssets);
+    }, [initialAssets]);
 
     const formatCurrency = (val) => {
         if (val >= 1e12) return `$${(val / 1e12).toFixed(1)}T`;
@@ -66,7 +126,7 @@ const MarketTerminal = () => {
     };
 
     const filteredAndSortedAssets = useMemo(() => {
-        return initialAssets
+        return assets
             .filter(asset =>
                 asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 asset.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -80,28 +140,47 @@ const MarketTerminal = () => {
                     return aVal < bVal ? 1 : -1;
                 }
             });
-    }, [initialAssets, searchQuery, sortConfig]);
+    }, [assets, searchQuery, sortConfig]);
 
     if (loading) return <MarketSkeleton />;
 
+    const kpiElements = [
+        { label: 'Market Cap', val: `$${flashKpis['Market Cap'].val.toFixed(2)}T`, icon: <Globe size={16} /> },
+        { label: 'BTC Dominance', val: `${flashKpis['BTC Dominance'].val.toFixed(1)}%`, icon: <Activity size={16} /> },
+        { label: 'Stable Float', val: `$${flashKpis['Stable Float'].val.toFixed(0)}B`, icon: <Layers size={16} /> },
+        { label: 'Volume (24h)', val: `$${flashKpis['Volume (24h)'].val.toFixed(1)}B`, icon: <BarChart2 size={16} /> },
+    ];
+
     return (
         <div className="animate-in fade-in duration-700 w-full space-y-0 bg-[#020617]">
+            {/* Alchemy Live Stream HUD */}
+            <div className="bg-slate-900/40 border-b border-white/[0.05] p-6 backdrop-blur-md">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <h3 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Alchemy Real-Time Memory Pool ({mode} Mode)</h3>
+                    </div>
+                </div>
+                <div className="flex flex-wrap gap-3 max-h-24 overflow-y-auto custom-scrollbar">
+                    {liveHashes.map((ltx, i) => (
+                        <div key={i} className="px-3 py-2 bg-white/[0.03] border border-white/[0.05] rounded flex items-center gap-3 animate-in fade-in slide-in-from-left-2">
+                            <span className="text-[10px] font-mono text-indigo-400">{ltx.hash.slice(0, 10)}...</span>
+                            {ltx.value && <span className="text-[9px] font-black text-emerald-500">{ltx.value.toFixed(2)} ETH</span>}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Market Indicators Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-b border-white/[0.05] w-full">
-                {[
-                    { label: 'Market Cap', val: '$3.14T', chg: '+2.4%', icon: <Globe size={16} /> },
-                    { label: 'BTC Dominance', val: '56.4%', chg: '-0.2%', icon: <Activity size={16} /> },
-                    { label: 'Stable Float', val: '$162B', chg: '+$1.2B', icon: <Layers size={16} /> },
-                    { label: 'Volume (24h)', val: '$84.2B', chg: '+15%', icon: <BarChart2 size={16} /> },
-                ].map((kpi, i) => (
-                    <div key={i} className="py-8 px-6 border-r border-b sm:border-b-0 last:border-r-0 border-white/[0.05] group hover:bg-white/[0.02] transition-colors">
+                {kpiElements.map((kpi, i) => (
+                    <div key={i} className="py-8 px-6 border-r border-b sm:border-b-0 last:border-r-0 border-white/[0.05] group hover:bg-white/[0.02] transition-colors overflow-hidden">
                         <div className="flex items-center gap-3 mb-4">
                             <span className="text-slate-500 group-hover:text-indigo-400 transition-colors">{kpi.icon}</span>
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{kpi.label}</span>
                         </div>
-                        <div className="text-3xl font-black text-white mb-2">{kpi.val}</div>
-                        <div className={`text-[11px] font-bold ${kpi.chg.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
-                            {kpi.chg} vs. Prev. Session
+                        <div className={`text-3xl font-black text-white mb-2 transition-all duration-500 tabular-nums ${flashKpis[kpi.label].flash ? (flashKpis[kpi.label].trend === 'up' ? 'text-emerald-400 scale-105' : 'text-rose-400 scale-105') : ''}`}>
+                            {kpi.val}
                         </div>
                     </div>
                 ))}
@@ -165,15 +244,22 @@ const MarketTerminal = () => {
                         <tbody>
                             {filteredAndSortedAssets.map((asset, i) => (
                                 <tr key={i} className="hover:bg-white/[0.02] transition-colors border-b border-white/[0.02] last:border-0">
-                                    <td className="px-6 py-5">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-8 h-8 rounded bg-slate-950 border border-white/[0.05] flex items-center justify-center font-black text-slate-500 text-[10px]">
+                                    <td className="px-6">
+                                        <div className="flex items-center gap-3 group/link">
+                                            <div className="w-8 h-8 rounded bg-slate-900 border border-white/[0.05] flex items-center justify-center font-black text-indigo-400 text-[10px]">
                                                 {asset.symbol[0]}
                                             </div>
                                             <div>
-                                                <div className="text-[13px] font-black text-white uppercase tracking-tighter leading-none mb-1">{asset.name}</div>
-                                                <div className="text-[9px] text-slate-600 font-black uppercase tracking-widest">{asset.symbol}/USDT</div>
+                                                <div className="text-[13px] font-black text-white uppercase tracking-tighter">{asset.name}</div>
+                                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{asset.symbol}</div>
                                             </div>
+                                            <button
+                                                onClick={() => onInvestigate('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2')}
+                                                className="opacity-0 group-hover/link:opacity-100 transition-opacity p-1 hover:bg-white/5 rounded"
+                                                title="Bridge to Visualizer"
+                                            >
+                                                <Eye size={12} className="text-slate-400 hover:text-indigo-400" />
+                                            </button>
                                         </div>
                                     </td>
                                     <td className="metric-mono text-white font-bold">
@@ -313,14 +399,22 @@ const MarketTerminal = () => {
                                     { type: 'Whale Buy', amt: '12,500 ARB', pair: 'ARB/USDC', time: '22m ago', icon: <Layers size={16} />, status: 'positive' },
                                     { type: 'Big Move', amt: '-4.8%', pair: 'SUI/USDC', time: '30m ago', icon: <Activity size={16} />, status: 'negative' },
                                 ].map((alert, i) => (
-                                    <div key={i} className="p-5 border-b border-white/[0.02] last:border-0 hover:bg-white/[0.03] transition-colors cursor-pointer group rounded-2xl mx-2 my-1">
+                                    <div key={i} className="p-5 border-b border-white/[0.02] last:border-0 hover:bg-white/[0.03] transition-colors cursor-pointer group rounded-2xl mx-2 my-1 relative">
                                         <div className="flex justify-between items-start mb-2">
                                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{alert.time}</span>
-                                            <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${alert.status === 'positive' ? 'text-emerald-500 bg-emerald-500/10' :
-                                                alert.status === 'negative' ? 'text-rose-500 bg-rose-500/10' :
-                                                    'text-indigo-400 bg-indigo-400/10'
-                                                }`}>
-                                                {alert.type}
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); onInvestigate('0x1234567890123456789012345678901234567890'); }}
+                                                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <Eye size={12} className="text-indigo-400" />
+                                                </button>
+                                                <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${alert.status === 'positive' ? 'text-emerald-500 bg-emerald-500/10' :
+                                                    alert.status === 'negative' ? 'text-rose-500 bg-rose-500/10' :
+                                                        'text-indigo-400 bg-indigo-400/10'
+                                                    }`}>
+                                                    {alert.type}
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="text-sm font-black text-white mb-1 group-hover:text-indigo-400 transition-colors">{alert.amt}</div>

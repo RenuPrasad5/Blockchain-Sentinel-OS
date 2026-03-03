@@ -1,76 +1,234 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    LayoutDashboard,
-    BookOpen,
-    BarChart3,
-    Wrench,
-    Users,
-    ShieldCheck,
-    Search,
-    User,
     Menu,
-    X,
-    Bell,
-    TrendingUp,
     Globe,
-    FileSearch,
+    Cpu,
     Database,
-    LineChart,
+    FileSearch,
+    Layers,
+    Activity,
+    Wrench,
     Users2,
-    CheckCircle,
-    Layers as LayersIcon
+    ShieldCheck,
+    Newspaper,
+    Info,
+    Settings,
+    LogOut,
+    User,
+    ChevronRight,
+    TrendingUp,
+    Radar,
+    Shield,
+    Share2,
+    Zap
 } from 'lucide-react';
-import logo from '../assets/logo.png';
+import { useAuth } from '../context/AuthContext';
+import useModeStore from '../store/modeStore';
 import './Sidebar.css';
 
-const Sidebar = ({ isOpen, setIsOpen }) => {
+const Sidebar = () => {
+    const { user, userData, logout } = useAuth();
+    const { isMobileOpen, setIsMobileOpen } = useModeStore();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [isExpanded, setIsExpanded] = useState(true);
+    const [openSubMenus, setOpenSubMenus] = useState({});
+
+    // Close sidebar on mobile when navigating
+    useEffect(() => {
+        setIsMobileOpen(false);
+    }, [location.pathname, setIsMobileOpen]);
+
+    const toggleSidebar = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    const toggleSubMenu = (id) => {
+        setOpenSubMenus(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
 
     const navItems = [
-        { title: 'Terminal', icon: <Globe size={20} />, path: '/' },
-        { title: 'Encyclopedia', icon: <Database size={20} />, path: '/encyclopedia' },
-        { title: 'Protocol Research', icon: <FileSearch size={20} />, path: '/research' },
-        { title: 'Blockchain Hub', icon: <LayersIcon size={20} />, path: '/blockchain-hub' },
-        { title: 'Intelligence Hub', icon: <LineChart size={20} />, path: '/intelligence' },
-        { title: 'Analysis Tools', icon: <Wrench size={20} />, path: '/tools' },
-        { title: 'Peer Review', icon: <Users2 size={20} />, path: '/community' },
-        { title: 'Trust Center', icon: <ShieldCheck size={20} />, path: '/trust' },
+        { id: 'terminal', title: 'Terminal', icon: <Globe size={20} />, path: '/' },
+        { id: 'cc', title: 'Command Center', icon: <Cpu size={20} />, path: '/dashboard' },
+        { id: 'encyclopedia', title: 'Encyclopedia', icon: <Database size={20} />, path: '/encyclopedia' },
+        { id: 'research', title: 'Protocol Research', icon: <FileSearch size={20} />, path: '/research' },
+        { id: 'hub', title: 'Blockchain Hub', icon: <Layers size={20} />, path: '/blockchain-hub' },
+        { id: 'mempool', title: 'Mempool Intel', icon: <Activity size={20} />, path: '/mempool' },
+        {
+            id: 'tools',
+            title: 'Analysis Tools',
+            icon: <Wrench size={20} />,
+            path: '/tools',
+            subItems: [
+                { title: 'AI Sentinel', icon: <ShieldCheck size={18} />, path: '/tools/sentinel' },
+                { title: 'Whale Watch', icon: <Radar size={18} />, path: '/tools/whale-watch' },
+                { title: 'Market Intel', icon: <TrendingUp size={18} />, path: '/tools/market' },
+                { title: 'On-Chain Signals', icon: <Activity size={18} />, path: '/tools/signals' },
+                { title: 'Security & Risk', icon: <Shield size={18} />, path: '/tools/security' },
+                { title: 'Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
+            ]
+        },
+        { id: 'community', title: 'Strategic Hub', icon: <Users2 size={20} />, path: '/community' },
+        { id: 'trust', title: 'Trust Center', icon: <ShieldCheck size={20} />, path: '/trust' },
+        { id: 'news', title: 'News', icon: <Newspaper size={20} />, path: '/news' },
+        { id: 'about', title: 'About Us', icon: <Info size={20} />, path: '/about' },
     ];
+
+    const sidebarVariants = {
+        expanded: { width: 260 },
+        collapsed: { width: 80 }
+    };
 
     return (
         <>
-            <aside className={`sidebar glass ${isOpen ? 'open' : ''}`}>
+            {/* Sidebar Overlay for Mobile */}
+            <AnimatePresence>
+                {isMobileOpen && (
+                    <motion.div
+                        className="sidebar-overlay lg:hidden"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsMobileOpen(false)}
+                    />
+                )}
+            </AnimatePresence>
+
+            <motion.aside
+                className={`sidebar-container ${isMobileOpen ? 'mobile-open' : ''}`}
+                initial={false}
+                animate={isExpanded ? 'expanded' : 'collapsed'}
+                variants={sidebarVariants}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+                {/* Header / Toggle */}
                 <div className="sidebar-header">
-                    <button className="close-btn" onClick={() => setIsOpen(false)}>
-                        <X size={24} />
+                    <button className="expand-toggle-btn" onClick={toggleSidebar}>
+                        <Menu size={24} />
                     </button>
+                    {isExpanded && (
+                        <motion.span
+                            className="brand-text"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                        >
+                            REAL-TIME OS
+                        </motion.span>
+                    )}
                 </div>
 
-                <nav className="sidebar-nav">
+                {/* Nav Links */}
+                <nav className="sidebar-nav scrollbar-hide">
                     {navItems.map((item) => (
-                        <NavLink
-                            key={item.path}
-                            to={item.path}
-                            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <span className="nav-icon">{item.icon}</span>
-                            <span className="nav-title">{item.title}</span>
-                        </NavLink>
+                        <div key={item.id} className="nav-group">
+                            <NavLink
+                                to={item.path}
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
+                                onClick={(e) => {
+                                    if (item.subItems) {
+                                        e.preventDefault();
+                                        toggleSubMenu(item.id);
+                                    }
+                                }}
+                            >
+                                <div className="item-icon">{item.icon}</div>
+                                {isExpanded && (
+                                    <motion.span
+                                        className="item-label"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                    >
+                                        {item.title}
+                                    </motion.span>
+                                )}
+                                {item.subItems && isExpanded && (
+                                    <ChevronRight
+                                        size={14}
+                                        className={`submenu-arrow ${openSubMenus[item.id] ? 'rotate-90' : ''}`}
+                                    />
+                                )}
+                            </NavLink>
+
+                            {/* Submenu */}
+                            <AnimatePresence>
+                                {item.subItems && (openSubMenus[item.id] || !isExpanded) && isExpanded && (
+                                    <motion.div
+                                        className="submenu-container"
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: 'auto', opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                    >
+                                        {item.subItems.map((sub) => (
+                                            <NavLink
+                                                key={sub.path}
+                                                to={sub.path}
+                                                className={({ isActive }) => `submenu-item ${isActive ? 'active' : ''}`}
+                                            >
+                                                <div className="sub-icon">{sub.icon}</div>
+                                                <span className="sub-label">{sub.title}</span>
+                                            </NavLink>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     ))}
                 </nav>
 
+                {/* Bottom Section */}
                 <div className="sidebar-footer">
-                    <NavLink to="/profile" className="user-short" onClick={() => setIsOpen(false)}>
-                        <div className="avatar">K</div>
-                        <div className="user-info">
-                            <p className="username">Karthik</p>
-                            <p className="user-tier">Pro Member</p>
-                        </div>
+                    <NavLink
+                        to="/settings"
+                        className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
+                    >
+                        <div className="item-icon"><Settings size={20} /></div>
+                        {isExpanded && <span className="item-label">Settings</span>}
                     </NavLink>
+
+                    {user ? (
+                        <div className="user-profile-trigger">
+                            <NavLink to="/profile" className="sidebar-item user-card">
+                                <div className="item-icon user-avatar">
+                                    {userData?.photoURL ? (
+                                        <img src={userData.photoURL} alt="Avatar" />
+                                    ) : (
+                                        <span>{userData?.name?.[0] || user?.email?.[0] || 'U'}</span>
+                                    )}
+                                </div>
+                                {isExpanded && (
+                                    <div className="user-info-text">
+                                        <span className="user-name">{userData?.name?.split(' ')[0] || 'User'}</span>
+                                        <span className="user-status">Online</span>
+                                    </div>
+                                )}
+                            </NavLink>
+                            <button className="logout-btn-sidebar" onClick={handleLogout} title="Logout">
+                                <LogOut size={18} />
+                                {isExpanded && <span>Exit System</span>}
+                            </button>
+                        </div>
+                    ) : (
+                        <button className="sidebar-item connect-btn" onClick={() => navigate('/login')}>
+                            <div className="item-icon"><Zap size={20} /></div>
+                            {isExpanded && <span className="item-label">Connect Node</span>}
+                        </button>
+                    )}
                 </div>
-            </aside>
-            {isOpen && <div className="sidebar-overlay" onClick={() => setIsOpen(false)}></div>}
+            </motion.aside>
         </>
     );
 };

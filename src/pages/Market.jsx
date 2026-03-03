@@ -56,16 +56,10 @@ const Market = () => {
         <div className={`market fade-in mode-${mode.toLowerCase()} full-width-terminal`}>
             <div className="content-header-integrated glass no-border-radius">
                 <div className="terminal-container">
-                    <div className="header-nav">
-                        <button className="back-link" onClick={() => navigate('/')}>
-                            <ArrowLeft size={16} />
-                            <span>Back to Terminal</span>
-                        </button>
-                        <div className="status-badges">
-                            <div className="badge grad-primary">Live Markets</div>
-                            <div className={`badge mode-indicator ${mode.toLowerCase()}`}>
-                                <Zap size={12} /> {mode} Intelligence
-                            </div>
+                    <div className="status-badges" style={{ marginBottom: '1rem' }}>
+                        <div className="badge grad-primary">Live Markets</div>
+                        <div className={`badge mode-indicator ${mode.toLowerCase()}`}>
+                            <Zap size={12} /> {mode} Intelligence
                         </div>
                     </div>
                     <div className="topic-hero-integrated header-content-wrap">

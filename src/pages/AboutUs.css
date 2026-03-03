@@ -9,10 +9,12 @@
 
 .about-page-header {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
+    /* Centered container */
     margin: 0 auto;
     z-index: 100;
-    padding: 2.5rem 4rem 1rem 4rem;
+    padding: 2rem 2rem 0;
+    /* Reduced top padding */
     display: flex;
     justify-content: flex-start;
 }
@@ -21,27 +23,29 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: rgba(30, 41, 59, 0.4);
+    background: rgba(255, 255, 255, 0.03);
+    /* Subtle glass style */
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: #94a3b8;
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 1.4rem;
     border-radius: 100px;
-    /* Pill shape for industry look */
-    font-size: 0.85rem;
-    font-weight: 500;
+    /* Pill shape */
+    font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
 .about-page-header .back-to-terminal-btn:hover {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.08);
+    /* Soft hover glow */
+    border-color: rgba(99, 102, 241, 0.3);
     color: #fff;
     transform: translateX(-4px);
-    /* Subtle indicator of "back" action */
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.1);
 }
 
 .about-page-header .back-to-terminal-btn svg {
@@ -91,14 +95,18 @@
 
 /* Hero Section */
 .about-hero {
-    height: 100vh;
+    min-height: 70vh;
+    /* Tighter layout */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 0 2rem;
+    padding: 1.5rem 2rem;
     position: relative;
+    max-width: 1400px;
+    /* Centered container */
+    margin: 0 auto;
 }
 
 .hero-glow {
@@ -106,32 +114,37 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60vw;
-    height: 60vw;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+    width: 80%;
+    height: 120%;
+    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.05) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
+    filter: blur(60px);
 }
 
 .about-hero h1 {
-    font-size: clamp(2.5rem, 8vw, 5.8rem);
+    font-size: clamp(2.5rem, 8vw, 4.8rem);
+    /* Slightly reduced size */
     font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     margin-bottom: 2rem;
     z-index: 1;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    max-width: 900px;
 }
 
 .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: #94a3b8;
-    max-width: 800px;
-    line-height: 1.6;
-    margin-bottom: 4rem;
+    max-width: 700px;
+    /* Limited width */
+    line-height: 1.8;
+    /* Increased line-height */
+    margin-bottom: 2.5rem;
     z-index: 1;
 }
 
@@ -164,6 +177,12 @@
     border-radius: 2px;
 }
 
+/* Section Dense utility */
+.section-dense {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+}
+
 /* Section Utilities */
 .section-label {
     font-family: 'JetBrains Mono', monospace;
@@ -183,10 +202,9 @@
 
 /* Manifesto Section */
 .manifesto-section {
-    padding: 4rem 4rem;
+    padding: 2.5rem 4rem;
     max-width: 1200px;
     margin: 0 auto;
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .manifesto-intro {
@@ -233,7 +251,7 @@
 
 /* Company Journey */
 .about-journey-section {
-    padding: 4rem 4rem;
+    padding: 2.5rem 4rem;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -266,8 +284,34 @@
 
 .journey-item {
     position: relative;
-    padding: 0.8rem 0;
+    padding: 1rem 0;
     padding-left: 3rem;
+    cursor: crosshair;
+}
+
+/* Interactive Timeline Tooltip */
+.timeline-tooltip {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) translateX(20px);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #6366f1;
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    z-index: 10;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.journey-item:hover .timeline-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
 }
 
 .journey-item-reveal::before {
@@ -292,21 +336,21 @@
 }
 
 .journey-content h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.250rem;
+    margin-bottom: 0.5rem;
     color: #fff;
 }
 
 .journey-content p {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: #64748b;
     max-width: 700px;
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 /* Purpose & Goal */
 .about-purpose-section {
-    padding: 4rem 4rem;
+    padding: 2.5rem 4rem;
     background: rgba(15, 23, 42, 0.1);
 }
 
@@ -320,7 +364,7 @@
 
 .purpose-card {
     background: rgba(30, 41, 59, 0.3);
-    padding: 4rem;
+    padding: 2.5rem;
     border-radius: 28px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: border-color 0.3s ease;
@@ -347,87 +391,118 @@
     line-height: 1.7;
 }
 
-/* About Me / Founder */
-.about-me-section {
-    padding: 4rem 4rem;
+/* Founders Section */
+.about-founders-section {
+    padding: 3.2rem 4rem 4rem;
+    /* Reduced top padding by 20% from 4rem */
     max-width: 1200px;
     margin: 0 auto;
 }
 
-.me-grid {
+.section-header-centered {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.founders-grid {
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    gap: 6rem;
-    align-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4rem;
 }
 
-.me-visual {
+.founder-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 32px;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
-    aspect-ratio: 0.75;
-    /* Slightly taller to accommodate hair */
 }
 
-.founder-image-placeholder {
+.founder-card:hover {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.04);
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.15), inset 0 0 20px rgba(99, 102, 241, 0.05);
+}
+
+.card-top-label {
+    text-align: center;
+    padding: 1.5rem 0 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    color: rgba(99, 102, 241, 0.8);
+    text-transform: uppercase;
+}
+
+.founder-visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    /* Strict aspect square */
+    overflow: hidden;
+}
+
+.founder-image-box {
     width: 100%;
     height: 100%;
-    background: #0f172a;
-    border-radius: 40px;
     position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.founder-image {
+.founder-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Fill space without distortion */
+}
+
+.portrait-founder {
     object-position: center 5%;
-    /* Align 5% from the top to ensure hair is visible */
-    display: block;
+    /* Tight crop to remove headspace and match co-founder */
+}
+
+.founder-overlay-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #020617 0%, transparent 50%);
     z-index: 1;
-    position: relative;
 }
 
-.founder-glow {
+.founder-role-tag {
     position: absolute;
-    width: 150%;
-    height: 150%;
-    top: -25%;
-    left: -25%;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.founder-tag {
-    position: absolute;
-    bottom: -0.5rem;
-    right: -0.5rem;
+    bottom: 1.5rem;
+    left: 1.5rem;
     background: #6366f1;
-    color: white;
-    padding: 0.7rem 1.4rem;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    z-index: 3;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 2;
+    letter-spacing: 0.05em;
 }
 
-.me-text h2 {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
+.founder-info {
+    padding: 2.5rem;
 }
 
-.me-text p {
-    font-size: 1.15rem;
+.founder-info h3 {
+    font-size: 1.8rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.founder-info p {
     color: #94a3b8;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    font-size: 1rem;
 }
 
 /* Offerings */
 .about-offerings-section {
-    padding: 4rem 4rem;
+    padding: 2.5rem 4rem;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -464,7 +539,7 @@
 
 /* Achievements & Stats */
 .about-achievements-section {
-    padding: 4rem 4rem;
+    padding: 3rem 4rem;
     background: rgba(2, 6, 23, 0.6);
     border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -485,6 +560,28 @@
     font-weight: 800;
     color: #fff;
     margin-bottom: 0.5rem;
+}
+
+.flicker-text {
+    animation: flicker 4s infinite;
+}
+
+@keyframes flicker {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.95;
+        color: #a5b4fc;
+    }
+
+    51% {
+        opacity: 1;
+        color: #fff;
+    }
 }
 
 .stat-desc {
@@ -526,7 +623,7 @@
 
 /* Future Vision */
 .about-future-section {
-    padding: 5rem 4rem;
+    padding: 3rem 4rem;
     text-align: center;
     background: radial-gradient(circle at center, rgba(99, 102, 241, 0.03) 0%, transparent 70%);
 }
@@ -553,14 +650,14 @@
 
 /* CTA Section */
 .about-cta-section {
-    padding: 4rem 4rem;
+    padding: 2.5rem 4rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .cta-box {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(30, 41, 59, 0.15) 100%);
-    padding: 6rem;
+    padding: 4rem;
     border-radius: 40px;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -579,21 +676,17 @@
     margin-bottom: 3.5rem;
 }
 
-.cta-btn-premium {
-    background: #6366f1;
-    color: white;
-    padding: 1.25rem 3.5rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-    border-radius: 14px;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 40px rgba(99, 102, 241, 0.25);
-    border: none;
-    cursor: pointer;
+.glow-button {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    border: 1px solid rgba(99, 102, 241, 0.5);
+}
+
+.glow-button:hover {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
 }
 
 .manifesto-footer {
-    padding: 6rem 4rem;
+    padding: 3rem 4rem;
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.03);
     color: #475569;

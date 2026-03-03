@@ -1,167 +1,296 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     MessageSquare,
     Users,
-    HelpCircle,
-    Award,
-    Star,
     TrendingUp,
     ChevronUp,
     MessageCircle,
-    Search,
     Plus,
-    ArrowLeft
+    ArrowLeft,
+    Shield,
+    Activity,
+    BarChart3,
+    Share2,
+    MoreHorizontal,
+    Search,
+    Clock
 } from 'lucide-react';
-import './ResearchPillars.css';
+import { db } from '../firebase/config';
+import {
+    collection,
+    query,
+    orderBy,
+    onSnapshot,
+    addDoc,
+    serverTimestamp,
+    updateDoc,
+    doc,
+    increment
+} from 'firebase/firestore';
+import { useAuth } from '../context/AuthContext';
+import './StrategicDiscussion.css';
 
-const DiscussionItem = ({ title, author, answers, level, time }) => (
-    <div className="glass glass-hover discussion-card-full no-border-radius" style={{ padding: '1.5rem' }}>
-        <div className="discussion-inner">
-            <div className="vote-control">
-                <button className="text-btn" style={{ color: 'var(--text-muted)' }}><ChevronUp size={24} /></button>
-                <span className="vote-num">{Math.floor(Math.random() * 50)}</span>
-            </div>
-            <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', marginBottom: 0 }}>{level}</span>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Posted by {author} • {time}</span>
+const IntelCard = ({ post }) => {
+    const handleLike = async () => {
+        try {
+            const postRef = doc(db, 'discussionHub', post.id);
+            await updateDoc(postRef, {
+                likes: increment(1)
+            });
+        } catch (error) {
+            console.error("Error liking post:", error);
+        }
+    };
+
+    return (
+        <div className="intel-card">
+            <div className="card-sidebar">
+                <div className="vote-box">
+                    <button className="action-btn-mini" onClick={handleLike}>
+                        <ChevronUp size={20} />
+                    </button>
+                    <span className="vote-count">{post.likes || 0}</span>
                 </div>
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', cursor: 'pointer' }}>{title}</h3>
-                <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><MessageCircle size={16} /> {answers} Answers</span>
-                    <span className="expert-tag-gold"><Star size={16} /> Expert Verified</span>
+            </div>
+            <div className="card-main">
+                <div className="card-header">
+                    <div className="user-info">
+                        <div className="user-node">{post.userName?.[0]?.toUpperCase() || '?'}</div>
+                        <div className="user-meta">
+                            <span className="username">{post.userName}</span>
+                            <span className="tier-badge">Institutional Analyst</span>
+                        </div>
+                    </div>
+                    <div className="timestamp">
+                        <Clock size={12} style={{ marginRight: '4px' }} />
+                        {post.createdAt?.seconds ? new Date(post.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
+                    </div>
+                </div>
+                <div className="card-content">
+                    {post.content}
+                </div>
+                <div className="card-footer">
+                    <div className="metric">
+                        <MessageCircle size={16} />
+                        <span>{post.repliesCount || 0} Discussions</span>
+                    </div>
+                    <div className="metric">
+                        <Activity size={16} />
+                        <span>Risk Score: Low</span>
+                    </div>
+                    <div className="metric">
+                        <Share2 size={16} />
+                        <span>Share</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
-const Community = () => {
+const StrategicDiscussionHub = () => {
     const navigate = useNavigate();
+    const { user, userData } = useAuth();
+    const [posts, setPosts] = useState([]);
+    const [newPost, setNewPost] = useState('');
+    const [isPosting, setIsPosting] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        console.log("Initializing Intelligence Stream (onSnapshot)...");
+        const q = query(collection(db, 'discussionHub'), orderBy('createdAt', 'desc'));
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            console.log("Snapshot received! Records count:", snapshot.size);
+            const feedData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setPosts(feedData);
+            setLoading(false);
+        }, (error) => {
+            console.error("CRITICAL: Stream Correlation Failure:", error);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            handlePostSubmit(e);
+        }
+    };
+
+    const handlePostSubmit = async (e) => {
+        if (e) e.preventDefault();
+        console.log("Post submission triggered. User:", user?.uid, "Message:", newPost);
+
+        if (!user) {
+            alert("You must be logged in to post intelligence insights.");
+            return;
+        }
+
+        if (!newPost.trim()) {
+            console.log("Empty post content. Aborting.");
+            return;
+        }
+
+        setIsPosting(true);
+        try {
+            const postData = {
+                content: newPost.trim(),
+                userId: user.uid,
+                userName: userData?.fullName || user.displayName || user.email?.split('@')[0] || 'Anonymous Analyst',
+                createdAt: serverTimestamp(),
+                likes: 0,
+                repliesCount: 0
+            };
+
+            console.log("Attempting to write to Firestore collection 'discussionHub'...", postData);
+
+            const docRef = await addDoc(collection(db, 'discussionHub'), postData);
+
+            console.log("Firestore write successful! Document ID:", docRef.id);
+            setNewPost('');
+            // Toast or visual confirmation could be added here
+        } catch (error) {
+            console.error("CRITICAL: Firestore Dispatch Error:", error);
+            alert("Security Correlation Error: Could not dispatch intelligence to the network. " + error.message);
+        } finally {
+            setIsPosting(false);
+        }
+    };
+
     return (
-        <div className="community fade-in full-width-terminal">
-            <div className="content-header-integrated glass no-border-radius">
-                <div className="header-nav">
-                    <button className="back-link" onClick={() => navigate('/')}>
-                        <ArrowLeft size={16} />
-                        <span>Back to Terminal</span>
-                    </button>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <div className="search-pill glass" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0 1rem', borderRadius: '12px' }}>
-                            <Search size={18} color="var(--text-muted)" />
-                            <input type="text" placeholder="Search discussions..." style={{ background: 'none', border: 'none', padding: '0.75rem 0', color: 'var(--text-main)', outline: 'none' }} />
+        <div className="strategic-hub fade-in">
+            <div className="hub-container">
+                {/* 70% MAIN CONTENT */}
+                <div className="hub-main-content">
+                    <div className="hub-header">
+                        <div className="hub-title-group">
+                            <span className="hub-badge">Intelligence Network</span>
+                            <h1 className="hub-title">Strategic Discussion Hub</h1>
                         </div>
-                        <button className="btn-primary"><Plus size={18} /> New Thread</button>
                     </div>
-                </div>
-                <div className="topic-hero-integrated" style={{ marginTop: '2rem' }}>
-                    <div className="badge grad-primary">Knowledge Zone</div>
-                    <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Community Network</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Connect with 50,000+ crypto researchers and developers.</p>
-                </div>
-            </div>
 
-            <div className="community-terminal-layout">
-                <div className="terminal-gutter"></div>
-
-                <div className="community-feed">
-                    <div className="create-post-container no-border-radius">
-                        <div className="post-input-wrapper">
-                            <div className="user-mini-avatar">K</div>
-                            <div className="input-area-box">
-                                <textarea placeholder="Ask a question or share research insights..."></textarea>
-                                <div className="input-actions-row">
-                                    <div className="format-tools">
-                                        <button className="tool-btn-subtle"><Plus size={18} /></button>
-                                        <button className="tool-btn-subtle"><Users size={18} /></button>
-                                        <button className="tool-btn-subtle"><MessageSquare size={18} /></button>
-                                    </div>
-                                    <button className="btn-primary" style={{ padding: '0.5rem 1.5rem', fontSize: '0.85rem' }}>Post Insight</button>
-                                </div>
+                    {/* Input Panel */}
+                    <div className="intelligence-input-panel">
+                        <div className="input-header" style={{ justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div className="user-node">{user?.email?.[0]?.toUpperCase() || 'A'}</div>
+                                <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Post Professional Commentary</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <div style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: user ? '#10b981' : '#ef4444',
+                                    boxShadow: user ? '0 0 10px #10b981' : 'none'
+                                }}></div>
+                                <span style={{ fontSize: '0.7rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    {user ? 'Analyst Connected' : 'Terminal Offline'}
+                                </span>
                             </div>
                         </div>
+                        <textarea
+                            className="thought-terminal"
+                            placeholder="Provide on-chain insights, risk analysis, or protocol observations..."
+                            value={newPost}
+                            onChange={(e) => setNewPost(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <div className="input-footer">
+                            <div className="post-actions">
+                                <button className="action-btn-mini" title="Attach Data"><Activity size={16} /></button>
+                                <button className="action-btn-mini" title="Risk Level"><Shield size={16} /></button>
+                                <button className="action-btn-mini" title="Analysis"><BarChart3 size={16} /></button>
+                            </div>
+                            <button
+                                className="dispatch-btn"
+                                onClick={handlePostSubmit}
+                                disabled={isPosting || !newPost.trim()}
+                            >
+                                {isPosting ? 'Dispatching...' : 'Dispatch Insight'}
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="feed-filters" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', padding: '0 1.5rem' }}>
-                        {['Trending', 'Latest', 'Expert Pick', 'Unanswered'].map(filter => (
-                            <button key={filter} className="glass btn-terminal-action">{filter}</button>
-                        ))}
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0', borderTop: '1px solid var(--border)' }}>
-                        <DiscussionItem
-                            title="How do ZK-Sync era fees compare to Optimism on mainnet?"
-                            author="vitalik_fan"
-                            answers={24}
-                            level="Technical"
-                            time="2h ago"
-                        />
-                        <DiscussionItem
-                            title="Best practices for multi-sig wallet security in institutional setups."
-                            author="custody_pro"
-                            answers={15}
-                            level="Security"
-                            time="5h ago"
-                        />
-                        <DiscussionItem
-                            title="Understanding the impact of EIP-4844 on Layer 2 profitability."
-                            author="protocol_nerd"
-                            answers={42}
-                            level="Research"
-                            time="8h ago"
-                        />
-                        <DiscussionItem
-                            title="The upcoming regulatory framework in Hong Kong: What you need to know."
-                            author="legal_eagle"
-                            answers={31}
-                            level="Regulation"
-                            time="1d ago"
-                        />
+                    {/* Feed */}
+                    <div className="discussion-feed">
+                        {loading ? (
+                            <div style={{ color: '#475569', textAlign: 'center', padding: '2rem' }}>Synchronizing with Intelligence Stream...</div>
+                        ) : posts.length > 0 ? (
+                            posts.map(post => <IntelCard key={post.id} post={post} />)
+                        ) : (
+                            <div style={{ color: '#475569', textAlign: 'center', padding: '2rem' }}>No strategic insights found. Be the first to analyze.</div>
+                        )}
                     </div>
                 </div>
 
-                <aside className="community-sidebar">
-                    <div className="glass sidebar-panel no-border-radius">
-                        <div className="panel-title">
-                            <Award size={24} color="var(--accent-gold)" />
-                            <h2 style={{ fontSize: '1.2rem' }}>Top Contributors</h2>
+                {/* 30% SIDEBAR ANALYTICS */}
+                <aside className="hub-sidebar">
+                    <div className="analytics-panel">
+                        <div className="panel-section">
+                            <div className="section-title">
+                                <TrendingUp size={16} />
+                                Trending Intelligence
+                            </div>
+                            <div className="hot-topic-list">
+                                {[
+                                    { tag: "#Layer2Scaling", count: "1.2k" },
+                                    { tag: "#ZKProofs", count: "850" },
+                                    { tag: "#LiquidStaking", count: "640" },
+                                    { tag: "#MEV-Analysis", count: "420" }
+                                ].map((topic, i) => (
+                                    <div key={i} className="hot-topic-item">
+                                        <span className="topic-label">{topic.tag}</span>
+                                        <span className="topic-stats">{topic.count} hits</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                            {[
-                                { name: "Satoshi_Vision", score: "4.5k", field: "Cryptography", color: "#6366f1" },
-                                { name: "DeFi_Wizard", score: "3.2k", field: "Protocols", color: "#ec4899" },
-                                { name: "Chain_Explorer", score: "2.8k", field: "On-chain Data", color: "#10b981" },
-                            ].map((expert, idx) => (
-                                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: expert.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700' }}>{expert.name[0]}</div>
-                                        <div>
-                                            <div style={{ fontWeight: '600', fontSize: '0.9rem' }}>{expert.name}</div>
-                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{expert.field}</div>
+
+                        <div className="panel-section">
+                            <div className="section-title">
+                                <Activity size={16} />
+                                Top Intelligence Officers
+                            </div>
+                            <div className="analyst-ranking">
+                                {[
+                                    { name: "Satoshi_Vision", field: "Cryptography", score: "99" },
+                                    { name: "Protocol_Nerd", field: "L2 Research", score: "94" },
+                                    { name: "DeFi_Wizard", field: "Risk Modeling", score: "88" }
+                                ].map((officer, i) => (
+                                    <div key={i} className="analyst-item">
+                                        <div className="analyst-avatar" style={{ border: '1px solid #6366f1' }}>{officer.name[0]}</div>
+                                        <div className="analyst-data">
+                                            <div className="analyst-name">{officer.name}</div>
+                                            <div className="analyst-metric">{officer.field}</div>
                                         </div>
+                                        <div className="analyst-score">{officer.score}</div>
                                     </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontWeight: '700', color: 'var(--accent-gold)', fontSize: '0.9rem' }}>{expert.score}</div>
-                                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>XP</div>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="glass grad-primary no-border-radius" style={{ padding: '2rem' }}>
-                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white' }}><HelpCircle size={20} /> Need Help?</h3>
-                        <p style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.8)', marginTop: '0.5rem', marginBottom: '1.5rem' }}>Our mentors are available 24/7 in the beginner-friendly help center.</p>
-                        <button style={{ background: 'white', color: 'var(--primary)', padding: '0.75rem 1.25rem', borderRadius: '10px', fontWeight: '700', width: '100%' }}>Join Help Center</button>
-                    </div>
-
-                    <div className="glass sidebar-panel no-border-radius">
-                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}><TrendingUp size={18} color="var(--primary)" /> Trending Topics</h4>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                            {['#BitcoinETF', '#Layer2', '#ZKProofs', '#Solana', '#Airdrops', '#EigenLayer'].map(tag => (
-                                <span key={tag} className="glass" style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer' }}>{tag}</span>
-                            ))}
+                        <div className="panel-section" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1.5rem' }}>
+                            <div className="section-title">
+                                <Users size={16} />
+                                Network Status
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>Active Analysts</span>
+                                    <span style={{ color: '#10b981' }}>4,129</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>Intelligence Stream</span>
+                                    <span style={{ color: '#10b981' }}>Operational</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </aside>
@@ -170,4 +299,5 @@ const Community = () => {
     );
 };
 
-export default Community;
+export default StrategicDiscussionHub;
+
