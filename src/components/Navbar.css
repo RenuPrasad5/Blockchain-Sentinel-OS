@@ -1,17 +1,15 @@
 .navbar {
-    height: 100px;
-    min-height: 100px;
-    width: 100%;
+    height: var(--navbar-height);
+    min-height: var(--navbar-height);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2.5rem;
-    z-index: 900;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    background: rgba(2, 6, 23, 0.8);
-    backdrop-filter: blur(12px);
-    position: sticky;
-    top: 0;
+    padding: 0 4rem 0 3rem;
+    z-index: 1100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0D1117;
+    position: relative;
+    width: 100%;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -200,8 +198,8 @@
 }
 
 .logo-circular-nav {
-    width: 68px;
-    height: 68px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     clip-path: circle(50%);
     object-fit: cover;
@@ -214,11 +212,11 @@
 }
 
 .brand-text-nav {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     font-weight: 800;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    background: linear-gradient(135deg, var(--text-primary) 0%, #a5b4fc 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -251,6 +249,27 @@
     letter-spacing: 0.025em;
 }
 
+.regulatory-btn {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+}
+
+.regulatory-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.regulatory-btn.active {
+    background: rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
 .nav-link-btn::after {
     content: '';
     position: absolute;
@@ -269,17 +288,16 @@
 }
 
 .nav-link-btn:hover {
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .nav-link-btn.active {
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .nav-link-btn.active::after {
     width: 100%;
     background: #6366f1;
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
 }
 
 
@@ -343,7 +361,7 @@
 .tools-item-title {
     font-size: 0.85rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 0.025em;
 }
@@ -379,7 +397,7 @@
     height: 48px;
     /* Institutional height */
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     border-radius: 8px;
     /* rounded-lg */
     font-weight: 600;
@@ -500,7 +518,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--text-primary);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
@@ -690,8 +708,6 @@
 .icon-btn:hover {
     background: rgba(255, 255, 255, 0.05);
     color: #6366f1;
-    filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3));
-    /* Notification Glow */
 }
 
 .notification-dot {
@@ -708,6 +724,12 @@
 @media (max-width: 1024px) {
     .nav-links-desktop {
         display: none;
+    }
+
+    .navbar.sidebar-expanded,
+    .navbar.sidebar-collapsed {
+        left: 0;
+        width: 100%;
     }
 
     .navbar-center {

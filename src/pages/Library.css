@@ -1,4 +1,4 @@
-.library-layout {
+﻿.library-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
     gap: 3rem;
@@ -45,7 +45,7 @@
 
 .cat-item.active {
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
 }
 
 .cat-item .arrow {
@@ -56,7 +56,7 @@
 .reading-stats {
     padding: 2rem;
     border-radius: var(--radius-lg);
-    color: white;
+    color: var(--text-primary);
 }
 
 .reading-stats h4 {
@@ -74,7 +74,7 @@
 
 .progress-bar .fill {
     height: 100%;
-    background: white;
+    background: var(--text-primary);
     border-radius: 4px;
 }
 
@@ -89,7 +89,7 @@
     padding: 0.75rem;
     border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.15);
-    color: white;
+    color: var(--text-primary);
     font-weight: 600;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -98,7 +98,7 @@
     padding: 3rem;
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
-    color: white;
+    color: var(--text-primary);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -139,7 +139,7 @@
 }
 
 .btn-white {
-    background: white;
+    background: var(--text-primary);
     color: var(--primary);
     padding: 0.75rem 1.75rem;
     border-radius: var(--radius-md);
@@ -187,7 +187,7 @@
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(8px);
-    color: white;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,5 +1,5 @@
-.about-us-page {
-    background: #020617;
+﻿.about-us-page {
+    background: #0D1117;
     color: #f8fafc;
     min-height: 100vh;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -43,7 +43,7 @@
     background: rgba(99, 102, 241, 0.08);
     /* Soft hover glow */
     border-color: rgba(99, 102, 241, 0.3);
-    color: #fff;
+    color: var(--text-primary);
     transform: translateX(-4px);
     box-shadow: 0 0 25px rgba(99, 102, 241, 0.1);
 }
@@ -64,7 +64,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: #020617;
+    background: #0D1117;
     z-index: 1000;
     display: flex;
     justify-content: center;
@@ -130,7 +130,7 @@
     letter-spacing: -0.02em;
     margin-bottom: 2rem;
     z-index: 1;
-    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    background: linear-gradient(135deg, var(--text-primary) 0%, #a5b4fc 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -197,7 +197,7 @@
     font-size: clamp(1.8rem, 3.5vw, 3rem);
     font-weight: 700;
     margin-bottom: 2.5rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 /* Manifesto Section */
@@ -240,7 +240,7 @@
 .manifesto-block h3 {
     font-size: 1.5rem;
     margin-bottom: 1.25rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .manifesto-block p {
@@ -338,7 +338,7 @@
 .journey-content h3 {
     font-size: 1.250rem;
     margin-bottom: 0.5rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .journey-content p {
@@ -465,7 +465,7 @@
 .founder-overlay-glow {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, #020617 0%, transparent 50%);
+    background: linear-gradient(to top, #0D1117 0%, transparent 50%);
     z-index: 1;
 }
 
@@ -474,7 +474,7 @@
     bottom: 1.5rem;
     left: 1.5rem;
     background: #6366f1;
-    color: #fff;
+    color: var(--text-primary);
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-family: 'JetBrains Mono', monospace;
@@ -490,7 +490,7 @@
 
 .founder-info h3 {
     font-size: 1.8rem;
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
@@ -529,7 +529,7 @@
 .offering-item h3 {
     font-size: 1.4rem;
     margin-bottom: 1rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .offering-item p {
@@ -558,7 +558,7 @@
     display: block;
     font-size: 4rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
@@ -580,7 +580,7 @@
 
     51% {
         opacity: 1;
-        color: #fff;
+        color: var(--text-primary);
     }
 }
 
@@ -618,7 +618,7 @@
 .testimonial-author {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 /* Future Vision */
@@ -636,7 +636,7 @@
 .future-content h2 {
     font-size: clamp(3rem, 5vw, 4.5rem);
     margin-bottom: 2rem;
-    background: linear-gradient(to bottom, #fff, #94a3b8);
+    background: linear-gradient(to bottom, var(--text-primary), #94a3b8);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -667,7 +667,7 @@
 .cta-box h2 {
     font-size: 3rem;
     margin-bottom: 1.5rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .cta-box p {
@@ -727,3 +727,4 @@
         font-size: 1rem;
     }
 }
+

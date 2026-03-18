@@ -1,14 +1,73 @@
-/* Institutional Hero Reset */
 .home-container {
-    padding-top: 0;
-    margin-top: -64px;
-    /* Pull up to touch navbar */
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
     position: relative;
     z-index: 10;
 }
+
+/* --- Layout Standardization Classes --- */
+/* Hero Container centering */
+.hero-centered-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    height: 100%;
+}
+
+.hero-section {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - var(--navbar-height));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-inner {
+    width: 100%;
+    padding: 2rem; /* Reduced from 4rem to allow more room */
+    display: flex;
+    align-items: center;
+    min-height: calc(100vh - var(--navbar-height));
+}
+
+.responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    align-items: center;
+}
+
+.standard-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: rgba(13, 17, 23, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    margin: 0;
+}
+
+.standard-btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.standard-input {
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 0;
+}
+
+/* -------------------------------------- */
 
 /* Ensure navbar is above hero */
 nav,
@@ -50,14 +109,13 @@ nav,
 .hero-visual .float-card:hover {
     animation-play-state: paused;
     transform: scale(1.05);
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6);
 }
 
 /* Stats Row divider */
 .stat-divider {
     width: 1px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-color);
 }
 
 /* Matrix Section styling */
@@ -95,20 +153,45 @@ nav,
 /* Button Glow Effect */
 .btn-glow-indigo {
     position: relative;
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .btn-glow-indigo:hover {
-    box-shadow: 0 0 40px rgba(99, 102, 241, 0.7);
     transform: translateY(-2px);
 }
 
 
 
+.hero-main-heading {
+    color: white;
+    font-size: clamp(2.2rem, 4.5vw, 3.2rem); /* Slightly smaller max to fit lanes */
+    font-weight: 950;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+/* Hero Column Customizations */
+.hero-cards-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding-left: 2rem;
+}
+
 /* Responsiveness overrides */
 @media (max-width: 1024px) {
-    .lg\:col-span-12 {
-        grid-column: span 12 / span 12;
+    .hero-inner {
+        padding: 4rem 1.5rem;
+    }
+    .hero-cards-col {
+        align-items: center;
+        margin-top: 4rem;
+        padding-left: 0;
     }
 }

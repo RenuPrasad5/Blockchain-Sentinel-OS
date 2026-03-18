@@ -40,6 +40,32 @@ class AlchemyManager {
         }
     }
 
+    onSwap(callback) {
+        const WETH_USDC_POOL = "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640";
+        const SWAP_TOPIC = "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67";
+
+        const filter = {
+            address: WETH_USDC_POOL,
+            topics: [SWAP_TOPIC]
+        };
+
+        try {
+            alchemy.ws.on(filter, (log) => {
+                // Decode price from sqrtPriceX96 in Swap event
+                // data: [amount0, amount1, sqrtPriceX96, liquidity, tick]
+                const data = log.data;
+                const sqrtPriceX96 = BigInt("0x" + data.slice(130, 194));
+                const price = Number((sqrtPriceX96 * sqrtPriceX96 * BigInt(1e12)) / (BigInt(2) ** BigInt(192)));
+                const ethPrice = 1 / (price / 1e12); // Simple conversion for demonstration
+                callback(ethPrice);
+            });
+            return () => alchemy.ws.off(filter);
+        } catch (err) {
+            console.error("Error setting up swap listener:", err);
+            return () => { };
+        }
+    }
+
     async getTransactionDetails(hash) {
         try {
             return await alchemy.core.getTransaction(hash);

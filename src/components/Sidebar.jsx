@@ -22,7 +22,8 @@ import {
     Radar,
     Shield,
     Share2,
-    Zap
+    Zap,
+    Briefcase
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
@@ -30,10 +31,9 @@ import './Sidebar.css';
 
 const Sidebar = () => {
     const { user, userData, logout } = useAuth();
-    const { isMobileOpen, setIsMobileOpen } = useModeStore();
+    const { isMobileOpen, setIsMobileOpen, isExpanded, setIsExpanded } = useModeStore();
     const navigate = useNavigate();
     const location = useLocation();
-    const [isExpanded, setIsExpanded] = useState(true);
     const [openSubMenus, setOpenSubMenus] = useState({});
 
     // Close sidebar on mobile when navigating
@@ -63,6 +63,7 @@ const Sidebar = () => {
 
     const navItems = [
         { id: 'terminal', title: 'Terminal', icon: <Globe size={20} />, path: '/' },
+        { id: 'enterprise', title: 'Gov & Ent', icon: <Briefcase size={20} />, path: '/gov-ent' },
         { id: 'cc', title: 'Command Center', icon: <Cpu size={20} />, path: '/dashboard' },
         { id: 'encyclopedia', title: 'Encyclopedia', icon: <Database size={20} />, path: '/encyclopedia' },
         { id: 'research', title: 'Protocol Research', icon: <FileSearch size={20} />, path: '/research' },
@@ -89,8 +90,8 @@ const Sidebar = () => {
     ];
 
     const sidebarVariants = {
-        expanded: { width: 260 },
-        collapsed: { width: 80 }
+        expanded: { opacity: 1 },
+        collapsed: { opacity: 1 }
     };
 
     return (

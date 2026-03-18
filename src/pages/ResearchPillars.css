@@ -1,4 +1,4 @@
-/* UNIVERSAL RESEARCH PILLAR TERMINAL STYLES */
+﻿/* UNIVERSAL RESEARCH PILLAR TERMINAL STYLES */
 
 .full-width-terminal {
     width: 100%;
@@ -338,7 +338,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--text-primary);
     font-weight: 800;
     flex-shrink: 0;
 }
@@ -353,7 +353,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1rem;
-    color: white;
+    color: var(--text-primary);
     font-size: 0.95rem;
     resize: none;
     min-height: 80px;

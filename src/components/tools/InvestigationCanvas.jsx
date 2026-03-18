@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+﻿import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     ReactFlow,
     Controls,
@@ -354,7 +354,7 @@ const InvestigationCanvas = ({ preloadedAddress }) => {
     }, [selectedEdge, liveData]);
 
     return (
-        <div className="w-full h-[700px] bg-[#020617] border border-white/[0.05] rounded-3xl overflow-hidden relative">
+        <div className="w-full h-[700px] bg-[#0D1117] border border-white/[0.05] rounded-3xl overflow-hidden relative">
             {/* Header Overlay */}
             <div className="absolute top-6 left-6 z-10">
                 <div className="px-5 py-3 bg-slate-900/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl flex items-center gap-4">
@@ -389,7 +389,7 @@ const InvestigationCanvas = ({ preloadedAddress }) => {
                 maxZoom={1.5}
                 minZoom={0.2}
             >
-                <Background color="#1e293b" gap={25} size={1} />
+                <Background color="rgba(255,255,255,0.1)" gap={25} size={1} />
                 <Controls className="bg-slate-900 border-white/5 fill-white" />
             </ReactFlow>
 
@@ -545,7 +545,7 @@ const InvestigationCanvas = ({ preloadedAddress }) => {
                             <div className="p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 mb-6">
                                 <div className="text-[8px] text-indigo-300 uppercase font-black mb-1">Transfer Value</div>
                                 <div className="text-2xl font-black text-white tracking-tighter">{edgeDetails.valueEth || '0.00'} ETH</div>
-                                <div className="text-[10px] text-indigo-400/60 font-bold">≈ ${(parseFloat(edgeDetails.valueEth || 0) * 2740).toLocaleString()} USD</div>
+                                <div className="text-[10px] text-indigo-400/60 font-bold">â‰ˆ ${(parseFloat(edgeDetails.valueEth || 0) * 2740).toLocaleString()} USD</div>
                             </div>
 
                             <div className="grid grid-cols-1 gap-2">
@@ -604,3 +604,4 @@ const InvestigationCanvas = ({ preloadedAddress }) => {
 };
 
 export default InvestigationCanvas;
+

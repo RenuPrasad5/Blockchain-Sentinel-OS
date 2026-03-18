@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+﻿import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: '#020617',
+                    background: '#0D1117',
                     color: '#6366f1',
                     fontFamily: 'sans-serif'
                 }}>
@@ -109,3 +109,4 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+

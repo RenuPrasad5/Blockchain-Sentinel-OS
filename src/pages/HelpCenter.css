@@ -1,4 +1,4 @@
-.help-center-page {
+﻿.help-center-page {
     padding: 6rem 0;
     min-height: 100vh;
 }
@@ -30,7 +30,7 @@
 .help-header-hero h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    background: linear-gradient(to right, #fff, #94a3b8);
+    background: linear-gradient(to right, var(--text-primary), #94a3b8);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -107,7 +107,7 @@
     margin-top: 1rem;
     padding: 1rem;
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     border-radius: var(--radius-md);
     font-weight: 700;
     display: flex;

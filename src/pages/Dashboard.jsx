@@ -19,11 +19,23 @@ import {
     BarChart,
     Layers,
     Navigation,
-    MousePointer2
+    MousePointer2,
+    Download,
+    Flag,
+    AlertCircle,
+    Map as MapIcon,
+    FileText
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import './Dashboard.css';
 import useModeStore from '../store/modeStore';
+
+import ForensicIntake from '../components/dashboard/ForensicIntake';
+import YieldMatrix from '../components/dashboard/YieldMatrix';
+import CapitalFlow from '../components/dashboard/CapitalFlow';
+import TDSLeakagePanel from '../components/dashboard/TDSLeakagePanel';
+import SovereignNodeMap from '../components/dashboard/SovereignNodeMap';
 
 const IntelCard = ({ title, icon: Icon, children, badge, type = "default" }) => (
     <motion.div
@@ -54,29 +66,114 @@ const MarketStat = ({ label, value, colorClass = "" }) => (
 
 const Dashboard = () => {
     const { mode } = useModeStore();
+    const [searchParams] = useSearchParams();
+    const location = useLocation();
+    const isEnterprise = searchParams.get('mode') === 'enterprise' || location.pathname === '/gov-ent';
+    const [isRegulatoryMode, setIsRegulatoryMode] = React.useState(false);
+
+    const handleExportPDF = () => {
+        // Mock PDF export
+        const alert = document.createElement('div');
+        alert.className = 'fixed top-20 right-8 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-2xl z-[1000] font-black uppercase text-xs animate-bounce';
+        alert.innerText = 'GENERATING ENCRYPTED FORENSIC PDF...';
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 3000);
+    };
 
     return (
-        <div className={`saas-terminal fade-in mode-${mode.toLowerCase()}`}>
+        <div className={`saas-terminal fade-in mode-${mode.toLowerCase()} ${isRegulatoryMode ? 'regulatory-active' : ''}`}>
             {/* Global Market Status Bar */}
-            <div className="global-status-bar glass">
-                <MarketStat label="Global Cap" value="$3.42T" colorClass="text-emerald" />
-                <div className="stat-sep"></div>
-                <MarketStat label="BTC Dominance" value="54.2%" />
-                <div className="stat-sep"></div>
-                <MarketStat label="Sentiment" value="Extreme Greed (78)" colorClass="text-emerald" />
-                <div className="stat-sep"></div>
-                <MarketStat label="Risk Index" value="Low (12)" colorClass="text-emerald" />
-                <div className="stat-sep"></div>
-                <MarketStat label="Active Signals" value="14 Alerts" colorClass="text-primary-bright" />
-                <div className="stat-sep"></div>
-                <div className="user-tier-badge">
-                    <Shield size={12} />
-                    <span>{mode} PRO</span>
+            <div className="global-status-bar glass flex items-center justify-between px-6">
+                <div className="flex items-center gap-6">
+                    <MarketStat label="Global Cap" value="$3.42T" colorClass="text-emerald" />
+                    <div className="stat-sep"></div>
+                    <MarketStat label="BTC Dominance" value="54.2%" />
+                    <div className="stat-sep"></div>
+                    <MarketStat label="Sentiment" value="Extreme Greed (78)" colorClass="text-emerald" />
+                </div>
+                
+                <div className="flex items-center gap-6">
+                    {isEnterprise && (
+                        <>
+                            <div className="flex items-center gap-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/10">
+                                <span className="text-[10px] font-black text-slate-500 uppercase">Regulatory Mode</span>
+                                <button 
+                                    onClick={() => setIsRegulatoryMode(!isRegulatoryMode)}
+                                    className={`w-10 h-5 rounded-full relative transition-all ${isRegulatoryMode ? 'bg-orange-500' : 'bg-slate-700'}`}
+                                >
+                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${isRegulatoryMode ? 'left-6' : 'left-1'}`}></div>
+                                </button>
+                            </div>
+                            <button 
+                                onClick={handleExportPDF}
+                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all"
+                            >
+                                <Download size={14} /> Export Forensic Report
+                            </button>
+                        </>
+                    )}
+                    <div className="stat-sep"></div>
+                    <div className="user-tier-badge">
+                        <Shield size={12} />
+                        <span>{isEnterprise ? 'GOVERNMENT-LEVEL' : mode} PRO</span>
+                    </div>
                 </div>
             </div>
 
-            {/* Main Terminal Grid: 2 Columns */}
-            <div className="terminal-layout-grid">
+            {isEnterprise ? (
+                <div className="enterprise-view space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    {isRegulatoryMode && (
+                        <div className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-4">
+                                <AlertCircle className="text-orange-500" size={24} />
+                                <div>
+                                    <h4 className="text-xs font-black text-orange-500 uppercase">Active PMLA Protocol</h4>
+                                    <p className="text-[10px] text-orange-200/70 font-bold uppercase">All transactions {">"} ₹8.4 Lakhs ($10k) are being auto-flagged for FIU review.</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-1 bg-orange-500 text-white rounded text-[10px] font-black uppercase">
+                                Monitoring Active
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div className="lg:col-span-4 flex flex-col gap-4">
+                            <IntelCard title="Wallet Investigation Unit" icon={Shield}>
+                                <div className="h-[400px]">
+                                    <ForensicIntake isRegulatoryMode={isRegulatoryMode} />
+                                </div>
+                            </IntelCard>
+                            <IntelCard title="TDS Leakage Monitor (Sec 194S)" icon={FileText}>
+                                <div className="h-[430px]">
+                                    <TDSLeakagePanel isRegulatoryMode={isRegulatoryMode} />
+                                </div>
+                            </IntelCard>
+                        </div>
+                        
+                        <div className="lg:col-span-8 flex flex-col gap-4">
+                            <IntelCard title="Sovereign Infrastructure Monitor" icon={MapIcon} badge="LIVE GEO-DATA">
+                                <div className="h-[500px]">
+                                    <SovereignNodeMap isRegulatoryMode={isRegulatoryMode} />
+                                </div>
+                            </IntelCard>
+                            <IntelCard title="Institutional Yield Matrix" icon={TrendingUp} badge="GOVERNANCE AUDIT">
+                                <YieldMatrix isRegulatoryMode={isRegulatoryMode} />
+                            </IntelCard>
+                        </div>
+                    </div>
+                    
+                    <div className="center-panel-enterprise mt-4">
+                        <IntelCard title="Capital Flow Architecture v4.2" icon={Waves} badge="HIGH-FIDELITY">
+                            <div className="h-[550px]">
+                                <CapitalFlow isRegulatoryMode={isRegulatoryMode} />
+                            </div>
+                        </IntelCard>
+                    </div>
+                </div>
+            ) : (
+                /* Main Terminal Grid: 2 Columns */
+                <div className="terminal-layout-grid">
 
                 {/* COLUMN 1: STRATEGIC INTELLIGENCE (Left) */}
                 <div className="terminal-column">
@@ -224,8 +321,8 @@ const Dashboard = () => {
                         </div>
                     </IntelCard>
                 </div>
-
             </div>
+            )}
         </div>
     );
 };

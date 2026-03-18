@@ -1,31 +1,79 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: #0D1117;
+}
+
 .app-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: var(--navbar-height) 1fr;
   min-height: 100vh;
+  width: 100vw;
+  background: #0D1117;
+  overflow: hidden;
+  transition: grid-template-columns 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Navbar spans both columns top row */
+.navbar {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  z-index: 1100;
+}
+
+/* Sidebar in left column second row */
+.sidebar-container {
+  grid-row: 2;
+  grid-column: 1;
+  z-index: 1000;
+}
+
+/* Main Wrapper in right column second row */
+.main-wrapper {
+  grid-row: 2;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: calc(100vh - var(--navbar-height));
+  position: relative;
+  overflow: hidden;
 }
 
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #0D1117;
 }
 
 @media (max-width: 1024px) {
-  .main-content {
+  .app-container {
+    display: block;
+    overflow-x: hidden;
+  }
+  .main-wrapper {
     margin-left: 0;
+    width: 100%;
+    height: auto;
+    overflow: visible;
   }
 }
 
-.page-wrapper {
-  padding-top: 1.5rem;
-  padding-bottom: 4rem;
-  flex: 1;
-}
-
-.full-width-layout {
+.content-area {
   flex: 1;
   width: 100%;
-  padding: 0;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-nav-header {
@@ -44,7 +92,7 @@
   font-size: 0.95rem;
   color: var(--text-main);
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: var(--border);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
@@ -53,7 +101,6 @@
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--primary);
   transform: translateX(-5px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .back-btn svg {
@@ -144,19 +191,9 @@
   border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
-/* Mode-specific page tints */
-.mode-beginner .page-wrapper {
-  background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.03), transparent 40%);
-}
-
-.mode-analyst .page-wrapper {
-  background: radial-gradient(circle at top left, rgba(168, 85, 247, 0.03), transparent 40%);
-}
-
-.mode-developer .page-wrapper {
-  background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.03), transparent 40%);
-}
-
+.mode-beginner .page-wrapper,
+.mode-analyst .page-wrapper,
+.mode-developer .page-wrapper,
 .mode-investor .page-wrapper {
-  background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.03), transparent 40%);
+  background: transparent;
 }

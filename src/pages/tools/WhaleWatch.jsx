@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+﻿import React, { useMemo, useState, useEffect } from 'react';
 import {
     Activity,
     ArrowUpRight,
@@ -189,7 +189,7 @@ const WhaleWatch = () => {
         markers: {
             size: 8,
             strokeWidth: 2,
-            strokeColors: '#0f172a',
+            strokeColors: '#161B22',
             hover: { size: 12 },
             fillOpacity: 0.8,
             colors: [({ value, seriesIndex, w, dataPointIndex }) => {
@@ -483,3 +483,4 @@ const WhaleWatch = () => {
 };
 
 export default WhaleWatch;
+

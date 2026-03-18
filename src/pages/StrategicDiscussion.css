@@ -1,6 +1,6 @@
 .strategic-hub {
     min-height: 100vh;
-    background: #020617;
+    background: #0D1117;
     color: #e2e8f0;
     padding-top: 2rem;
     /* Reduced top spacing */
@@ -39,7 +39,7 @@
     font-size: 1.8rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, var(--text-primary) 0%, #94a3b8 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -72,7 +72,6 @@
 
 .intelligence-input-panel:focus-within {
     border-color: rgba(99, 102, 241, 0.4);
-    box-shadow: 0 0 25px rgba(99, 102, 241, 0.15), inset 0 0 10px rgba(99, 102, 241, 0.05);
 }
 
 .input-header {
@@ -141,13 +140,13 @@
 
 .action-btn-mini:hover {
     background: rgba(255, 255, 255, 0.05);
-    color: #fff;
+    color: var(--text-primary);
     border-color: rgba(255, 255, 255, 0.2);
 }
 
 .dispatch-btn {
     background: #6366f1;
-    color: white;
+    color: var(--text-primary);
     border: none;
     padding: 0.5rem 1.25rem;
     border-radius: 6px;
@@ -185,18 +184,10 @@
     border-color: rgba(99, 102, 241, 0.3);
     background: rgba(15, 23, 42, 0.6);
     transform: translateX(4px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .intel-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 70%);
-    pointer-events: none;
+    display: none;
 }
 
 .intel-card::before {
@@ -380,7 +371,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #1e293b;
+    background: rgba(255,255,255,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -417,3 +408,4 @@
         flex: 1 1 100%;
     }
 }
+

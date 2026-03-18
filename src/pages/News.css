@@ -1,7 +1,7 @@
-:root {
+﻿:root {
     --terminal-bg: #030712;
     --terminal-sidebar: #0a0f1d;
-    --terminal-border: #1e293b;
+    --terminal-border: rgba(255,255,255,0.1);
     --terminal-text-primary: #f8fafc;
     --terminal-text-secondary: #94a3b8;
     --terminal-accent: #3b82f6;
@@ -37,7 +37,7 @@
 
 .back-to-terminal-btn:hover {
     background: var(--terminal-accent);
-    color: white;
+    color: var(--text-primary);
 }
 
 .terminal-status-indicator {
@@ -83,7 +83,7 @@
 .ticker-label {
     background: #1e3a8a;
     /* Deep institutional blue */
-    color: #fff;
+    color: var(--text-primary);
     padding: 0 16px;
     height: 100%;
     display: flex;
@@ -608,3 +608,4 @@
         min-height: 100vh;
     }
 }
+

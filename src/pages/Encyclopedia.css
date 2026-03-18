@@ -1,4 +1,4 @@
-/* ENCYCLOPEDIA V3 - CORE LAYOUT */
+﻿/* ENCYCLOPEDIA V3 - CORE LAYOUT */
 .library.encyclopedia {
     padding: 2rem 3rem;
     min-height: 100vh;
@@ -130,7 +130,7 @@
 
 .active .icon-box {
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
@@ -479,7 +479,7 @@
 
 .option-btn.selected .bullet {
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
 }
 
 .option-btn.correct {
@@ -489,7 +489,7 @@
 
 .option-btn.correct .bullet {
     background: #10b981;
-    color: white;
+    color: var(--text-primary);
 }
 
 .option-btn.wrong {
@@ -499,7 +499,7 @@
 
 .option-btn.wrong .bullet {
     background: #ef4444;
-    color: white;
+    color: var(--text-primary);
 }
 
 .explanation-bubble {
@@ -522,12 +522,12 @@
 
 .status-tag.success {
     background: #10b981;
-    color: white;
+    color: var(--text-primary);
 }
 
 .status-tag.error {
     background: #ef4444;
-    color: white;
+    color: var(--text-primary);
 }
 
 .quiz-footer-nav {

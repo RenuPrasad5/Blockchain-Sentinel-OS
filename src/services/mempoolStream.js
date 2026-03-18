@@ -8,46 +8,99 @@ const client = createPublicClient({
     transport: webSocket(import.meta.env.VITE_ALCHEMY_RPC_URL || 'wss://eth-mainnet.g.alchemy.com/v2/ZJNf33Hk7Dj5Jm5b5wH5yKCfWKAPeUWG')
 });
 
+let buffer = [];
+const FLUSH_INTERVAL = 800; // 800ms buffer for flick-free updates
+let retryCount = 0;
+const MAX_RETRIES = 5;
+
 export const startMempoolStream = () => {
-    console.log(' Real-Time OS: Mempool Stream Active');
+    const { setConnectionStatus, addLiveData } = useModeStore.getState();
+    let unwatch;
+    let flushInterval;
 
-    const unwatch = client.watchPendingTransactions({
-        onTransactions: async (hashes) => {
-            // Take the top 5 most recent hashes
-            const batch = hashes.slice(0, 5);
+    const connect = () => {
+        console.log(`📡 Real-Time OS: Attempting Connection (Retry: ${retryCount})`);
+        setConnectionStatus('connecting');
 
-            // 2. Fetch all transaction details AT THE SAME TIME (Parallel)
-            // This prevents the UI from lagging
-            const txPromises = batch.map(hash =>
-                client.getTransaction({ hash }).catch(() => null)
-            );
+        try {
+            unwatch = client.watchPendingTransactions({
+                onTransactions: async (hashes) => {
+                    retryCount = 0; // Reset on success
+                    setConnectionStatus('open');
 
-            const transactions = await Promise.all(txPromises);
+                    // Take the top 5 most recent hashes
+                    const batch = hashes.slice(0, 5);
 
-            transactions.forEach(tx => {
-                if (!tx || !tx.value) return; // Skip failed or empty txs
+                    // 2. Fetch all transaction details AT THE SAME TIME (Parallel)
+                    // This prevents the UI from lagging
+                    const txPromises = batch.map(hash =>
+                        client.getTransaction({ hash }).catch(() => null)
+                    );
 
-                const ethValue = Number(tx.value) / 1e18;
-                const valueUsd = ethValue * 2700;
+                    const transactions = await Promise.all(txPromises);
 
-                const data = {
-                    id: tx.hash,
-                    type: 'TRANSACTION',
-                    symbol: 'ETH',
-                    valueEth: ethValue.toFixed(4),
-                    valueUsd: valueUsd,
-                    from: tx.from,
-                    to: tx.to || 'Contract Creation',
-                    timestamp: new Date(),
-                    status: 'PENDING',
-                    input: tx.input // HEX data for forensic decoding
-                };
+                    transactions.forEach(tx => {
+                        if (!tx || !tx.value) return; // Skip failed or empty txs
 
-                // 3. Push to global state
-                useModeStore.getState().addLiveData(data);
+                        const ethValue = Number(tx.value) / 1e18;
+                        const valueUsd = ethValue * 2700;
+
+                        const data = {
+                            id: tx.hash,
+                            type: 'TRANSACTION',
+                            symbol: 'ETH',
+                            valueEth: ethValue.toFixed(4),
+                            valueUsd: valueUsd,
+                            from: tx.from,
+                            to: tx.to || 'Contract Creation',
+                            timestamp: new Date(),
+                            status: 'PENDING',
+                            input: tx.input // HEX data for forensic decoding
+                        };
+
+                        // 3. Push to global state
+                        buffer.push(data);
+                    });
+                },
+                onError: (err) => {
+                    console.error('Mempool Stream Error:', err);
+                    handleReconnect();
+                }
             });
+        } catch (e) {
+            console.error('Mempool Stream Connection Error:', e);
+            handleReconnect();
         }
-    });
+    };
 
-    return unwatch;
+    const handleReconnect = () => {
+        setConnectionStatus('error');
+        if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            const timeout = Math.pow(2, retryCount) * 1000;
+            console.log(`🔄 Reconnecting in ${timeout}ms...`);
+            setTimeout(connect, timeout);
+        } else {
+            console.error('Max reconnection attempts reached. Please check your connection.');
+            setConnectionStatus('failed');
+        }
+    };
+
+    // Initial connection
+    connect();
+
+    // Flush buffer periodically
+    flushInterval = setInterval(() => {
+        if (buffer.length > 0) {
+            // Sort by timestamp or just push
+            buffer.forEach(data => addLiveData(data));
+            buffer = [];
+        }
+    }, FLUSH_INTERVAL);
+
+    return () => {
+        if (unwatch) unwatch();
+        if (flushInterval) clearInterval(flushInterval);
+        setConnectionStatus('closed');
+    };
 };

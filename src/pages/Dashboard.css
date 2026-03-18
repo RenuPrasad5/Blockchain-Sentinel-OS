@@ -1,6 +1,6 @@
 :root {
-    --terminal-dark: #07080a;
-    --terminal-surface: #0f1115;
+    --terminal-dark: #0D1117;
+    --terminal-surface: #0D1117;
     --terminal-card-bg: rgba(20, 24, 28, 0.7);
     --terminal-border: rgba(255, 255, 255, 0.08);
     --primary-bright: #3b82f6;
@@ -11,7 +11,38 @@
     --text-main: #f1f5f9;
     --text-dim: #94a3b8;
     --text-muted: #64748b;
-    --neon-blue: 0 0 20px rgba(59, 130, 246, 0.2);
+    --neon-blue: none;
+    --warning-orange: #f97316;
+}
+
+.regulatory-active {
+    --primary-bright: var(--warning-orange);
+    --primary-dim: rgba(249, 115, 22, 0.1);
+    --accent-glow: rgba(249, 115, 22, 0.4);
+}
+
+.regulatory-active .intel-card-saas {
+    border: 1px solid rgba(249, 115, 22, 0.05);
+}
+
+.regulatory-active .user-tier-badge {
+    background: var(--primary-dim);
+    border-color: rgba(249, 115, 22, 0.3);
+    color: var(--warning-orange);
+}
+
+.column-label {
+    padding: 0.6rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
 }
 
 .saas-terminal {
@@ -30,11 +61,10 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    padding: 1rem 2rem;
-    background: var(--terminal-surface);
-    border: 1px solid var(--terminal-border);
-    border-radius: 12px;
-    backdrop-filter: blur(20px);
+    padding: 0.75rem 2rem;
+    background: #0d1117;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
 }
 
 .market-stat-module {
@@ -81,43 +111,32 @@
 .terminal-layout-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    align-items: start;
+    gap: 1px; /* Tiled effect */
+    background: rgba(255, 255, 255, 0.05); /* Border between tiles */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .terminal-column {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-}
-
-.column-label {
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: -0.5rem;
-    padding-left: 0.5rem;
+    gap: 1px;
+    background: #0d1117;
 }
 
 /* SaaS Cards */
 .intel-card-saas {
-    background: var(--terminal-card-bg);
-    border: 1px solid var(--terminal-border);
-    border-radius: 12px;
-    backdrop-filter: blur(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #0d1117;
+    border: none; /* Borders handled by grid container gap */
+    border-radius: 0; /* Square edges for perfect tiling */
+    backdrop-filter: none; /* Remove blur for legibility */
+    transition: all 0.2s ease;
     overflow: hidden;
 }
 
 .intel-card-saas:hover {
-    border-color: rgba(59, 130, 246, 0.3);
-    transform: translateY(-2px);
-    box-shadow: var(--neon-blue);
+    border-color: rgba(59, 130, 246, 0.5);
 }
 
 .intel-card-saas.highlight {
@@ -152,7 +171,7 @@
     font-size: 0.6rem;
     font-weight: 900;
     background: var(--rose);
-    color: white;
+    color: var(--text-primary);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     animation: pulse-soft 2s infinite;
@@ -218,7 +237,6 @@
 .track-fill {
     height: 100%;
     background: var(--primary-bright);
-    box-shadow: 0 0 10px var(--primary-bright);
 }
 
 .risk-grid-dense {
@@ -453,6 +471,22 @@
 
 .depth-red {
     background: var(--rose);
+    height: 100%;
+}
+
+.enterprise-view .terminal-layout-grid {
+    border-radius: 0;
+}
+
+.center-panel-enterprise {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.center-panel-enterprise .intel-card-saas {
     height: 100%;
 }
 

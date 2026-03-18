@@ -1,6 +1,6 @@
-/* Professional Terminal - Intelligence System */
+﻿/* Professional Terminal - Intelligence System */
 :root {
-    --terminal-bg: #020617;
+    --terminal-bg: #0D1117;
     --terminal-border: rgba(51, 65, 85, 0.2);
     --terminal-accent: #6366f1;
     --terminal-text-muted: #64748b;
@@ -8,15 +8,15 @@
     --slate-400: #94a3b8;
     --slate-500: #64748b;
     --slate-600: #475569;
-    --slate-800: #1e293b;
-    --slate-900: #0f172a;
+    --slate-800: rgba(255,255,255,0.1);
+    --slate-900: #161B22;
 }
 
 .tools-terminal-wrapper {
     width: 100%;
     min-height: 100vh;
     background: var(--terminal-bg);
-    color: white;
+    color: var(--text-primary);
 }
 
 .terminal-container {
@@ -105,7 +105,7 @@
 }
 
 .nav-tab-link:hover {
-    color: white;
+    color: var(--text-primary);
 }
 
 .nav-tab-link.active {
@@ -135,7 +135,7 @@
 .section-desc-title {
     font-size: 36px;
     font-weight: 800;
-    color: white;
+    color: var(--text-primary);
     letter-spacing: -0.03em;
     margin-bottom: 0.5rem;
 }
@@ -256,3 +256,4 @@
         opacity: 0;
     }
 }
+

@@ -1,7 +1,7 @@
-.sentinel-container {
-    background: #020617;
+﻿.sentinel-container {
+    background: #0D1117;
     min-height: calc(100vh - 80px);
-    color: #fff;
+    color: var(--text-primary);
     padding: 2rem;
     position: relative;
     overflow: hidden;
@@ -92,7 +92,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 0.75rem 1rem;
-    color: #fff;
+    color: var(--text-primary);
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     width: 100%;
@@ -107,7 +107,7 @@
 
 .btn-deploy {
     background: #6366f1;
-    color: white;
+    color: var(--text-primary);
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -148,3 +148,4 @@
     background-size: 50px 50px;
     pointer-events: none;
 }
+

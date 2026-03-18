@@ -25,6 +25,12 @@ Deploy autonomous surveillance units to monitor specific on-chain behaviors.
 *   **Persistence:** Persistent network scanning with sub-800ms response times.
 *   **Response Actions:** Integrated Telegram and Webhook notifications.
 
+### 4. 🇮🇳 GOV & ENT (SOVEREIGN INTELLIGENCE)
+A dedicated portal for government and institutional-level intelligence.
+*   **Regulatory Analytics:** Automated TDS leakage monitoring (Sec 194S) and PMLA-tier investigations.
+*   **Sovereign Infrastructure Map:** Live geo-tracking of national blockchain node health.
+*   **Forensic Audit Unit:** Direct forensic analysis ingestion and encrypted reporting.
+
 ---
 
 ## 🛠️ THE ARCHITECTURE STACK
@@ -33,7 +39,7 @@ Deploy autonomous surveillance units to monitor specific on-chain behaviors.
 - **Framework:** `React 18` + `Vite` (Ultra-low latency builds)
 - **State:** `Zustand` (Global Intelligence Store)
 - **Styling:** `TailwindCSS` with custom Glassmorphism and Neon-Indigo tokens.
-- **Visuals:** `ApexCharts`, `Recharts`, and `Framer Motion` (HF Data Rendering).
+- **Visuals:** `Three.js` + `React Three Fiber` (3D Neural Void Background), `ApexCharts`, `Recharts`, and `Framer Motion`.
 
 ### **[ BACKEND // SURVEILLANCE ]**
 - **Cloud:** `Firebase` (Auth, Firestore, Storage)

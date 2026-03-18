@@ -1,5 +1,5 @@
-.ecosystem-page {
-    --eco-bg: #020617;
+﻿.ecosystem-page {
+    --eco-bg: #0D1117;
     --eco-card: rgba(15, 23, 42, 0.4);
     --eco-border: rgba(30, 41, 59, 0.5);
     --eco-accent: #6366f1;
@@ -97,7 +97,7 @@
 }
 
 .text-gradient {
-    background: linear-gradient(135deg, #fff 0%, var(--eco-accent) 100%);
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--eco-accent) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -325,3 +325,4 @@
         grid-template-columns: 1fr;
     }
 }
+

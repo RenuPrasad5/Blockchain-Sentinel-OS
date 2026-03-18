@@ -1,0 +1,66 @@
+.service-marquee-section {
+    width: 100%;
+    max-width: 100vw;
+    padding: 3rem 0;
+    background: transparent;
+    overflow: hidden;
+    position: relative;
+    z-index: 5;
+    pointer-events: auto;
+}
+
+.marquee-container {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.marquee-track {
+    display: flex;
+    gap: 5rem;
+    width: max-content;
+    animation: marquee-scroll-right 80s linear infinite;
+    /* Very slow and smooth */
+    will-change: transform;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: #94a3b8;
+    /* text-slate-400 */
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.service-item:hover {
+    color: #6366f1;
+    /* Primary Indigo */
+    transform: scale(1.05);
+}
+
+.service-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+}
+
+@keyframes marquee-scroll-right {
+    0% {
+        transform: translateX(-50%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}

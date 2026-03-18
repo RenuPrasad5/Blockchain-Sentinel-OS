@@ -1,11 +1,11 @@
-.support-section {
+﻿.support-section {
     padding: 8rem 1.5rem;
     /* Increased top spacing */
     position: relative;
     z-index: 5;
-    background: #020617;
+    background: var(--bg-primary);
     margin-top: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: var(--border);
 }
 
 .support-wrapper {
@@ -42,7 +42,7 @@
 .support-title {
     font-size: 2rem;
     margin-bottom: 0.75rem;
-    background: linear-gradient(to right, #fff, #94a3b8);
+    background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -168,7 +168,7 @@
 .category-card:hover .category-btn {
     background: var(--primary);
     border-color: var(--primary);
-    color: white;
+    color: var(--text-primary);
 }
 
 /* Modal Styles */
@@ -178,7 +178,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(2, 6, 23, 0.8);
+    background: rgba(13, 17, 23, 0.8);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
@@ -204,7 +204,7 @@
 }
 
 .modal-close:hover {
-    color: white;
+    color: var(--text-primary);
 }
 
 .modal-title {
@@ -259,7 +259,7 @@
     width: 100%;
     padding: 0.85rem;
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     border-radius: var(--radius-md);
     font-weight: 600;
     margin-top: 1rem;

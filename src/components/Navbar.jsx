@@ -30,7 +30,10 @@ import {
     Layers as LayersIcon,
     Share2,
     TrendingUp,
-    Radar
+    Radar,
+    ToggleLeft,
+    ToggleRight,
+    ShieldAlert
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
@@ -39,7 +42,7 @@ import './Navbar.css';
 
 const Navbar = () => {
     const { user, userData, logout } = useAuth();
-    const { isMobileOpen, setIsMobileOpen } = useModeStore();
+    const { isMobileOpen, setIsMobileOpen, isExpanded, regulatoryMode, setRegulatoryMode } = useModeStore();
     const location = useLocation();
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -111,7 +114,7 @@ const Navbar = () => {
     };
 
     return (
-        <header className="navbar glass">
+        <header className="navbar">
             <div className="navbar-left">
                 <button
                     className="menu-btn lg:hidden"
@@ -128,8 +131,28 @@ const Navbar = () => {
 
             <div className="navbar-right">
                 <nav className="nav-links-desktop lg:flex hidden">
+                    <div className="regulatory-toggle-wrapper px-4 border-r border-white/5 h-full flex items-center mr-4">
+                        <button 
+                            className={`regulatory-btn ${regulatoryMode ? 'active' : ''}`}
+                            onClick={() => setRegulatoryMode(!regulatoryMode)}
+                            title="Toggle Regulatory Mode"
+                        >
+                            <div className="flex items-center gap-2">
+                                {regulatoryMode ? <ToggleRight size={20} className="text-emerald-500" /> : <ToggleLeft size={20} className="text-slate-500" />}
+                                <div className="flex flex-col items-start leading-none">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-white">Regulatory</span>
+                                    <span className={`text-[8px] font-bold uppercase ${regulatoryMode ? 'text-emerald-500' : 'text-slate-500'}`}>
+                                        {regulatoryMode ? 'Mode Active' : 'Mode Inactive'}
+                                    </span>
+                                </div>
+                                <ShieldAlert size={14} className={regulatoryMode ? 'text-emerald-500 animate-pulse' : 'text-slate-700'} />
+                            </div>
+                        </button>
+                    </div>
+
                     <NavLink to="/blockchain-hub" className="nav-link-btn">Blockchain</NavLink>
                     <NavLink to="/mempool" className="nav-link-btn">Mempool</NavLink>
+                    <NavLink to="/gov-ent" className="nav-link-btn">Gov & Ent</NavLink>
 
                     <div
                         className="tools-dropdown-container"

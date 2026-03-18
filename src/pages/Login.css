@@ -1,9 +1,9 @@
-.login-container {
+﻿.login-container {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #020617;
+    background-color: #0D1117;
     position: relative;
     overflow: hidden;
     padding: 2rem;
@@ -221,7 +221,7 @@
 .login-submit {
     margin-top: 1rem;
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     padding: 1rem;
     border-radius: var(--radius-md);
     font-weight: 700;
@@ -307,3 +307,4 @@
         display: none;
     }
 }
+

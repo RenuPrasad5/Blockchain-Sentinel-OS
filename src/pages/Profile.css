@@ -1,5 +1,5 @@
-:root {
-    --profile-bg: #020617;
+﻿:root {
+    --profile-bg: #0D1117;
     --profile-card: rgba(15, 23, 42, 0.6);
     --profile-border: rgba(255, 255, 255, 0.08);
     --profile-accent: #3b82f6;
@@ -42,7 +42,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: white;
+    color: var(--text-primary);
 }
 
 /* Header Section */
@@ -72,7 +72,7 @@
     bottom: 0;
     right: 0;
     background: var(--profile-accent);
-    color: white;
+    color: var(--text-primary);
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -92,7 +92,7 @@
     font-size: 1.75rem;
     font-weight: 800;
     margin-bottom: 0.25rem;
-    color: white;
+    color: var(--text-primary);
 }
 
 .profile-header-info .username {
@@ -144,7 +144,7 @@
     border: 1px solid var(--profile-border);
     border-radius: 8px;
     padding: 0.75rem 1rem;
-    color: white;
+    color: var(--text-primary);
     font-size: 0.95rem;
     transition: all 0.2s;
 }
@@ -211,7 +211,7 @@
 /* Buttons */
 .save-btn {
     background: var(--profile-accent);
-    color: white;
+    color: var(--text-primary);
     border: none;
     padding: 0.75rem 2rem;
     border-radius: 8px;
@@ -235,7 +235,7 @@
 .action-btn {
     background: transparent;
     border: 1px solid var(--profile-border);
-    color: white;
+    color: var(--text-primary);
     padding: 0.5rem 1.25rem;
     border-radius: 8px;
     font-size: 0.875rem;
@@ -246,7 +246,7 @@
 
 .action-btn:hover {
     background: rgba(255, 255, 255, 0.05);
-    border-color: white;
+    border-color: var(--text-primary);
 }
 
 /* System Info Box */
@@ -274,7 +274,7 @@
 .info-text {
     font-size: 1rem;
     font-weight: 600;
-    color: white;
+    color: var(--text-primary);
 }
 
 /* Danger Zone */
@@ -304,13 +304,13 @@
 
 .delete-btn:hover {
     background: var(--profile-danger);
-    color: white;
+    color: var(--text-primary);
 }
 
 .logout-btn-profile {
     background: transparent;
     border: 1px solid var(--profile-border);
-    color: white;
+    color: var(--text-primary);
     padding: 0.75rem 2rem;
     border-radius: 8px;
     font-weight: 700;
@@ -385,7 +385,7 @@
 .modal-content h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: white;
+    color: var(--text-primary);
 }
 
 .modal-content p {
@@ -419,3 +419,4 @@
         justify-content: center;
     }
 }
+

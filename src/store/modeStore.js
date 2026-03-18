@@ -3,7 +3,9 @@ import { create } from 'zustand';
 const useModeStore = create((set, get) => ({
     mode: localStorage.getItem('researchMode') || 'Analyst',
     liveData: [],
+    connectionStatus: 'connecting', // 'connecting', 'open', 'closed', 'error'
     alerts: [],
+    setConnectionStatus: (status) => set({ connectionStatus: status }),
     setMode: (newMode) => {
         localStorage.setItem('researchMode', newMode);
         set({ mode: newMode });
@@ -55,6 +57,8 @@ const useModeStore = create((set, get) => ({
     setIsScanning: (val) => set({ isScanning: val }),
     isMobileOpen: false,
     setIsMobileOpen: (val) => set({ isMobileOpen: val }),
+    isExpanded: false,
+    setIsExpanded: (val) => set({ isExpanded: val }),
     riskAssessment: {}, // Stores { address: { score, level, details } }
     setRiskAssessment: (address, assessment) => {
         set((state) => ({
@@ -63,7 +67,11 @@ const useModeStore = create((set, get) => ({
                 [address.toLowerCase()]: assessment
             }
         }));
-    }
+    },
+    regulatoryMode: false,
+    setRegulatoryMode: (val) => set({ regulatoryMode: val }),
+    activeMenu: 'Terminal',
+    setActiveMenu: (val) => set({ activeMenu: val })
 }));
 
 export default useModeStore;

@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
@@ -39,8 +39,8 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '40px', color: '#6366f1', background: '#020617', height: '100vh', fontFamily: 'sans-serif' }}>
-          <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>⚠️ Interface Correlation Error</h1>
+        <div style={{ padding: '40px', color: '#6366f1', background: '#0D1117', height: '100vh', fontFamily: 'sans-serif' }}>
+          <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>âš ï¸ Interface Correlation Error</h1>
           <p style={{ opacity: 0.8, marginBottom: '2rem' }}>A critical error occurred while rendering this module.</p>
           <div style={{ background: 'rgba(255,0,0,0.1)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(255,0,0,0.2)', marginBottom: '20px' }}>
             <pre style={{ overflowX: 'auto', whiteSpace: 'pre-wrap' }}>{this.state.error?.toString()}</pre>
@@ -77,3 +77,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </React.StrictMode>,
 )
+

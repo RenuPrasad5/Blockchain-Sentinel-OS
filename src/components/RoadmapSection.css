@@ -1,5 +1,5 @@
 .roadmap-v8-terminal {
-    background: #101424;
+    background: var(--bg-surface);
     /* Explicitly dark but slightly different to show separation */
     width: 100%;
     height: auto;
@@ -7,7 +7,7 @@
     flex-direction: column;
     position: relative;
     overflow: visible;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: var(--border);
     margin-bottom: 2rem;
     z-index: 10;
 }
@@ -17,8 +17,8 @@
     width: 100%;
     padding: 4rem 4rem 3rem 4rem;
     z-index: 20;
-    background: #020617;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--bg-primary);
+    border-bottom: var(--border);
 }
 
 .roadmap-v8-pill {
@@ -38,7 +38,7 @@
 .roadmap-v8-title {
     font-size: 3rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-primary);
     line-height: 1.1;
     letter-spacing: -0.02em;
     margin-bottom: 1rem;
@@ -108,7 +108,7 @@
     flex: 0 0 50%;
     height: 100%;
     overflow-y: auto;
-    background: #020617;
+    background: var(--bg-primary);
     padding: 0;
     display: flex;
     flex-direction: column;

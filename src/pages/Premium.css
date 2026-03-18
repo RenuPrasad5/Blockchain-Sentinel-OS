@@ -1,0 +1,290 @@
+﻿:root {
+    --bg-deep: var(--bg-primary);
+    --card-bg: var(--bg-surface);
+    --card-border: var(--border);
+    --primary-purple: #8B5CF6;
+    --primary-purple-glow: rgba(139, 92, 246, 0.5);
+    --accent-green: #10B981;
+    --text-white: var(--text-primary);
+    --text-gray: var(--text-secondary);
+    --glass-blur: blur(10px);
+}
+
+.premium-page {
+    background-color: var(--bg-deep);
+    min-height: 100vh;
+    width: 100%;
+    color: var(--text-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.premium-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 800px;
+}
+
+.premium-header h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.premium-header p {
+    font-size: 1.1rem;
+    color: var(--text-gray);
+    line-height: 1.6;
+}
+
+/* Toggle Switch */
+.toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 4rem;
+}
+
+.toggle-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    padding: 4px;
+    border-radius: 999px;
+    display: flex;
+    cursor: pointer;
+    position: relative;
+    width: 240px;
+}
+
+.toggle-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.toggle-item.active {
+    color: var(--text-white);
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    bottom: 4px;
+    width: calc(50% - 4px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-slider.annual {
+    transform: translateX(100%);
+}
+
+.save-badge {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Pricing Grid */
+.pricing-grid {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.pricing-card {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    backdrop-filter: var(--glass-blur);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.pricing-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Alpha Sentinel Hero Card */
+.pricing-card.hero {
+    transform: scale(1.05);
+    background: rgba(139, 92, 246, 0.03);
+    border: 1px solid var(--primary-purple);
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.1);
+    z-index: 2;
+}
+
+.pricing-card.hero::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 24px;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--primary-purple), transparent);
+    -webkit-mask: linear-gradient(var(--text-primary) 0 0) content-box, linear-gradient(var(--text-primary) 0 0);
+    mask: linear-gradient(var(--text-primary) 0 0) content-box, linear-gradient(var(--text-primary) 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.neon-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-purple);
+    color: var(--text-primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 16px;
+    border-radius: 999px;
+    letter-spacing: 0.1em;
+    box-shadow: 0 0 20px var(--primary-purple);
+    white-space: nowrap;
+}
+
+/* Card Content */
+.card-header {
+    margin-bottom: 2rem;
+}
+
+.plan-icon {
+    margin-bottom: 1.5rem;
+}
+
+.plan-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-gray);
+    margin-bottom: 1rem;
+}
+
+.hero .plan-name {
+    color: var(--text-white);
+}
+
+.plan-price {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-white);
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.price-period {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-gray);
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 3rem 0;
+    flex: 1;
+}
+
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-gray);
+}
+
+.hero .feature-item {
+    color: var(--text-white);
+}
+
+.check-icon {
+    color: var(--accent-green);
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+/* Buttons */
+.plan-button {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    border: none;
+}
+
+.btn-outlined {
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-white);
+}
+
+.btn-outlined:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--text-white);
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #6D28D9, #8B5CF6);
+    color: var(--text-primary);
+    box-shadow: 0 10px 20px rgba(109, 40, 217, 0.3);
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(109, 40, 217, 0.4);
+}
+
+/* Guardian Card */
+.pricing-card.guardian {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .pricing-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .pricing-card {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .pricing-card.hero {
+        transform: scale(1);
+    }
+}

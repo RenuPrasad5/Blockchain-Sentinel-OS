@@ -1,7 +1,7 @@
-:root {
-    --command-bg: #020617;
-    --command-card: #0f172a;
-    --command-border: #1e293b;
+﻿:root {
+    --command-bg: #0D1117;
+    --command-card: #161B22;
+    --command-border: rgba(255,255,255,0.1);
     --command-text: #94a3b8;
     --command-text-bright: #f1f5f9;
     --command-emerald: #10b981;
@@ -20,7 +20,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #1e293b;
+    background: rgba(255,255,255,0.1);
     border-radius: 10px;
 }
 
