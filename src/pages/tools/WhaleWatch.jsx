@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
     Activity,
     ArrowUpRight,
@@ -249,10 +249,10 @@ const WhaleWatch = () => {
                 <div className="terminal-container">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
-                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.4em]">Live Intelligence Stream</span>
+                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.4em]">Live Intelligence Surveillance</span>
                     </div>
-                    <h1 className="section-desc-title tracking-tighter">Whale Watch Engine</h1>
-                    <p className="section-desc-text">Surveillance of high-value liquidity movements across global exchanges and private cold-storage clusters.</p>
+                    <h1 className="section-desc-title tracking-tighter">High-Value Surveillance Engine</h1>
+                    <p className="section-desc-text">Secure surveillance of high-value liquidity movements across global exchanges and private cold-storage clusters for risk assessment.</p>
                 </div>
             </header>
 
@@ -262,7 +262,7 @@ const WhaleWatch = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                         <div className="stats-card-v2 glass p-6">
                             <div className="flex justify-between items-start mb-4">
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">24h Net Exchange Flow</span>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Surplus Net Flow Audit</span>
                                 <Activity size={16} className="text-indigo-400" />
                             </div>
                             <div className="flex items-baseline gap-3">
@@ -292,7 +292,7 @@ const WhaleWatch = () => {
                                 <span className="text-3xl font-black tracking-tighter text-white">
                                     {stats.activeWhales.size}
                                 </span>
-                                <span className="text-xs font-bold text-slate-500">Entities Detected</span>
+                                <span className="text-xs font-bold text-slate-500">Entities Flagged</span>
                             </div>
                             <div className="mt-4 progress-bar-mini bg-white/5 h-1 rounded-full overflow-hidden">
                                 <motion.div
@@ -323,7 +323,7 @@ const WhaleWatch = () => {
                         <div className="p-8 border-b border-white/[0.03] flex justify-between items-center bg-white/[0.01]">
                             <div className="flex items-center gap-3">
                                 <BarChart3 size={18} className="text-indigo-400" />
-                                <h2 className="text-xs font-black text-white uppercase tracking-[0.3em]">Whale Transaction Heatmap</h2>
+                                <h2 className="text-xs font-black text-white uppercase tracking-[0.3em]">Transaction Intensity Heatmap</h2>
                             </div>
                             <div className="flex items-center gap-4">
                                 {isBuffering && (

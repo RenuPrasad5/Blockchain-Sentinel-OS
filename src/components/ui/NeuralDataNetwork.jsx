@@ -1,292 +1,268 @@
-import React, { useRef, useMemo, useState, useEffect } from 'react';
+import React, { useRef, useMemo, useState, useEffect, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Float, Text, Points, PointMaterial, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 
-
-const BLOCK_COUNT = 45;
-const PARTICLE_COUNT = 3000;
-const CONNECTION_DISTANCE = 15;
-const NEURAL_GREEN = "#00ce46";
-const SAFFRON = "#FF9933";
-const WHITE = "#FFFFFF";
-
-// Helper to create a gradient-colored wireframe box
-const createSovereignBox = (geometry) => {
-    const edges = new THREE.EdgesGeometry(geometry);
-    const count = edges.attributes.position.count;
-    const colors = new Float32Array(count * 3);
-    
-    const saffronColor = new THREE.Color(SAFFRON);
-    const whiteColor = new THREE.Color(WHITE);
-    
-    for (let i = 0; i < count; i++) {
-        const y = edges.attributes.position.getY(i);
-        // Box is 1.2 units tall, so y is -0.6 to 0.6
-        const lerpFactor = THREE.MathUtils.clamp((y / 1.2) + 0.5, 0, 1);
-        const mixedColor = new THREE.Color().lerpColors(whiteColor, saffronColor, lerpFactor);
-        colors[i * 3] = mixedColor.r;
-        colors[i * 3 + 1] = mixedColor.g;
-        colors[i * 3 + 2] = mixedColor.b;
-    }
-    
-    edges.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    return edges;
+// Configuration - Ultra Premium "High-Visibility" Mode
+const COLORS = {
+    CYAN: "#00f3ff",
+    BLUE: "#00a2ff",
+    PURPLE: "#9d66ff",
+    BG: "#05070a",
+    GRID: "#003366",
+    PACKET: "#ffffff",
+    GLOW: "#00ffff"
 };
 
-const DataBlock = ({ position, isSovereign, mouseOffset }) => {
-    const groupRef = useRef();
-    const lineRef = useRef();
-    const innerMeshRef = useRef();
-    const activeRef = useRef(0);
+const NODE_COUNT = 160;
+const CUBE_COUNT = 24;
+const CONNECTION_DISTANCE = 16;
+const PACKET_COUNT = 50;
+
+// --- Background Components ---
+
+const InfrastructureGrid = () => (
+    <group position={[0, -12, -20]} rotation={[Math.PI / 2.1, 0, 0]}>
+        <gridHelper args={[200, 50, COLORS.GRID, COLORS.GRID]} opacity={0.2} transparent />
+    </group>
+);
+
+// --- Data Flow Packets ---
+
+const DataPacket = ({ start, end }) => {
+    const meshRef = useRef();
+    const progress = useRef(Math.random());
+    const speed = useMemo(() => 0.004 + Math.random() * 0.008, []);
     
-    useFrame((state) => {
-        if (!groupRef.current) return;
-
-        // Slow motion mouse drift
-        const targetX = position[0] + mouseOffset.x * 2;
-        const targetY = position[1] + mouseOffset.y * 2;
-        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.02);
-        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.02);
-
-        // Collision logic simulation
-        const time = state.clock.elapsedTime;
-        const pulse = Math.sin(time * 2 - position[0] * 0.5) * 0.5 + 0.5;
-        const intensity = Math.pow(pulse, 3); // Sharper activation
-        activeRef.current = intensity;
-
-        if (lineRef.current) {
-            if (isSovereign) {
-                const pulseColor = new THREE.Color().lerpColors(
-                    new THREE.Color(WHITE),
-                    new THREE.Color(SAFFRON),
-                    intensity
-                );
-                lineRef.current.material.color.copy(pulseColor);
-                lineRef.current.material.opacity = 0.3 + intensity * 0.5;
-            } else {
-                const targetColor = new THREE.Color(NEURAL_GREEN);
-                const baseColor = new THREE.Color("#444444");
-                const mixed = new THREE.Color().lerpColors(baseColor, targetColor, intensity);
-                lineRef.current.material.color.copy(mixed);
-                lineRef.current.material.opacity = 0.2 + intensity * 0.6;
-            }
-        }
-
-        if (innerMeshRef.current) {
-            innerMeshRef.current.scale.setScalar(intensity * 0.8 || 0.001);
-            innerMeshRef.current.material.opacity = intensity * 0.2;
-        }
-
-        groupRef.current.rotation.y += 0.01;
-        groupRef.current.rotation.z += 0.005;
-    });
-
-    const geometry = useMemo(() => new THREE.BoxGeometry(1.2, 1.2, 1.2), []);
-    const sovereignEdges = useMemo(() => createSovereignBox(geometry), [geometry]);
-    const normalEdges = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
-
-    return (
-        <group ref={groupRef} position={position}>
-            <lineSegments ref={lineRef} geometry={isSovereign ? sovereignEdges : normalEdges}>
-                <lineBasicMaterial 
-                    transparent 
-                    vertexColors={isSovereign} 
-                    color={isSovereign ? "#FFFFFF" : NEURAL_GREEN}
-                    linewidth={1.5}
-                />
-            </lineSegments>
-            
-            <mesh ref={innerMeshRef}>
-                <sphereGeometry args={[0.5, 12, 12]} />
-                <meshBasicMaterial 
-                    color={NEURAL_GREEN} 
-                    transparent 
-                    opacity={0} 
-                />
-            </mesh>
-        </group>
-    );
-};
-
-const DataStream = ({ mouseOffset }) => {
-    const pointsRef = useRef();
-    
-    const { positions, velocities } = useMemo(() => {
-        const pos = new Float32Array(PARTICLE_COUNT * 3);
-        const vel = new Float32Array(PARTICLE_COUNT);
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            pos[i * 3] = (Math.random() - 0.5) * 60; // x
-            pos[i * 3 + 1] = (Math.random() - 0.5) * 40; // y
-            pos[i * 3 + 2] = (Math.random() - 0.5) * 20; // z
-            vel[i] = 0.1 + Math.random() * 0.2; // Speed from right to left
-        }
-        return { positions: pos, velocities: vel };
-    }, []);
-
-    useFrame((state, delta) => {
-        if (!pointsRef.current) return;
+    useFrame(() => {
+        if (!meshRef.current) return;
+        progress.current = (progress.current + speed) % 1;
         
-        const posAttr = pointsRef.current.geometry.attributes.position;
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            // Move left
-            posAttr.array[i * 3] -= velocities[i];
-            
-            // If out of bounds, wrap around to the right
-            if (posAttr.array[i * 3] < -30) {
-                posAttr.array[i * 3] = 30;
-                posAttr.array[i * 3 + 1] = (Math.random() - 0.5) * 40;
-            }
-
-            // Mouse interaction: particles drift slightly
-            posAttr.array[i * 3 + 1] += mouseOffset.y * 0.05;
-        }
-        posAttr.needsUpdate = true;
-
-        // Subtle rotation of the whole cloud
-        pointsRef.current.rotation.y = mouseOffset.x * 0.1;
+        const p = progress.current;
+        meshRef.current.position.x = start[0] + (end[0] - start[0]) * p;
+        meshRef.current.position.y = start[1] + (end[1] - start[1]) * p;
+        meshRef.current.position.z = start[2] + (end[2] - start[2]) * p;
+        
+        // Brighter packet glow
+        meshRef.current.material.opacity = Math.sin(p * Math.PI) * 0.8;
     });
 
     return (
-        <points ref={pointsRef}>
-            <bufferGeometry>
-                <bufferAttribute 
-                    attach="attributes-position"
-                    count={PARTICLE_COUNT}
-                    array={positions}
-                    itemSize={3}
-                />
-            </bufferGeometry>
-            <pointsMaterial 
-                size={0.12} 
-                color={NEURAL_GREEN} 
-                transparent 
-                opacity={0.4} 
-                blending={THREE.AdditiveBlending}
-            />
-        </points>
+        <mesh ref={meshRef}>
+            <sphereGeometry args={[0.12, 8, 8]} />
+            <meshBasicMaterial color={COLORS.CYAN} transparent opacity={0} blending={THREE.AdditiveBlending} />
+        </mesh>
     );
 };
 
-const NeuralPathways = ({ blocks, mouseOffset }) => {
+// --- Main Interactive Components ---
+
+const BlockchainNetwork = ({ mouseX, mouseY }) => {
+    const { viewport } = useThree();
     const lineRef = useRef();
-    
-    const lines = useMemo(() => {
-        const connections = [];
-        for (let i = 0; i < blocks.length; i++) {
+    const nodeRef = useRef();
+
+    const nodes = useMemo(() => {
+        return Array.from({ length: NODE_COUNT }).map(() => ({
+            pos: [
+                (Math.random() - 0.5) * viewport.width * 3.5,
+                (Math.random() - 0.5) * viewport.height * 3.5,
+                (Math.random() - 0.5) * 25 - 5
+            ]
+        }));
+    }, [viewport]);
+
+    const connections = useMemo(() => {
+        const pairs = [];
+        for (let i = 0; i < nodes.length; i++) {
             let count = 0;
-            for (let j = i + 1; j < blocks.length && count < 2; j++) {
-                const dist = new THREE.Vector3(...blocks[i].pos).distanceTo(new THREE.Vector3(...blocks[j].pos));
+            for (let j = i + 1; j < nodes.length && count < 2; j++) {
+                const dist = new THREE.Vector3(...nodes[i].pos).distanceTo(new THREE.Vector3(...nodes[j].pos));
                 if (dist < CONNECTION_DISTANCE) {
-                    connections.push([i, j]);
+                    pairs.push([i, j]);
                     count++;
                 }
             }
         }
-        return connections;
-    }, [blocks]);
+        return pairs;
+    }, [nodes]);
+
+    const packets = useMemo(() => {
+        return Array.from({ length: PACKET_COUNT }).map(() => {
+            const conn = connections[Math.floor(Math.random() * connections.length)];
+            return conn ? { start: nodes[conn[0]].pos, end: nodes[conn[1]].pos } : null;
+        }).filter(Boolean);
+    }, [connections, nodes]);
 
     useFrame((state) => {
+        const time = state.clock.getElapsedTime();
         if (!lineRef.current) return;
-        const time = state.clock.elapsedTime;
-        
-        const positions = new Float32Array(lines.length * 6);
-        const colors = new Float32Array(lines.length * 6);
-        
-        lines.forEach(([i, j], index) => {
-            const start = blocks[i].pos;
-            const end = blocks[j].pos;
-            
-            // Mouse drift applied to pathways too
-            const offsetX = mouseOffset.x * 2;
-            const offsetY = mouseOffset.y * 2;
 
-            positions[index * 6] = start[0] + offsetX;
-            positions[index * 6 + 1] = start[1] + offsetY;
-            positions[index * 6 + 2] = start[2];
-            
-            positions[index * 6 + 3] = end[0] + offsetX;
-            positions[index * 6 + 4] = end[1] + offsetY;
-            positions[index * 6 + 5] = end[2];
+        const positions = new Float32Array(connections.length * 6);
+        connections.forEach(([i, j], idx) => {
+            const start = nodes[i].pos;
+            const end = nodes[j].pos;
 
-            const alpha = 0.05 + (Math.sin(time + index) + 1) * 0.05;
-            for (let k = 0; k < 6; k++) {
-                colors[index * 6 + k] = alpha;
-            }
+            const driftX = mouseX.current * 4.5;
+            const driftY = mouseY.current * 4.5;
+
+            positions[idx * 6] = start[0] + driftX;
+            positions[idx * 6 + 1] = start[1] + driftY;
+            positions[idx * 6 + 2] = start[2];
+            positions[idx * 6 + 3] = end[0] + driftX;
+            positions[idx * 6 + 4] = end[1] + driftY;
+            positions[idx * 6 + 5] = end[2];
         });
-        
+
         lineRef.current.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        lineRef.current.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 1));
         lineRef.current.geometry.attributes.position.needsUpdate = true;
+        
+        // Brighter pulse
+        lineRef.current.material.opacity = 0.25 + (Math.sin(time * 1.5) + 1) * 0.2;
     });
 
     return (
-        <lineSegments ref={lineRef}>
-            <bufferGeometry />
-            <lineBasicMaterial 
-                color={NEURAL_GREEN} 
-                transparent 
-                opacity={0.2}
-                vertexColors={true}
-            />
-        </lineSegments>
+        <group>
+            <lineSegments ref={lineRef}>
+                <bufferGeometry />
+                <lineBasicMaterial transparent color={COLORS.BLUE} blending={THREE.AdditiveBlending} depthTest={false} />
+            </lineSegments>
+
+            <Points ref={nodeRef}>
+                <bufferGeometry>
+                    <bufferAttribute
+                        attach="attributes-position"
+                        count={NODE_COUNT}
+                        array={new Float32Array(nodes.flatMap(n => n.pos))}
+                        itemSize={3}
+                    />
+                </bufferGeometry>
+                <PointMaterial
+                    transparent
+                    color={COLORS.CYAN}
+                    size={0.4} // Further increased
+                    sizeAttenuation={true}
+                    depthWrite={false}
+                    blending={THREE.AdditiveBlending}
+                />
+            </Points>
+
+            {packets.map((p, i) => (
+                <DataPacket key={i} start={p.start} end={p.end} />
+            ))}
+        </group>
+    );
+};
+
+const FloatingBlock = ({ position, mouseX, mouseY }) => {
+    const meshRef = useRef();
+    const hash = useMemo(() => Math.random().toString(16).slice(2, 6).toUpperCase(), []);
+    const speed = useMemo(() => 0.15 + Math.random() * 0.2, []);
+
+    useFrame((state) => {
+        const time = state.clock.getElapsedTime();
+        if (meshRef.current) {
+            meshRef.current.rotation.x = time * speed;
+            meshRef.current.rotation.y = time * (speed * 0.8);
+
+            meshRef.current.position.x = position[0] + mouseX.current * 18; // Stronger parallax
+            meshRef.current.position.y = position[1] + mouseY.current * 18;
+            meshRef.current.position.z = position[2] + Math.sin(time * 0.5 + position[0]) * 5;
+        }
+    });
+
+    return (
+        <Float speed={2.5} rotationIntensity={1.2} floatIntensity={1.2}>
+            <group position={position}>
+                <mesh ref={meshRef}>
+                    <boxGeometry args={[2.8, 2.8, 2.8]} />
+                    <meshBasicMaterial color={COLORS.PURPLE} wireframe transparent opacity={0.6} blending={THREE.AdditiveBlending} />
+                    
+                    <Suspense fallback={null}>
+                        <Text
+                            fontSize={0.35}
+                            color={COLORS.CYAN}
+                            position={[0, 0, 1.41]}
+                            font="https://fonts.gstatic.com/s/robotomono/v12/L0tkDFwvuaCwsiZu47umS-5vXCcE.woff"
+                            opacity={1}
+                            textAlign="center"
+                            anchorX="center"
+                            anchorY="middle"
+                        >
+                            {hash}
+                        </Text>
+                    </Suspense>
+                </mesh>
+                
+                {/* Intensified core pulse glow */}
+                <mesh>
+                    <sphereGeometry args={[1.0, 16, 16]} />
+                    <meshBasicMaterial color={COLORS.BLUE} transparent opacity={0.15} blending={THREE.AdditiveBlending} />
+                </mesh>
+            </group>
+        </Float>
     );
 };
 
 const Scene = () => {
-    const { viewport } = useThree();
-    const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-    
-    const blocks = useMemo(() => {
-        return Array.from({ length: BLOCK_COUNT }).map(() => ({
-            pos: [
-                (Math.random() - 0.5) * viewport.width * 2,
-                (Math.random() - 0.5) * viewport.height * 2,
-                (Math.random() - 0.5) * 10
-            ],
-            isSovereign: Math.random() < 0.1 // 10% Sovereign Trace
-        }));
+    const { viewport, mouse } = useThree();
+    const mouseX = useRef(0);
+    const mouseY = useRef(0);
+
+    const cubePositions = useMemo(() => {
+        return Array.from({ length: CUBE_COUNT }).map(() => [
+            (Math.random() - 0.5) * viewport.width * 3.0,
+            (Math.random() - 0.5) * viewport.height * 3.0,
+            (Math.random() - 0.5) * 15 + 12
+        ]);
     }, [viewport]);
 
-    useFrame((state) => {
-        // Slow-motion mouse interaction
-        setMouseOffset({
-            x: THREE.MathUtils.lerp(mouseOffset.x, state.mouse.x * (viewport.width / 10), 0.03),
-            y: THREE.MathUtils.lerp(mouseOffset.y, state.mouse.y * (viewport.height / 10), 0.03)
-        });
+    useFrame(() => {
+        mouseX.current = THREE.MathUtils.lerp(mouseX.current, mouse.x, 0.04);
+        mouseY.current = THREE.MathUtils.lerp(mouseY.current, mouse.y, 0.04);
     });
 
     return (
-        <>
-            <ambientLight intensity={0.5} />
-            <DataStream mouseOffset={mouseOffset} />
-            {blocks.map((block, i) => (
-                <DataBlock 
-                    key={i} 
-                    position={block.pos} 
-                    isSovereign={block.isSovereign} 
-                    mouseOffset={mouseOffset}
-                />
+        <Suspense fallback={null}>
+            <color attach="background" args={[COLORS.BG]} />
+            <fog attach="fog" args={[COLORS.BG, 20, 90]} />
+            
+            <InfrastructureGrid />
+            
+            <BlockchainNetwork mouseX={mouseX} mouseY={mouseY} />
+
+            {cubePositions.map((pos, i) => (
+                <FloatingBlock key={i} position={pos} mouseX={mouseX} mouseY={mouseY} />
             ))}
-            <NeuralPathways blocks={blocks} mouseOffset={mouseOffset} />
-        </>
+
+            <Stars radius={150} depth={50} count={7000} factor={8} saturation={1} fade speed={4} />
+        </Suspense>
     );
 };
 
 const NeuralDataNetwork = () => {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+
+    if (!mounted) return <div className="fixed inset-0 bg-[#05070a]" />;
+
     return (
-        <div 
-            id="neural-void-bg"
-            className="fixed inset-0 z-[-1] pointer-events-none bg-[#0D1117]"
-        >
-            <div className="w-full h-full" style={{ opacity: 0.17 }}>
-                <Canvas camera={{ position: [0, 0, 25], fov: 50 }}>
-                    <Scene />
-                </Canvas>
-            </div>
+        <div id="neural-void-bg" className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#05070a]">
+            {/* Intensified grain/noise overlay */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.08] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
             
-            {/* Visual scanline/vignette overlays for atmospheric feel */}
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-[#0D1117]/50" />
-            <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(circle,rgba(0,206,70,0.4)_0%,transparent_70%)]" />
+            <Canvas 
+                camera={{ position: [0, 0, 45], fov: 45 }}
+                gl={{ antialias: true, alpha: true, stencil: false, depth: true }}
+                dpr={[1, 2]}
+            >
+                <Scene />
+            </Canvas>
+
+            {/* Premium Atmospheric overlays */}
+            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_300px_rgba(0,0,0,1)]" />
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#05070a] via-transparent to-transparent opacity-95" />
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,7,10,0.8)_100%)]" />
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import { Alchemy, Network, Utils } from "alchemy-sdk";
+import { ethers } from "ethers";
 
 const getAlchemyConfig = () => ({
     apiKey: import.meta.env.VITE_ALCHEMY_API_KEY || 'demo',
@@ -6,10 +7,16 @@ const getAlchemyConfig = () => ({
 });
 
 let alchemy;
+let provider; // Ethers provider for fallback
+const ALCHEMY_KEY = import.meta.env.VITE_ALCHEMY_API_KEY || 'demo';
+
 try {
     alchemy = new Alchemy(getAlchemyConfig());
+    // Create a fallback ethers provider for data integrity
+    provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`);
 } catch (err) {
-    console.warn("Alchemy SDK initialization postponed or failed.");
+    console.warn("Alchemy SDK initialization postponed or failed. Using public fallback.");
+    provider = new ethers.JsonRpcProvider('https://eth.publicnode.com');
 }
 
 class AlchemyManager {
@@ -80,4 +87,5 @@ class AlchemyManager {
 }
 
 export const alchemyManager = new AlchemyManager();
+export { provider };
 export default alchemy;

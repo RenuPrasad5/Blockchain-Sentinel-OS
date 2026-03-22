@@ -28,8 +28,8 @@ const MarketIntel = () => {
         <div className="tools-terminal-wrapper full-width-terminal">
             <header className="section-desc-box pt-12">
                 <div className="terminal-container">
-                    <h1 className="section-desc-title">Market Intelligence</h1>
-                    <p className="section-desc-text">Aggregate market data, volatility metrics, and global prediction markets.</p>
+                    <h1 className="section-desc-title tracking-tighter">Financial Risk Intelligence</h1>
+                    <p className="section-desc-text">Advanced surveillance of global financial volatility, institutional flows, and predictive risk indicators.</p>
                 </div>
             </header>
             <main className="content-area-terminal">

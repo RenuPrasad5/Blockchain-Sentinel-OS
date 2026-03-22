@@ -33,6 +33,9 @@ import WhaleWatch from './pages/tools/WhaleWatch';
 import AISentinel from './pages/tools/AISentinel';
 import Sidebar from './components/Sidebar';
 import AISentinelAssistant from './components/AISentinelAssistant';
+import Government from './pages/Government';
+import UseCases from './pages/UseCases';
+import CompliancePortal from './pages/CompliancePortal';
 import './App.css';
 
 import ProtectedRoute from './components/ProtectedRoute';
@@ -46,7 +49,7 @@ function App() {
     return () => unwatch();
   }, []);
 
-  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/gov-ent', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel'];
+  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel'];
   const isFullWidth = fullWidthPaths.includes(location.pathname);
   const isAuthPage = ['/login', '/register'].includes(location.pathname);
 
@@ -112,7 +115,10 @@ function App() {
               <Route path="/blockchain-hub" element={<BlockchainHub />} />
               <Route path="/blockchain-ecosystem" element={<BlockchainEcosystem />} />
               <Route path="/mempool" element={<MempoolHub />} />
+              <Route path="/government" element={<Government />} />
               <Route path="/gov-ent" element={<Dashboard />} />
+              <Route path="/use-cases" element={<UseCases />} />
+              <Route path="/compliance" element={<CompliancePortal />} />
             </Routes>
             <AISentinelAssistant />
           </div>

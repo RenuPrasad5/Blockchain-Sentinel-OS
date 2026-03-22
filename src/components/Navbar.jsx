@@ -33,7 +33,9 @@ import {
     Radar,
     ToggleLeft,
     ToggleRight,
-    ShieldAlert
+    ShieldAlert,
+    Briefcase,
+    Scale
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
@@ -78,16 +80,19 @@ const Navbar = () => {
     ];
 
     const navItems = [
-        { title: 'Terminal', icon: <Globe size={18} />, path: '/' },
-        { title: 'Command Center', icon: <Cpu size={18} />, path: '/dashboard' },
+        { title: 'Home', icon: <Globe size={18} />, path: '/' },
+        { title: 'Dashboard', icon: <Cpu size={18} />, path: '/dashboard' },
+        { title: 'Gov & Enterprise', icon: <Shield size={18} />, path: '/gov-ent' },
+        { title: 'Enforcement', icon: <ShieldAlert size={18} />, path: '/government' },
+        { title: 'Compliance & Legal', icon: <Scale size={18} />, path: '/compliance' },
+        { title: 'Use Cases', icon: <Briefcase size={18} />, path: '/use-cases' },
         { title: 'Encyclopedia', icon: <Database size={18} />, path: '/encyclopedia' },
-        { title: 'Protocol Research', icon: <FileSearch size={18} />, path: '/research' },
-        { title: 'Blockchain Hub', icon: <LayersIcon size={18} />, path: '/blockchain-hub' },
-        { title: 'Mempool Intel', icon: <Activity size={18} />, path: '/mempool' },
-        { title: 'Analysis Tools', icon: <Wrench size={18} />, path: '/tools' },
-        { title: 'Strategic Hub', icon: <Users2 size={18} />, path: '/community' },
+        { title: 'Research', icon: <FileSearch size={18} />, path: '/research' },
+        { title: 'Monitoring Layer', icon: <Activity size={18} />, path: '/mempool' },
+        { title: 'Tools', icon: <Wrench size={18} />, path: '/tools' },
+        { title: 'Community', icon: <Users2 size={18} />, path: '/community' },
         { title: 'Trust Center', icon: <ShieldCheck size={18} />, path: '/trust' },
-        { title: 'News', icon: <Newspaper size={18} />, path: '/news' },
+        { title: 'News Feed', icon: <Newspaper size={18} />, path: '/news' },
         { title: 'About Us', icon: <Info size={18} />, path: '/about' },
         { title: 'Settings', icon: <Settings size={18} />, path: '/settings' },
     ];
@@ -124,35 +129,27 @@ const Navbar = () => {
                 </button>
                 <Link to="/" className="nav-brand">
                     <img src={logo} alt="CryptoWorld Logo" className="logo-circular-nav" />
-                    <span className="brand-text-nav">Crypto World</span>
+                    <span className="brand-text-nav">CryptoWorld</span>
                 </Link>
             </div>
 
 
             <div className="navbar-right">
                 <nav className="nav-links-desktop lg:flex hidden">
-                    <div className="regulatory-toggle-wrapper px-4 border-r border-white/5 h-full flex items-center mr-4">
-                        <button 
-                            className={`regulatory-btn ${regulatoryMode ? 'active' : ''}`}
-                            onClick={() => setRegulatoryMode(!regulatoryMode)}
-                            title="Toggle Regulatory Mode"
-                        >
-                            <div className="flex items-center gap-2">
-                                {regulatoryMode ? <ToggleRight size={20} className="text-emerald-500" /> : <ToggleLeft size={20} className="text-slate-500" />}
-                                <div className="flex flex-col items-start leading-none">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white">Regulatory</span>
-                                    <span className={`text-[8px] font-bold uppercase ${regulatoryMode ? 'text-emerald-500' : 'text-slate-500'}`}>
-                                        {regulatoryMode ? 'Mode Active' : 'Mode Inactive'}
-                                    </span>
-                                </div>
-                                <ShieldAlert size={14} className={regulatoryMode ? 'text-emerald-500 animate-pulse' : 'text-slate-700'} />
-                            </div>
-                        </button>
-                    </div>
-
-                    <NavLink to="/blockchain-hub" className="nav-link-btn">Blockchain</NavLink>
-                    <NavLink to="/mempool" className="nav-link-btn">Mempool</NavLink>
-                    <NavLink to="/gov-ent" className="nav-link-btn">Gov & Ent</NavLink>
+                    <NavLink to="/mempool" className="nav-link-btn">Monitoring Layer</NavLink>
+                    <NavLink to="/gov-ent" className="nav-link-btn flex items-center gap-2">
+                        <Shield size={16} className="text-blue-400" />
+                        <span>Gov & Enterprise</span>
+                    </NavLink>
+                    <NavLink to="/government" className="nav-link-btn flex items-center gap-2">
+                        <ShieldAlert size={16} className="text-emerald-500" />
+                        <span>Enforcement</span>
+                    </NavLink>
+                    <NavLink to="/compliance" className="nav-link-btn flex items-center gap-2">
+                        <Scale size={16} className="text-blue-500" />
+                        <span>Compliance & Legal</span>
+                    </NavLink>
+                    <NavLink to="/use-cases" className="nav-link-btn">Use Cases</NavLink>
 
                     <div
                         className="tools-dropdown-container"
@@ -175,41 +172,41 @@ const Navbar = () => {
                                     <ShieldCheck size={16} className="text-emerald-500" />
                                     <div className="tools-item-text">
                                         <span className="tools-item-title">AI Sentinel</span>
-                                        <span className="tools-item-desc">Autonomous wallet & liquidity surveillance</span>
+                                        <span className="tools-item-desc">Autonomous node & liquidity surveillance</span>
                                     </div>
                                 </Link>
                                 <Link to="/tools/whale-watch" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
                                     <Radar size={16} className="text-rose-500" />
                                     <div className="tools-item-text">
-                                        <span className="tools-item-title">Whale Watch</span>
-                                        <span className="tools-item-desc">Live high-value transaction surveillance</span>
+                                        <span className="tools-item-title">Surveillance</span>
+                                        <span className="tools-item-desc">High-value transaction surveillance systems</span>
                                     </div>
                                 </Link>
                                 <Link to="/tools/market" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
                                     <TrendingUp size={16} className="text-indigo-400" />
                                     <div className="tools-item-text">
-                                        <span className="tools-item-title">Market Intelligence</span>
-                                        <span className="tools-item-desc">Aggregate market & prediction data</span>
+                                        <span className="tools-item-title">Risk Intel</span>
+                                        <span className="tools-item-desc">Aggregate financial risk intelligence data</span>
                                     </div>
                                 </Link>
                                 <Link to="/tools/signals" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
                                     <Activity size={16} className="text-emerald-500" />
                                     <div className="tools-item-text">
-                                        <span className="tools-item-title">On-Chain Signals</span>
-                                        <span className="tools-item-desc">Real-time whale & TVL tracking</span>
+                                        <span className="tools-item-title">Suspicious Indicators</span>
+                                        <span className="tools-item-desc">Real-time anomaly & cluster tracking</span>
                                     </div>
                                 </Link>
                                 <Link to="/tools/security" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
                                     <Shield size={16} className="text-rose-500" />
                                     <div className="tools-item-text">
-                                        <span className="tools-item-title">Security & Risk</span>
-                                        <span className="tools-item-desc">Live audit & threat detection</span>
+                                        <span className="tools-item-title">Compliance & AML</span>
+                                        <span className="tools-item-desc">Automated anti-money laundering triage</span>
                                     </div>
                                 </Link>
                                 <Link to="/tools/visualizer" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
                                     <Share2 size={16} className="text-indigo-400" />
                                     <div className="tools-item-text">
-                                        <span className="tools-item-title">Investigation Visualizer</span>
+                                        <span className="tools-item-title">Forensic Visualizer</span>
                                         <span className="tools-item-desc">Advanced wallet relationship mapping</span>
                                     </div>
                                 </Link>

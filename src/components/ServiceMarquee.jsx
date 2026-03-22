@@ -4,12 +4,12 @@ import './ServiceMarquee.css';
 
 const ServiceMarquee = () => {
     const services = [
-        { icon: <Shield size={20} />, label: "Smart Contract Audits" },
-        { icon: <Zap size={20} />, label: "Real-time Mempool" },
-        { icon: <Globe size={20} />, label: "Cross-chain Intelligence" },
-        { icon: <Lock size={20} />, label: "Private Key Custody" },
-        { icon: <Database size={20} />, label: "Historical On-chain Data" },
-        { icon: <Search size={20} />, label: "Forensic Triage" }
+        { icon: <Shield size={24} />, label: "Smart Contract Audits" },
+        { icon: <Zap size={24} />, label: "Real-time Mempool" },
+        { icon: <Globe size={24} />, label: "Cross-chain Intelligence" },
+        { icon: <Lock size={24} />, label: "Private Key Custody" },
+        { icon: <Database size={24} />, label: "Historical On-chain Data" },
+        { icon: <Search size={24} />, label: "Forensic Triage" }
     ];
 
     // Standard loop duplication

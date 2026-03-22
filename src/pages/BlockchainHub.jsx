@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     ArrowLeft,
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useBlockNumber } from 'wagmi';
 import { motion, AnimatePresence } from 'framer-motion';
-import alchemy from '../utils/AlchemyManager';
+import alchemy, { provider } from '../utils/AlchemyManager';
 import { formatIntelligence, resolveAddress } from '../utils/EthersUtils';
 import './BlockchainHub.css';
 
@@ -122,8 +122,27 @@ const BlockchainHub = () => {
         try {
             setError(null);
             const blockPromises = [];
-            for (let i = 0; i < 20; i++) {
-                blockPromises.push(alchemy.core.getBlock(Number(blockNum) - i));
+            for (let i = 0; i < 12; i++) {
+                blockPromises.push(alchemy.core.getBlock(Number(blockNum) - i).catch(async (err) => {
+                    console.warn(`Alchemy Primary Fetch Failed for ${Number(blockNum) - i}:`, err);
+                    // Critical Fallback to Ethers Direct Provider (Public Nodes)
+                    try {
+                        const b = await provider.getBlock(Number(blockNum) - i);
+                        if (!b) return null;
+                        return {
+                            number: b.number,
+                            hash: b.hash,
+                            timestamp: b.timestamp,
+                            transactions: b.transactions,
+                            gasUsed: b.gasUsed,
+                            gasLimit: b.gasLimit,
+                            parentHash: b.parentHash,
+                            baseFeePerGas: b.baseFeePerGas
+                        };
+                    } catch (e) {
+                        return null;
+                    }
+                }));
             }
 
             const resolvedBlocks = await Promise.all(blockPromises);

@@ -28,8 +28,8 @@ const ChainSignals = () => {
         <div className="tools-terminal-wrapper full-width-terminal">
             <header className="section-desc-box pt-12">
                 <div className="terminal-container">
-                    <h1 className="section-desc-title">On-Chain Signals</h1>
-                    <p className="section-desc-text">Real-time whale flows, ecosystem TVL tracking, and upcoming token unlock schedules.</p>
+                    <h1 className="section-desc-title tracking-tighter">Suspicious Activity Indicators</h1>
+                    <p className="section-desc-text">Identifier of illicit flows, mixer interactions, and high-risk wallet cluster behaviors.</p>
                 </div>
             </header>
             <main className="content-area-terminal">

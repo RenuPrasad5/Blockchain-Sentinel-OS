@@ -34,7 +34,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import useModeStore from '../store/modeStore';
 import alchemy from '../utils/AlchemyManager';
-import { calculateRiskScore } from '../services/RiskEngine';
+import { calculateRiskScore, createAuditLog, RISK_LEVELS } from '../services/ForensicEngine';
 import { formatIntelligence, resolveAddress, simulateGas } from '../utils/EthersUtils';
 import { ethers } from 'ethers';
 import './MempoolHub.css';
@@ -148,9 +148,18 @@ const MempoolHub = () => {
         setResolvedFrom(null);
 
         try {
-            // 1. Parallel Enrichment via Ethers.js Read-only layer
-            const [assessment, gasEst, resolvedAddr] = await Promise.all([
-                calculateRiskScore(tx.from),
+            // 1. Forensic Assessment via Compliance Engine
+            // Mocking historical activity for calculation
+            const mockActivity = [
+                { value: Number(tx.valueEth), toLabel: tx.to },
+                { value: 0.05, toLabel: 'Unknown' },
+                { value: 0.02, toLabel: 'Mixer' },
+                { value: 12.5, toLabel: 'Binance' }
+            ];
+            
+            const assessment = calculateRiskScore(tx.from, mockActivity);
+            
+            const [gasEst, resolvedAddr] = await Promise.all([
                 simulateGas({
                     to: tx.to === 'Contract Creation' ? ethers.ZeroAddress : tx.to,
                     from: tx.from,
@@ -168,6 +177,14 @@ const MempoolHub = () => {
         } finally {
             setIsLoadingDetails(false);
         }
+    };
+
+    const handleFullTrace = () => {
+        if (!selectedTx) return;
+        // Create Audit Log
+        const log = createAuditLog('FORENSIC_TRACE_INIT', selectedTx.id, `Agent initiated full forensic trace on address: ${selectedTx.from}`);
+        console.log("Audit Log Generated:", log);
+        alert(`Forensic Audit Logged: ${log.id}\nFull Network Trace Initialized.`);
     };
 
     const getIntentLabel = (tx) => {
@@ -197,12 +214,12 @@ const MempoolHub = () => {
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-2 border-r border-white/10 pr-6 group">
                             <Flame size={16} className="text-orange-500 group-hover:animate-pulse" />
-                            <span className="text-[10px] font-black uppercase text-slate-500">Gas Layer:</span>
-                            <span className="mono text-xs font-black text-white">{stats.avgGas} Gwei</span>
+                            <span className="text-[10px] font-black uppercase text-slate-500">Resource Load:</span>
+                            <span className="mono text-xs font-black text-white">{stats.avgGas} SAT/B</span>
                         </div>
                         <div className="flex items-center gap-2 border-r border-white/10 pr-6">
                             <Layers size={16} className="text-indigo-500" />
-                            <span className="text-[10px] font-black uppercase text-slate-500">Mempool Size:</span>
+                            <span className="text-[10px] font-black uppercase text-slate-500">Monitoring Depth:</span>
                             <span className="mono text-xs font-black text-white">{stats.mempoolSize}</span>
                         </div>
                         <div className="search-layer flex-1 max-w-md ml-auto">
@@ -234,10 +251,10 @@ const MempoolHub = () => {
                     <section className="block-projection-section mb-10">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="live-badge">LIVE</div>
-                                <h2 className="section-title">Block Projections <span className="text-[10px] opacity-30 italic ml-2">SIMULATING FUTURE BLOCKS...</span></h2>
+                                <div className="live-badge bg-emerald-500">ON-STREAM</div>
+                                <h2 className="section-title">Nodal Block Projections <span className="text-[10px] opacity-30 italic ml-2">SIMULATING TRANSACTION LAYERS...</span></h2>
                             </div>
-                            <div className="text-[10px] font-medium opacity-40 uppercase tracking-widest">Auto-Refresh Active</div>
+                            <div className="text-[10px] font-medium opacity-40 uppercase tracking-widest">Surveillance Active</div>
                         </div>
 
                         <div className="projection-grid h-40">
@@ -283,7 +300,7 @@ const MempoolHub = () => {
                             <div className="panel-header-dense px-6 py-4 flex items-center justify-between border-b border-white/5 bg-white/5 z-10">
                                 <div className="flex items-center gap-2">
                                     <Fingerprint size={16} className="text-indigo-400" />
-                                    <span className="text-xs font-black uppercase tracking-widest text-slate-300">Transaction Intelligence Feed</span>
+                                    <span className="text-xs font-black uppercase tracking-widest text-slate-300">Forensic Monitoring Layer</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-[10px] font-bold">
                                     <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-emerald-400" /> VERIFIED ORIGIN</span>
@@ -417,22 +434,49 @@ const MempoolHub = () => {
                                         {/* RISK ASSESSMENT */}
                                         <div className="forensic-section mb-8">
                                             <div className="flex items-center justify-between mb-4">
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Security Threat Level</span>
-                                                <div className={`risk-badge px-3 py-1 ${riskInfo?.level === 'Danger' ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'} border`}>
-                                                    {isLoadingDetails ? 'SCANNING...' : riskInfo?.level?.toUpperCase() || 'SAFE'}
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Compliance Risk Level</span>
+                                                <div 
+                                                    className="risk-badge-official" 
+                                                    style={{ 
+                                                        color: isLoadingDetails ? '#94a3b8' : riskInfo?.level?.color,
+                                                        borderColor: isLoadingDetails ? '#334155' : `${riskInfo?.level?.color}44`,
+                                                        background: isLoadingDetails ? '#1e293b' : `${riskInfo?.level?.color}11`
+                                                    }}
+                                                >
+                                                    {isLoadingDetails ? 'FORENSIC SCAN...' : riskInfo?.level?.label}
                                                 </div>
                                             </div>
-                                            <div className="risk-meter-container h-1.5 bg-white/5 rounded-full overflow-hidden mb-3">
+                                            <div className="risk-meter-container h-1.5 bg-white/5 rounded-full overflow-hidden mb-4">
                                                 <motion.div
-                                                    className={`h-full ${riskInfo?.level === 'Danger' ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                                    className="h-full"
+                                                    style={{ backgroundColor: riskInfo?.level?.color }}
                                                     initial={{ width: 0 }}
                                                     animate={{ width: isLoadingDetails ? "30%" : `${riskInfo?.score || 0}%` }}
-                                                    transition={{ duration: 0.5 }}
+                                                    transition={{ duration: 1, ease: "easeOut" }}
                                                 />
                                             </div>
-                                            <div className="flex gap-2 text-[10px] text-slate-500 italic">
-                                                <Info size={12} />
-                                                <p>{isLoadingDetails ? 'Decrypting origin metadata...' : riskInfo?.details?.[0] || 'No architectural vulnerabilities detected.'}</p>
+
+                                            <div className="aml-patterns-detected">
+                                                <div className="text-[9px] font-black text-slate-500 uppercase mb-3 tracking-widest">AML Indicators Detected:</div>
+                                                <div className="space-y-2">
+                                                    {isLoadingDetails ? (
+                                                        <div className="animate-pulse text-[10px] text-slate-600">Cross-referencing global sanctions lists...</div>
+                                                    ) : (
+                                                        <>
+                                                            {riskInfo?.flags?.length > 0 ? riskInfo.flags.map((flag, f) => (
+                                                                <div key={f} className="aml-tag-alert">
+                                                                    <AlertTriangle size={10} className="text-rose-500" />
+                                                                    <span>{flag}</span>
+                                                                </div>
+                                                            )) : (
+                                                                <div className="aml-tag-safe">
+                                                                    <CheckCircle2 size={10} className="text-emerald-500" />
+                                                                    <span>No Immediate AML Patterns Identified</span>
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
@@ -494,8 +538,11 @@ const MempoolHub = () => {
                                     </div>
 
                                     <div className="forensic-footer mt-auto pt-8 border-t border-white/5">
-                                        <button className="full-trace-btn w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-indigo-600/20 active:scale-95">
-                                            Initiate Full Network Trace
+                                        <button 
+                                            onClick={handleFullTrace}
+                                            className="full-trace-btn w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-blue-600/20 active:scale-95"
+                                        >
+                                            Initiate Full Forensic Trace
                                         </button>
                                     </div>
                                 </motion.aside>
@@ -509,11 +556,11 @@ const MempoolHub = () => {
             {/* SYSTEM FOOTER */}
             <footer className="h-8 bg-black/40 border-t border-white/5 flex items-center px-6 justify-between text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">
                 <div className="flex gap-6">
-                    <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500/40"></div> SYNC_STATUS: NOMINAL</span>
+                    <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500/40"></div> SYNC_STATUS: CRYPTO_UPLINK_ACTIVE</span>
                     <span>ENCRYPTION: AES-256-GCM</span>
                 </div>
                 <div className="flex gap-4">
-                    <span>OS_VERSION: 1.0.4-BETA</span>
+                    <span>OS_VERSION: 2.0.4-CRYPTO</span>
                     <span>AUTH: SESSION_TERMINAL_ROOT</span>
                 </div>
             </footer>

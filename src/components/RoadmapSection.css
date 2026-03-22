@@ -1,6 +1,6 @@
 .roadmap-v8-terminal {
-    background: var(--bg-surface);
-    /* Explicitly dark but slightly different to show separation */
+    background: transparent !important;
+    /* Explicitly transparent to show 3D background */
     width: 100%;
     height: auto;
     display: flex;
@@ -15,9 +15,9 @@
 /* Global Header: Now full-width section header */
 .roadmap-v8-global-header {
     width: 100%;
-    padding: 4rem 4rem 3rem 4rem;
+    padding: 4rem;
     z-index: 20;
-    background: var(--bg-primary);
+    background: transparent !important;
     border-bottom: var(--border);
 }
 
@@ -70,7 +70,7 @@
 .roadmap-v8-left-panel {
     flex: 0 0 50%;
     height: 100%;
-    background: #000;
+    background: transparent !important;
     position: relative;
     overflow: hidden;
 }
@@ -108,7 +108,7 @@
     flex: 0 0 50%;
     height: 100%;
     overflow-y: auto;
-    background: var(--bg-primary);
+    background: transparent !important;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -201,6 +201,22 @@
 .item-status.active {
     color: #10b981;
     background: rgba(16, 185, 129, 0.1);
+}
+
+.item-content {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.item-content:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-4px);
 }
 
 .item-title {

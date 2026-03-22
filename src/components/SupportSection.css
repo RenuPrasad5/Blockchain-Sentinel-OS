@@ -1,17 +1,21 @@
-﻿.support-section {
+.support-section {
     padding: 8rem 1.5rem;
     /* Increased top spacing */
     position: relative;
     z-index: 5;
-    background: var(--bg-primary);
+    background: transparent !important;
     margin-top: 0;
     border-top: var(--border);
 }
 
 .support-wrapper {
-    padding: 2.5rem;
+    padding: 3rem;
     border-radius: var(--radius-xl);
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
 }
 
 .support-grid {
@@ -128,10 +132,19 @@
 }
 
 .category-card {
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: var(--radius-lg);
     text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
     transition: var(--transition);
+}
+
+.category-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary);
+    transform: translateY(-5px);
 }
 
 .category-icon {
@@ -193,6 +206,9 @@
     padding: 2.5rem;
     position: relative;
     border-radius: var(--radius-lg);
+    background: rgba(13, 17, 23, 0.85); /* Darker but still blurred for readability in forms */
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .modal-close {

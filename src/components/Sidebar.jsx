@@ -23,7 +23,9 @@ import {
     Shield,
     Share2,
     Zap,
-    Briefcase
+    Briefcase,
+    ShieldAlert,
+    Scale
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
@@ -62,30 +64,33 @@ const Sidebar = () => {
     };
 
     const navItems = [
-        { id: 'terminal', title: 'Terminal', icon: <Globe size={20} />, path: '/' },
-        { id: 'enterprise', title: 'Gov & Ent', icon: <Briefcase size={20} />, path: '/gov-ent' },
-        { id: 'cc', title: 'Command Center', icon: <Cpu size={20} />, path: '/dashboard' },
+        { id: 'terminal', title: 'Home', icon: <Globe size={20} />, path: '/' },
+        { id: 'govent', title: 'Gov & Enterprise', icon: <Shield size={20} />, path: '/gov-ent' },
+        { id: 'enterprise', title: 'Enforcement', icon: <ShieldAlert size={20} />, path: '/government' },
+        { id: 'compliance', title: 'Compliance & Legal', icon: <Scale size={20} />, path: '/compliance' },
+        { id: 'usecases', title: 'Use Cases', icon: <Briefcase size={20} />, path: '/use-cases' },
+        { id: 'cc', title: 'Dashboard', icon: <Cpu size={20} />, path: '/dashboard' },
         { id: 'encyclopedia', title: 'Encyclopedia', icon: <Database size={20} />, path: '/encyclopedia' },
-        { id: 'research', title: 'Protocol Research', icon: <FileSearch size={20} />, path: '/research' },
+        { id: 'research', title: 'Research', icon: <FileSearch size={20} />, path: '/research' },
         { id: 'hub', title: 'Blockchain Hub', icon: <Layers size={20} />, path: '/blockchain-hub' },
-        { id: 'mempool', title: 'Mempool Intel', icon: <Activity size={20} />, path: '/mempool' },
+        { id: 'mempool', title: 'Mempool Hub', icon: <Activity size={20} />, path: '/mempool' },
         {
             id: 'tools',
-            title: 'Analysis Tools',
+            title: 'Tools',
             icon: <Wrench size={20} />,
             path: '/tools',
             subItems: [
                 { title: 'AI Sentinel', icon: <ShieldCheck size={18} />, path: '/tools/sentinel' },
-                { title: 'Whale Watch', icon: <Radar size={18} />, path: '/tools/whale-watch' },
-                { title: 'Market Intel', icon: <TrendingUp size={18} />, path: '/tools/market' },
-                { title: 'On-Chain Signals', icon: <Activity size={18} />, path: '/tools/signals' },
-                { title: 'Security & Risk', icon: <Shield size={18} />, path: '/tools/security' },
-                { title: 'Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
+                { title: 'Surveillance', icon: <Radar size={18} />, path: '/tools/whale-watch' },
+                { title: 'Risk Intel', icon: <TrendingUp size={18} />, path: '/tools/market' },
+                { title: 'Suspicious Indicators', icon: <Activity size={18} />, path: '/tools/signals' },
+                { title: 'Compliance & AML', icon: <Shield size={18} />, path: '/tools/security' },
+                { title: 'Forensic Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
             ]
         },
-        { id: 'community', title: 'Strategic Hub', icon: <Users2 size={20} />, path: '/community' },
+        { id: 'community', title: 'Community', icon: <Users2 size={20} />, path: '/community' },
         { id: 'trust', title: 'Trust Center', icon: <ShieldCheck size={20} />, path: '/trust' },
-        { id: 'news', title: 'News', icon: <Newspaper size={20} />, path: '/news' },
+        { id: 'news', title: 'News Feed', icon: <Newspaper size={20} />, path: '/news' },
         { id: 'about', title: 'About Us', icon: <Info size={20} />, path: '/about' },
     ];
 
@@ -127,7 +132,7 @@ const Sidebar = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                         >
-                            REAL-TIME OS
+                            CryptoWorld
                         </motion.span>
                     )}
                 </div>

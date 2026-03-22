@@ -1,0 +1,104 @@
+.use-cases-container {
+    padding: 3rem 5rem;
+    min-height: calc(100vh - var(--navbar-height));
+    background: transparent;
+    color: white;
+}
+
+.use-cases-header {
+    margin-bottom: 4rem;
+}
+
+.use-cases-nav {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1.5rem;
+}
+
+.use-case-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 2.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.25rem;
+    color: #64748b;
+    font-size: 1.125rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.use-case-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    transform: translateY(-3px);
+}
+
+.use-case-tab-btn.active {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+    box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2);
+}
+
+.use-case-content {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.use-case-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.use-case-card {
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.use-case-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(16, 185, 129, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+@media (max-width: 1280px) {
+    .use-cases-container {
+        padding: 2.5rem;
+    }
+    
+    .use-case-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .use-cases-nav {
+        flex-direction: column;
+    }
+    
+    .use-case-tab-btn {
+        width: 100%;
+    }
+}

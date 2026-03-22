@@ -28,8 +28,8 @@ const SecurityRisk = () => {
         <div className="tools-terminal-wrapper full-width-terminal">
             <header className="section-desc-box pt-12">
                 <div className="terminal-container">
-                    <h1 className="section-desc-title">Security & Risk</h1>
-                    <p className="section-desc-text">Wallet permission monitoring, protocol audit integrity, and central risk advisories.</p>
+                    <h1 className="section-desc-title tracking-tighter">Compliance & AML</h1>
+                    <p className="section-desc-text">Wallet permission monitoring, protocol audit integrity, and international anti-money laundering (AML) advisories.</p>
                 </div>
             </header>
             <main className="content-area-terminal">

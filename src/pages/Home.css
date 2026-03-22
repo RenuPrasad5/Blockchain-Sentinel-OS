@@ -20,19 +20,21 @@
 .hero-section {
     position: relative;
     width: 100%;
-    min-height: calc(100vh - var(--navbar-height));
+    min-height: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     overflow: hidden;
 }
 
 .hero-inner {
     width: 100%;
-    padding: 2rem; /* Reduced from 4rem to allow more room */
+    padding: 3rem 2rem; /* Added small top padding to maintain gap between navbar and hero content */
     display: flex;
-    align-items: center;
-    min-height: calc(100vh - var(--navbar-height));
+    flex-direction: column; /* Ensure layout works correctly */
+    align-items: flex-start;
+    min-height: auto;
+    padding-bottom: 3rem; /* Small gap before next section */
 }
 
 .responsive-grid {
@@ -46,7 +48,7 @@
 .standard-card {
     padding: 1.5rem;
     border-radius: 12px;
-    background: rgba(13, 17, 23, 0.8);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
     margin: 0;
@@ -122,6 +124,7 @@ nav,
 .learning-matrix-section {
     position: relative;
     z-index: 20;
+    background: transparent !important;
 }
 
 .matrix-card {
@@ -164,7 +167,7 @@ nav,
 
 .hero-main-heading {
     color: white;
-    font-size: clamp(2.2rem, 4.5vw, 3.2rem); /* Slightly smaller max to fit lanes */
+    font-size: clamp(1.8rem, 3.8vw, 2.4rem); /* Further reduced to ensure two lines */
     font-weight: 950;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -172,6 +175,10 @@ nav,
     display: flex;
     flex-direction: column;
     margin: 0;
+}
+
+.hero-main-heading span {
+    white-space: nowrap;
 }
 
 /* Hero Column Customizations */

@@ -37,7 +37,7 @@ const SupportSection = () => {
 
     return (
         <section id="support-section" className="support-section container">
-            <div className="support-wrapper glass">
+            <div className="support-wrapper">
                 <div className="support-grid">
                     {/* Left Side: Support Info */}
                     <div className="support-info">
@@ -90,7 +90,7 @@ const SupportSection = () => {
                     {/* Right Side: Two Cards */}
                     <div className="support-categories">
                         <div className="category-grid">
-                            <div className="category-card glass-hover">
+                            <div className="category-card">
                                 <HelpCircle className="category-icon" />
                                 <h3>Help Center</h3>
                                 <p>Access deep documentation and specialized assistance pools.</p>
@@ -101,7 +101,7 @@ const SupportSection = () => {
                                     Open Center
                                 </button>
                             </div>
-                            <div className="category-card glass-hover">
+                            <div className="category-card">
                                 <FileText className="category-icon" />
                                 <h3>Report Issue</h3>
                                 <p>Direct transmission for bug reports or technical anomalies.</p>
@@ -120,7 +120,7 @@ const SupportSection = () => {
             {/* Report Issue Modal */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content glass" onClick={e => e.stopPropagation()}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setIsModalOpen(false)}>
                             <X size={20} />
                         </button>
