@@ -473,7 +473,7 @@ const WhaleWatch = () => {
                                 <span>Uplink Status: {alchemyManager.getStatus()}</span>
                             </div>
                             <div className="h-3 w-px bg-slate-800"></div>
-                            <span>&copy; 2026 CryptoWorld Intelligence</span>
+                            <span>&copy; 2026 Blockchain Intelligence Intelligence</span>
                         </div>
                     </div>
                 </div>

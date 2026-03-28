@@ -43,7 +43,7 @@ const SupportSection = () => {
                     <div className="support-info">
                         <div className="support-header">
                             <span className="support-badge">Global Support</span>
-                            <h2 className="support-title">CryptoWorld Support & Help Desk</h2>
+                            <h2 className="support-title">Blockchain Intelligence Support & Help Desk</h2>
                             <p className="support-desc">
                                 Institutional intelligence requires professional assistance. Our dedicated team is available for high-priority inquiries.
                             </p>
@@ -56,7 +56,7 @@ const SupportSection = () => {
                                 </div>
                                 <div className="info-content">
                                     <label>Email Intelligence</label>
-                                    <p>support@cryptoworld.int</p>
+                                    <p>support@Blockchain Intelligence.int</p>
                                 </div>
                             </div>
                             <div className="info-item">
@@ -82,7 +82,7 @@ const SupportSection = () => {
                         <div className="security-notice">
                             <ShieldAlert size={18} className="security-icon" />
                             <p>
-                                <strong>Security Protocol:</strong> CryptoWorld analysts will <strong>never</strong> request your private keys, seed phrases, or password via any support channel.
+                                <strong>Security Protocol:</strong> Blockchain Intelligence analysts will <strong>never</strong> request your private keys, seed phrases, or password via any support channel.
                             </p>
                         </div>
                     </div>

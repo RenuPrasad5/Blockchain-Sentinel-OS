@@ -116,7 +116,7 @@ export const protocolData = [
             architecture: "It uses liquidity pools—piles of tokens provided by users—which allows for trades to happen automatically.",
             consensus: "Uniswap isn't a blockchain; it's a set of smart contracts running on blockchains like Ethereum and Solana.",
             tokenomics: "UNI is a governance token. Holders can vote on how the protocol is managed and how the treasury is spent.",
-            governance: "UNI holders vote on proposals. It is one of the largest and most active DAOs in the crypto world.",
+            governance: "UNI holders vote on proposals. It is one of the largest and most active DAOs in the Blockchain Intelligence.",
             roadmap: "Launching v4 for more customizable pools and UniswapX for better trading prices.",
             comparisons: "The 'main street' of DeFi. Like a bank but with no managers and open to everyone.",
             references: ["uniswap.org", "Uniswap v3 Whitepaper"]

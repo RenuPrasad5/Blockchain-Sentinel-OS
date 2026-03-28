@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useBlockNumber } from 'wagmi';
 import { motion, AnimatePresence } from 'framer-motion';
-import alchemy, { provider } from '../utils/AlchemyManager';
+import alchemy, { provider, alchemyManager } from '../utils/AlchemyManager';
 import { formatIntelligence, resolveAddress } from '../utils/EthersUtils';
 import './BlockchainHub.css';
 
@@ -37,6 +37,10 @@ const BlockchainHub = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [walletIntel, setWalletIntel] = useState(null);
     const [viewMode, setViewMode] = useState('network'); // 'network' or 'wallet'
+
+    const [connectionStatus, setConnectionStatus] = useState("CONNECTING");
+    const [pendingTxs, setPendingTxs] = useState([]);
+    const [rippleTrigger, setRippleTrigger] = useState(false);
 
     const BINANCE_WALLETS = [
         '0x3f5ce5fbfe3e9af3971dd833d26ba9b5c936f0be',
@@ -106,12 +110,70 @@ const BlockchainHub = () => {
         }
     };
 
-    // Simulated latency oscillation
     useEffect(() => {
-        const interval = setInterval(() => {
-            setLatency(prev => Math.max(10, Math.min(45, prev + (Math.random() > 0.5 ? 1 : -1))));
-        }, 3000);
+        const cleanup = alchemyManager.onStatusChange((status) => {
+            setConnectionStatus(status);
+        });
+        return cleanup;
+    }, []);
+
+    // Latency Ping Interval
+    useEffect(() => {
+        const pingNode = async () => {
+            const start = performance.now();
+            try {
+                await alchemy.core.getBlockNumber();
+                setLatency(Math.round(performance.now() - start));
+                setError(null);
+            } catch (err) {
+                console.warn('Ping failed', err);
+            }
+        };
+        pingNode();
+        const interval = setInterval(pingNode, 4000);
         return () => clearInterval(interval);
+    }, [connectionStatus]);
+
+    // WebSocket Listeners for Pending Txs & New Blocks
+    useEffect(() => {
+        const resetTxSub = alchemyManager.onPendingTransaction((hash) => {
+            setPendingTxs(prev => {
+                const unique = prev.filter(t => t.hash !== hash);
+                return [{ hash, time: Date.now() }, ...unique].slice(0, 50);
+            });
+        });
+
+        const resetBlockSub = alchemyManager.onNewBlock(async (blockNum) => {
+            setRippleTrigger(true);
+            setTimeout(() => setRippleTrigger(false), 1000);
+            try {
+                const b = await alchemy.core.getBlock(blockNum);
+                if (b) {
+                   const newBlock = {
+                        height: b.number,
+                        hash: b.hash,
+                        timestamp: b.timestamp,
+                        txCount: b.transactions.length,
+                        gasUsed: b.gasUsed.toString(),
+                        gasLimit: b.gasLimit.toString(),
+                        parentHash: b.parentHash,
+                        baseFeePerGas: b.baseFeePerGas ? b.baseFeePerGas.toString() : '0',
+                        gasPercentage: ((Number(b.gasUsed) / Number(b.gasLimit)) * 100).toFixed(1)
+                    };
+                    setBlocks(prev => {
+                        if (prev.find(x => x.height === newBlock.height)) return prev;
+                        return [newBlock, ...prev].slice(0, 12);
+                    });
+                }
+            } catch (err) {
+                console.error("Error formatting new block", err);
+            }
+        });
+
+        return () => {
+            resetTxSub();
+            resetBlockSub();
+        };
     }, []);
 
     const fetchData = async (blockNum) => {
@@ -187,8 +249,6 @@ const BlockchainHub = () => {
             }
         };
         initFetch();
-        const pollInterval = setInterval(initFetch, 12000);
-        return () => clearInterval(pollInterval);
     }, []);
 
     useEffect(() => {
@@ -289,7 +349,13 @@ const BlockchainHub = () => {
             <div className="max-w-[1600px] mx-auto px-6 py-8 h-screen flex flex-col">
                 <div className="flex-shrink-0 space-y-4 mb-8">
                     <div className="text-[0.7rem] font-bold tracking-widest text-[#94a3b8] flex justify-between items-center">
-                        <div>STATUS: {error ? <span className="text-red-500">{error}</span> : <span className="text-[#10b981]">OPERATIONAL</span>}</div>
+                        <div className="flex items-center gap-6">
+                            <div>STATUS: {connectionStatus === 'CONNECTED' ? <span style={{ color: '#00ce46' }} className="font-bold">NODE SYNC: OPTIMAL</span> : connectionStatus === 'Reconnecting...' ? <span className="text-yellow-500">Reconnecting...</span> : <span className="text-red-500">RPC Sync Failure</span>}</div>
+                            <div className="flex items-center gap-2">
+                                <span>LATENCY:</span>
+                                <span className={latency > 150 ? 'text-yellow-500' : 'text-[#10b981]'}>{latency}ms</span>
+                            </div>
+                        </div>
                         {viewMode === 'wallet' && (
                             <button
                                 onClick={() => setViewMode('network')}
@@ -334,53 +400,84 @@ const BlockchainHub = () => {
 
                 <div className="flex-1 flex gap-6 min-h-0 mb-6">
                     {/* Left Panel: 35% Width */}
-                    <aside className="w-[35%] flex flex-col bg-[#161B22] border border-[rgba(255,255,255,0.1)] rounded-xl overflow-hidden shadow-2xl">
-                        <div className="bg-white/5 px-4 py-3 border-bottom border-[rgba(255,255,255,0.1)] flex justify-between items-center flex-shrink-0">
-                            <span className="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#94a3b8]">NETWORK PULSE</span>
-                            <div className={`w-2 h-2 rounded-full ${!error ? 'bg-[#10b981] animate-pulse' : 'bg-red-500'}`}></div>
+                    <aside className="w-[35%] flex flex-col gap-6">
+                        <div className="flex-1 flex flex-col bg-[#161B22] border border-[rgba(255,255,255,0.1)] rounded-xl overflow-hidden shadow-2xl min-h-0">
+                            <div className="bg-white/5 px-4 py-3 border-bottom border-[rgba(255,255,255,0.1)] flex justify-between items-center flex-shrink-0" style={{
+                                boxShadow: rippleTrigger ? '0 0 15px #00ce46 inset' : 'none',
+                                transition: 'box-shadow 0.3s'
+                            }}>
+                                <span className="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#94a3b8]">NETWORK PULSE</span>
+                                <div className="relative flex h-2 w-2">
+                                     {rippleTrigger && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ce46] opacity-75"></span>}
+                                     <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#00ce46' }}></span>
+                                </div>
+                            </div>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                                {isLoading ? (
+                                    Array.from({ length: 12 }).map((_, i) => (
+                                        <div key={i} className="p-4 border-b border-white/5 animate-pulse">
+                                            <div className="w-2/3 h-3 bg-white/5 rounded mb-2"></div>
+                                            <div className="w-1/2 h-2 bg-white/5 rounded"></div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <AnimatePresence mode="popLayout">
+                                        {blocks.map((block) => (
+                                            <motion.div
+                                                key={block.height}
+                                                layout
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className={`p-4 border-b border-white/5 cursor-pointer transition-colors hover:bg-white/[0.02] ${selectedBlock?.height === block.height ? 'bg-[#6366f1]/10 border-l-4 border-l-[#6366f1]' : ''}`}
+                                                onClick={() => handleSelectBlock(block)}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center text-[#627EEA]">
+                                                        <Layers size={16} />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="text-sm font-black text-white">#{block.height}</span>
+                                                            {Number(block.gasPercentage) < 50 ? (
+                                                                <span className="text-[0.6rem] px-2 py-0.5 rounded bg-[#10b981]/10 text-[#10b981] font-bold">Safe</span>
+                                                            ) : Number(block.gasPercentage) > 90 ? (
+                                                                <span className="text-[0.6rem] px-2 py-0.5 rounded bg-red-500/10 text-red-500 font-bold">Heavy</span>
+                                                            ) : null}
+                                                        </div>
+                                                        <div className="flex justify-between text-[0.65rem] text-[#94a3b8]">
+                                                            <span>{formatTimeAgo(block.timestamp)}</span>
+                                                            <span className="text-[#10b981] font-bold">{block.txCount} TXS</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
+                                )}
+                            </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto custom-scrollbar">
-                            {isLoading ? (
-                                Array.from({ length: 12 }).map((_, i) => (
-                                    <div key={i} className="p-4 border-b border-white/5 animate-pulse">
-                                        <div className="w-2/3 h-3 bg-white/5 rounded mb-2"></div>
-                                        <div className="w-1/2 h-2 bg-white/5 rounded"></div>
+
+                        <div className="flex-1 flex flex-col bg-[#161B22] border border-[rgba(255,255,255,0.1)] rounded-xl overflow-hidden shadow-2xl min-h-0">
+                            <div className="bg-white/5 px-4 py-3 border-bottom border-[rgba(255,255,255,0.1)] flex justify-between items-center flex-shrink-0">
+                                <span className="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#94a3b8]">LIVE TRANSACTION FEED</span>
+                                <Activity size={12} className="text-[#00ce46] animate-pulse" />
+                            </div>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+                                {pendingTxs.map(tx => (
+                                    <div key={tx.hash} className="bg-white/5 px-3 py-2 rounded border border-white/5 flex justify-between items-center group">
+                                         <div className="flex items-center gap-3">
+                                             <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-[#6366f1]">
+                                                 <Zap size={10} />
+                                             </div>
+                                             <span className="font-mono text-xs text-white opacity-80 group-hover:text-[#00ce46] transition-colors">{tx.hash.slice(0, 16)}...{tx.hash.slice(-4)}</span>
+                                         </div>
+                                         <span className="text-[0.6rem] text-[#94a3b8] font-mono">{Math.floor((Date.now() - tx.time)/1000)}s ago</span>
                                     </div>
-                                ))
-                            ) : (
-                                <AnimatePresence mode="popLayout">
-                                    {blocks.map((block) => (
-                                        <motion.div
-                                            key={block.height}
-                                            layout
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className={`p-4 border-b border-white/5 cursor-pointer transition-colors hover:bg-white/[0.02] ${selectedBlock?.height === block.height ? 'bg-[#6366f1]/10 border-l-4 border-l-[#6366f1]' : ''}`}
-                                            onClick={() => handleSelectBlock(block)}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center text-[#627EEA]">
-                                                    <Layers size={16} />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <div className="flex justify-between items-center mb-1">
-                                                        <span className="text-sm font-black text-white">#{block.height}</span>
-                                                        {Number(block.gasPercentage) < 50 ? (
-                                                            <span className="text-[0.6rem] px-2 py-0.5 rounded bg-[#10b981]/10 text-[#10b981] font-bold">Safe</span>
-                                                        ) : Number(block.gasPercentage) > 90 ? (
-                                                            <span className="text-[0.6rem] px-2 py-0.5 rounded bg-red-500/10 text-red-500 font-bold">Heavy</span>
-                                                        ) : null}
-                                                    </div>
-                                                    <div className="flex justify-between text-[0.65rem] text-[#94a3b8]">
-                                                        <span>{formatTimeAgo(block.timestamp)}</span>
-                                                        <span className="text-[#10b981] font-bold">{block.txCount} TXS</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </AnimatePresence>
-                            )}
+                                ))}
+                                {pendingTxs.length === 0 && (
+                                     <div className="flex h-full items-center justify-center text-[0.65rem] text-[#94a3b8] uppercase tracking-widest opacity-50">Listening to mempool...</div>
+                                )}
+                            </div>
                         </div>
                     </aside>
 
@@ -572,7 +669,7 @@ const BlockchainHub = () => {
                     </div>
                     <div className="flex items-center gap-2 text-[0.65rem] text-[#94a3b8]">
                         <span>CONNECTION:</span>
-                        <span className={error ? 'text-red-500' : 'text-[#10b981] font-bold'}>{error ? 'FAILURE' : 'STABLE'}</span>
+                        <span className={connectionStatus === 'Failure' || error ? 'text-red-500' : connectionStatus === 'Reconnecting...' ? 'text-yellow-500' : 'text-[#10b981] font-bold'}>{connectionStatus === 'Failure' || error ? 'FAILURE' : connectionStatus === 'Reconnecting...' ? 'RECONNECTING' : 'STABLE'}</span>
                     </div>
                 </div>
                 <div className="text-[0.6rem] font-mono opacity-40 uppercase tracking-widest text-white">SECURE_CHANNEL_V4</div>

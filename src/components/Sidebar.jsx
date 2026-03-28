@@ -132,7 +132,7 @@ const Sidebar = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                         >
-                            CryptoWorld
+                            Blockchain Intelligence
                         </motion.span>
                     )}
                 </div>

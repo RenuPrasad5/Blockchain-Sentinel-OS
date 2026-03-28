@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Send, X, Terminal, ArrowRight, Shield, Zap, Search, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useModeStore from '../store/modeStore';
-import logo from '../assets/logo.png';
+import logo from '../assets/BL_logo.png';
 import './AISentinelAssistant.css';
 
 const TypewriterText = ({ text, delay = 30 }) => {

@@ -1,37 +1,79 @@
-import { Alchemy, Network, Utils } from "alchemy-sdk";
+import { Alchemy, Network } from "alchemy-sdk";
 import { ethers } from "ethers";
 
+const ALCHEMY_KEY = 'ZJNf33Hk7Dj5Jm5b5wH5yKCfWKAPeUWG';
+
 const getAlchemyConfig = () => ({
-    apiKey: import.meta.env.VITE_ALCHEMY_API_KEY || 'demo',
+    apiKey: ALCHEMY_KEY,
     network: Network.ETH_MAINNET,
 });
 
 let alchemy;
 let provider; // Ethers provider for fallback
-const ALCHEMY_KEY = import.meta.env.VITE_ALCHEMY_API_KEY || 'demo';
-
-try {
-    alchemy = new Alchemy(getAlchemyConfig());
-    // Create a fallback ethers provider for data integrity
-    provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`);
-} catch (err) {
-    console.warn("Alchemy SDK initialization postponed or failed. Using public fallback.");
-    provider = new ethers.JsonRpcProvider('https://eth.publicnode.com');
-}
 
 class AlchemyManager {
     constructor() {
         this.status = "DISCONNECTED";
+        this.statusListeners = [];
         this.init();
+    }
+
+    setStatus(newStatus) {
+        this.status = newStatus;
+        this.statusListeners.forEach(cb => cb(newStatus));
+    }
+
+    onStatusChange(callback) {
+        this.statusListeners.push(callback);
+        callback(this.status);
+        return () => {
+            this.statusListeners = this.statusListeners.filter(cb => cb !== callback);
+        };
+    }
+
+    initProvider() {
+        try {
+            this.setStatus("Reconnecting...");
+            const wsUrl = `wss://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+            provider = new ethers.WebSocketProvider(wsUrl);
+
+            // Wait for internal websocket to be available
+            setTimeout(() => {
+                if (provider && provider.websocket) {
+                    provider.websocket.onopen = () => {
+                        this.setStatus("CONNECTED");
+                    };
+                    provider.websocket.onclose = () => {
+                        this.setStatus("Reconnecting...");
+                        setTimeout(() => this.initProvider(), 3000);
+                    };
+                    provider.websocket.onerror = () => {
+                        this.setStatus("Failure");
+                    };
+
+                    // Initial state check
+                    if (provider.websocket.readyState === 1) {
+                        this.setStatus("CONNECTED");
+                    }
+                } else {
+                    this.setStatus("CONNECTED"); // Assume connected if websocket property inaccessible
+                }
+            }, 500);
+        } catch (err) {
+            console.warn("WSS Provider initialization failed:", err);
+            this.setStatus("Failure");
+            provider = new ethers.JsonRpcProvider('https://eth.publicnode.com');
+        }
     }
 
     init() {
         try {
-            this.status = "CONNECTED";
+            alchemy = new Alchemy(getAlchemyConfig());
+            this.initProvider();
             console.log("Alchemy SDK initialized.");
         } catch (err) {
             console.error("Alchemy init error:", err);
-            this.status = "ERROR";
+            this.setStatus("Failure");
         }
     }
 
@@ -47,28 +89,14 @@ class AlchemyManager {
         }
     }
 
-    onSwap(callback) {
-        const WETH_USDC_POOL = "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640";
-        const SWAP_TOPIC = "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67";
-
-        const filter = {
-            address: WETH_USDC_POOL,
-            topics: [SWAP_TOPIC]
-        };
-
+    onNewBlock(callback) {
         try {
-            alchemy.ws.on(filter, (log) => {
-                // Decode price from sqrtPriceX96 in Swap event
-                // data: [amount0, amount1, sqrtPriceX96, liquidity, tick]
-                const data = log.data;
-                const sqrtPriceX96 = BigInt("0x" + data.slice(130, 194));
-                const price = Number((sqrtPriceX96 * sqrtPriceX96 * BigInt(1e12)) / (BigInt(2) ** BigInt(192)));
-                const ethPrice = 1 / (price / 1e12); // Simple conversion for demonstration
-                callback(ethPrice);
-            });
-            return () => alchemy.ws.off(filter);
+            alchemy.ws.on("block", callback);
+            return () => {
+                alchemy.ws.off("block", callback);
+            };
         } catch (err) {
-            console.error("Error setting up swap listener:", err);
+            console.error("Error setting up block listener:", err);
             return () => { };
         }
     }

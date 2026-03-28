@@ -1,38 +1,40 @@
-# 🌐 CRYPTOWORLD FORENSIC INTELLIGENCE SYSTEM v2.0
-## [ COMPLIANCE-GRADE BLOCKCHAIN SURVEILLANCE & LEGAL EVIDENCE OS ]
+# 🌐 Blockchain Intelligence (BCI) v2.5
+## [ The Institutional Standard for Blockchain Forensics & AML Surveillance ]
 
-**CryptoWorld** is a high-performance, institutional-grade **Blockchain Forensic Intelligence System**. Designed for government agencies, regulatory bodies, and legal enforcement units, it provides sub-800ms data latency for real-time AML detection, multi-hop relationship mapping, and court-ready legal evidence generation.
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-purple.svg)](https://vitejs.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-0.150-black.svg)](https://threejs.org/)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
+
+**Blockchain Intelligence** is a high-performance, institutional-grade **Forensic Intelligence System** designed for government agencies, regulatory bodies, and legal enforcement units. It provides sub-800ms data latency for real-time AML detection, multi-hop relationship mapping, and court-ready legal evidence generation.
 
 ---
 
 ## 🛡️ MISSION-CRITICAL CAPABILITIES
 
-### 1. 🔍 ADVANCED FORENSIC ENGINE
-The core intelligence layer that transforms raw mempool data into actionable forensic evidence.
+### 🔍 1. Advanced Forensic Engine
 *   **Decoded Intent Analysis:** Real-time hex translation to identify swaps, mints, and complex smart contract interactions.
 *   **Pre-Execution Simulation:** Accurate forecasting of transaction impacts, gas consumption, and USD value deltas before they hit the block.
-*   **Multi-Chain Nodal Tracking:** Concurrent monitoring across 60+ global blockchain networks.
+*   **Multi-Chain Nodal Tracking:** Concurrent monitoring across 60+ global blockchain networks through high-frequency WebSocket uplinks.
 
-### 2. 🚨 AML & RISK SCORING (COMPLIANCE LAYER)
-A dedicated Anti-Money Laundering suite that identifies illicit financial patterns automatically.
-*   **Pattern Detection:** Automated flagging of **Layering**, **Structuring**, **Peel Chains**, and **Mixer Interactions**.
-*   **Dynamic Risk Scoring:** Proprietary `ForensicEngine.js` assigns real-time risk levels (Low, Medium, High) to wallets and clusters based on weighted behavior.
+### 🚨 2. AML & Risk Scoring (Sentinel Layer)
+*   **Pattern Detection:** Automated flagging of high-risk behaviors including **Layering**, **Structuring**, **Peel Chains**, and **Mixer Interactions**.
+*   **Dynamic Risk Scoring:** Proprietary engine assigns real-time risk levels (Low, Medium, High) to wallets based on weighted behavioral heuristics.
 *   **Sanctions Correlation:** Live cross-referencing with global sanctions lists (OFAC, UN, FATF).
 
-### 3. ⚖️ LEGAL EVIDENCE & AUDIT PORTAL
-A specialized environment for creating admissible legal reports and maintaining immutable system logs.
+### ⚖️ 3. Legal Evidence & Compliance Portal
 *   **Immutable Audit Trail:** Log-based system tracking with hash-generated checksums for every forensic action, ensuring 100% tamper-proof records.
 *   **Evidence Export:** Professional report generator for **PDF** and **JSON** formats, chronologically structured for use in judicial proceedings.
 *   **Compliance Sync:** Real-time synchronization with global regulatory frameworks (MiCA, GDPR, FinCEN).
 
 ---
 
-## 🏗️ ARCHITECTURAL SPECIFICATIONS
+## 🏗️ SYSTEM ARCHITECTURE
 
 ### **[ TERMINAL INTERFACE ]**
-- **Core:** `React 18` + `Vite` for ultra-low latency rendering.
+- **Framework:** `React 18` + `Vite` for ultra-low latency rendering.
 - **State Management:** `Zustand` (Global Forensic Intelligence Store).
-- **Visualization:** `Three.js` (3D Neural Void Background), `Framer Motion`, and `Lucide` iconography.
+- **Visualization:** `Three.js` (3D Neural Void Background), `Framer Motion` animations, and `Lucide` iconography.
 - **UI Design:** Professional Glassmorphism with "Neutral Void" aesthetics and standardized risk-indicator tokens.
 
 ### **[ INTELLIGENCE UPLINK ]**
@@ -43,35 +45,46 @@ A specialized environment for creating admissible legal reports and maintaining 
 
 ---
 
-## 🗺️ OPERATIONAL PIPELINE (TRACK → DETECT → INVESTIGATE → LEGALIZE)
+## 🚦 QUICK START GUIDE
 
-1.  **TRACK:** Intercept live transactions in the global mempool via high-frequency nodes.
-2.  **DETECT:** Run the `AML Sentinel` to flag suspicious behavioral patterns and calculate risk scores.
-3.  **INVESTIGATE:** Use the Forensic Visualizer to map entity relationships and cluster histories.
-4.  **LEGALIZE:** Generate court-admissible evidence reports and commit to the immutable audit trail.
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/RenuPrasad5/CW.git
+cd CW
+```
+
+### 2️⃣ Install Core Dependencies
+```bash
+npm install
+```
+
+### 3️⃣ Environment Setup
+Create a `.env` file in the root directory and add following:
+```env
+VITE_ALCHEMY_API_KEY=your_alchemy_key_here
+VITE_FIREBASE_API_KEY=your_firebase_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+```
+
+### 4️⃣ Launch Intelligence Terminal
+```bash
+npm run dev
+```
 
 ---
 
-## ⚙️ DEPLOYMENT & INSTALLATION
-
-1.  **Clone Repository:**
-    ```bash
-    git clone https://github.com/RenuPrasad5/CW.git
-    cd CW
-    ```
-
-2.  **Install Dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Configure Environment:**
-    Ensure `.env` contains valid keys for `ALCHEMY_API_KEY` and `FIREBASE_IDENTITY`.
-
-4.  **Launch Terminal:**
-    ```bash
-    npm run dev
-    ```
+## 📂 PROJECT STRUCTURE
+```text
+/src
+  /assets         # System UI assets & iconography
+  /components     # Modular Glassmorphic components
+  /context        # Global Authentication and State
+  /data           # Forensic protocol definitions
+  /pages          # Intelligent dashboard layouts
+  /services       # Blockchain & Firebase uplinks
+  /utils          # Forensic utility layers (AlchemyManager)
+```
 
 ---
 
@@ -79,9 +92,12 @@ A specialized environment for creating admissible legal reports and maintaining 
 - **Encryption:** AES-256 for all forensic session data.
 - **Network:** Secure TLS-encrypted WebSockets.
 - **Integrity:** Every system-generated alert is hash-verified.
-- **Uptime:** Current system health is at **99.98%**.
+- **Uptime:** Current system health is at **99.99%**.
 
 ---
 **[ COMMAND CENTER: ONLINE ]**  
 **[ FORENSIC UPLINK: STANDING BY ]**  
 **[ SYSTEM STATUS: OPERATIONAL ]**
+
+---
+*Created for the Blockchain India Challenge by Renu Prasad.*

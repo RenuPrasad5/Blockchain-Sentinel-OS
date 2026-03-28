@@ -37,7 +37,7 @@ import {
     Briefcase,
     Scale
 } from 'lucide-react';
-import logo from '../assets/logo.png';
+import logo from '../assets/BL_logo.png';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
 import './Navbar.css';
@@ -128,8 +128,8 @@ const Navbar = () => {
                     <Menu size={24} />
                 </button>
                 <Link to="/" className="nav-brand">
-                    <img src={logo} alt="CryptoWorld Logo" className="logo-circular-nav" />
-                    <span className="brand-text-nav">CryptoWorld</span>
+                    <img src={logo} alt="Blockchain Intelligence Logo" className="logo-circular-nav" />
+                    <span className="brand-text-nav">Blockchain Intelligence</span>
                 </Link>
             </div>
 

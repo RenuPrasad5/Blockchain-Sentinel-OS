@@ -24,7 +24,7 @@ const Home = () => {
                                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 transition-all duration-300">
                                     <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                                     <span className="text-xs font-semibold text-blue-400/90 tracking-widest uppercase">
-                                        CryptoWorld OS v2.0
+                                        Blockchain Intelligence OS v2.0
                                     </span>
                                 </div>
 

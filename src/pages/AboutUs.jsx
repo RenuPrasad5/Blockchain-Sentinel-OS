@@ -13,7 +13,7 @@ const TerminalIntro = ({ onComplete }) => {
         "> INITIALIZING_SYSTEM_BOOT...",
         "> LOADING_CRYPTOGRAPHIC_FRAMEWORKS...",
         "> ESTABLISHING_NEURAL_RESEACH_NODE...",
-        "> ACCESS_GRANTED: WELCOME_TO_CRYPTOWORLD",
+        "> ACCESS_GRANTED: WELCOME_TO_Blockchain Intelligence",
         "> DECODING_VISION..."
     ];
 
@@ -136,7 +136,7 @@ const AboutUs = () => {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1, delay: 0.8 }}
                 >
-                    CryptoWorld is not a platform. It is a commitment to the clarity, intelligence, and long-term
+                    Blockchain Intelligence is not a platform. It is a commitment to the clarity, intelligence, and long-term
                     understanding required to navigate the frontier of decentralized finance.
                 </motion.p>
 
@@ -342,7 +342,7 @@ const AboutUs = () => {
                 </div>
                 <div className="testimonials-grid">
                     <div className="testimonial-card">
-                        <p>"CryptoWorld turned the noise of CT into a clear, actionable signal. Their research is unmatched."</p>
+                        <p>"Blockchain Intelligence turned the noise of CT into a clear, actionable signal. Their research is unmatched."</p>
                         <div className="testimonial-author">— Institutional Analyst, NY</div>
                     </div>
                     <div className="testimonial-card">
@@ -372,7 +372,7 @@ const AboutUs = () => {
                     whileHover={{ scale: 1.02 }}
                 >
                     <h2>Ready to explore the architecture?</h2>
-                    <p>Join the thousands of analysts who are building the future with CryptoWorld.</p>
+                    <p>Join the thousands of analysts who are building the future with Blockchain Intelligence.</p>
                     <motion.button
                         className="cta-btn-premium glow-button"
                         whileHover={{ scale: 1.05 }}
@@ -383,7 +383,7 @@ const AboutUs = () => {
             </SectionReveal>
 
             <footer className="manifesto-footer">
-                EST. 2024 // CRYPTOWORLD ECOSYSTEM PROTOCOL // DOCUMENT_v1.0
+                EST. 2024 // Blockchain Intelligence ECOSYSTEM PROTOCOL // DOCUMENT_v1.0
             </footer>
         </div>
     );

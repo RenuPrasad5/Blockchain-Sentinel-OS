@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }) => {
                     fontFamily: 'sans-serif'
                 }}>
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>CryptoWorld</div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>Blockchain Intelligence</div>
                         <div style={{ fontSize: '14px', opacity: 0.7 }}>Initializing Intelligence Interface...</div>
                     </div>
                 </div>
