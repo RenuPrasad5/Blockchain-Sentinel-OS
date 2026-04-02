@@ -11,13 +11,16 @@ import {
     Eye,
     Zap,
     Scale,
-    Lock
+    Lock,
+    Wifi
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ActivityStream from '../components/ActivityStream';
 import './Government.css';
 
 const GovernmentAndEnforcement = () => {
     const [activeTab, setActiveTab] = useState('fraud');
+    const [networkStatus, setNetworkStatus] = useState('Connecting');
 
     const tabs = [
         { id: 'fraud', title: 'Fraud Detection', icon: <ShieldAlert size={18} /> },
@@ -39,9 +42,15 @@ const GovernmentAndEnforcement = () => {
                 </div>
                 
                 <div className="header-actions">
-                    <div className="compliance-badge">
-                        <Scale size={14} className="text-blue-500" />
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Compliance Ver: 8.4.2</span>
+                    <div className="flex items-center gap-3">
+                        <div className={`network-status-badge ${networkStatus.toLowerCase()}`}>
+                            <Wifi size={14} className={networkStatus === 'Live' ? "text-emerald-400" : "text-amber-400"} />
+                            <span className="text-[10px] font-black text-white uppercase tracking-widest">Network Status: {networkStatus}</span>
+                        </div>
+                        <div className="compliance-badge">
+                            <Scale size={14} className="text-blue-500" />
+                            <span className="text-[10px] font-black text-white uppercase tracking-widest">Compliance Ver: 8.4.2</span>
+                        </div>
                     </div>
                     <button className="export-btn">
                         <Download size={14} />
@@ -64,7 +73,7 @@ const GovernmentAndEnforcement = () => {
             </div>
 
             <main className="gov-content-area">
-                {activeTab === 'fraud' && <FraudDetectionDashboard />}
+                {activeTab === 'fraud' && <FraudDetectionDashboard onStatusChange={setNetworkStatus} />}
                 {activeTab === 'case' && <CaseBuilder />}
                 {activeTab === 'risk' && <RiskScoringSystem />}
                 {activeTab === 'alerts' && <AlertManagement />}
@@ -73,7 +82,7 @@ const GovernmentAndEnforcement = () => {
     );
 };
 
-const FraudDetectionDashboard = () => (
+const FraudDetectionDashboard = ({ onStatusChange }) => (
     <div className="gov-dashboard-grid">
         <div className="gov-stats-row">
             <div className="gov-stat-card glass">
@@ -94,26 +103,8 @@ const FraudDetectionDashboard = () => (
         </div>
 
         <div className="gov-main-grid mt-6">
-            <div className="gov-panel-column glass">
-                <div className="panel-header">
-                    <Activity size={16} />
-                    <span>Real-Time Illicit Activity Stream</span>
-                </div>
-                <div className="panel-content">
-                    {[1, 2, 3, 4, 5].map(i => (
-                        <div key={i} className="anomaly-item border-l-2 border-rose-500 p-4 bg-rose-500/5 mb-3">
-                            <div className="flex justify-between mb-1">
-                                <span className="text-[10px] font-black text-rose-500 uppercase">Alert: Potential Structuring</span>
-                                <span className="text-[10px] text-slate-500">0.4s ago</span>
-                            </div>
-                            <div className="text-xs font-mono text-slate-300 mb-2 truncate">0x71C...8e92 → 0xAb5...C9b</div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm font-black text-white">$1,240,000 USD</span>
-                                <button className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Initialize Case</button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+            <div className="gov-panel-column glass overflow-hidden flex flex-col h-[600px]">
+                <ActivityStream onStatusChange={onStatusChange} />
             </div>
             
             <div className="gov-panel-column glass">

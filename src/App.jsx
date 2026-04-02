@@ -56,7 +56,7 @@ function App() {
   const { isScanning, isExpanded } = useModeStore();
 
   return (
-    <div className="app-container" style={{ '--sidebar-width': isAuthPage ? '0px' : (isExpanded ? '260px' : '80px'), '--navbar-height': '80px' }}>
+    <div className="app-container" style={{ '--sidebar-width': isAuthPage ? '0px' : (isExpanded ? '260px' : '80px'), '--navbar-height': isAuthPage ? '0px' : '80px' }}>
       {isScanning && <CyberScanOverlay />}
       {!isAuthPage && <Navbar />}
       {!isAuthPage && <Sidebar />}
