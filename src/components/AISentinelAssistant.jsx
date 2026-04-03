@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Send, X, Terminal, ArrowRight, Shield, Zap, Search, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useModeStore from '../store/modeStore';
-import logo from '../assets/BL_logo.png';
+import logo from '../assets/BL.logo.png';
 import './AISentinelAssistant.css';
 
 const TypewriterText = ({ text, delay = 30 }) => {
@@ -178,9 +178,7 @@ const AISentinelAssistant = () => {
             </AnimatePresence>
 
             <div className="relative">
-                {!isOpen && hasPopped && (
-                    <div className="auto-pop-badge">1</div>
-                )}
+                {/* Notification Badge removed per design request */}
                 <div
                     className="sentinel-trigger"
                     onClick={() => setIsOpen(!isOpen)}

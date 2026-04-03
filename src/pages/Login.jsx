@@ -6,24 +6,64 @@ import { motion } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getAuth, signInWithCustomToken, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 
-const HexagonLogo = () => (
+import logo from '../assets/BL.logo.png';
+
+const NetworkNodeLogo = () => (
     <motion.div
-        animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        className="w-28 h-28 mb-8"
+        animate={{ 
+            opacity: [0.8, 1, 0.8],
+            scale: [0.98, 1, 0.98]
+        }}
+        transition={{ 
+            duration: 4, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+        }}
+        className="w-56 h-56 mb-8 flex items-center justify-center"
     >
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-            <path d="M50 5L90 27.5V72.5L50 95L10 72.5V27.5L50 5Z" stroke="#3b82f6" strokeWidth="3" />
-            <path d="M50 15L80 32.5V67.5L50 85L20 67.5V32.5L50 15Z" fill="url(#hexGradient)" opacity="0.8" />
-            <defs>
-                <linearGradient id="hexGradient" x1="50" y1="15" x2="50" y2="85" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#3b82f6" stopOpacity="0.5" />
-                    <stop offset="1" stopColor="#020617" stopOpacity="0" />
-                </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="10" fill="#ffffff" className="drop-shadow-[0_0_10px_#ffffff]" />
-        </svg>
+        <div className="relative w-full h-full">
+            {/* Soft outer glow */}
+            <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full animate-pulse" />
+            <img 
+                src={logo} 
+                alt="Network Node" 
+                className="w-full h-full object-contain relative z-10 animate-pulse" 
+            />
+        </div>
     </motion.div>
+);
+
+const NetworkBackground = () => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#f8fafc]">
+        {/* Cyber Grid */}
+        <svg width="100%" height="100%" className="absolute inset-0 opacity-[0.05]">
+            <pattern id="cyber-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2563eb" strokeWidth="1" />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#cyber-grid)" />
+        </svg>
+        
+        {/* Floating Telemetry Labels */}
+        <div className="absolute top-6 left-6 font-mono text-[10px] text-slate-400 tracking-widest uppercase">
+            Latency: <span className="text-blue-500">24MS</span>
+        </div>
+        <div className="absolute top-6 right-6 font-mono text-[10px] text-slate-400 tracking-widest uppercase">
+            Gateway: <span className="text-emerald-500">Verified</span>
+        </div>
+        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-slate-400 tracking-widest uppercase">
+            Protocol: <span className="text-blue-500">OS-V2</span>
+        </div>
+
+        <motion.div
+            animate={{ 
+                x: [0, 50, 0], 
+                y: [0, 30, 0],
+                rotate: [0, 10, 0]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-50/30 rounded-full blur-[100px]"
+        />
+    </div>
 );
 
 const Login = () => {
@@ -118,14 +158,16 @@ const Login = () => {
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,rgba(59,130,246,0.15),transparent_50%)] pointer-events-none"></div>
                 <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_right,rgba(139,92,246,0.15),transparent_50%)] pointer-events-none"></div>
                 
-                <HexagonLogo />
-                
-                <h1 className="text-4xl font-black text-white mb-4 tracking-tight text-center">
-                    Blockchain<br />Intelligence OS
-                </h1>
-                <p className="text-slate-400 text-lg text-center max-w-sm font-medium">
-                    The Future of Sovereign Digital Forensics.
-                </p>
+                <div className="flex flex-col items-center justify-center z-20">
+                    <NetworkNodeLogo />
+                    <h1 className="text-4xl font-black text-white mb-6 tracking-tight text-center leading-tight">
+                        Blockchain<br />Intelligence <span className="text-blue-500">OS</span>
+                    </h1>
+                    <div className="h-1 w-20 bg-blue-500/50 rounded-full mb-6"></div>
+                    <p className="text-slate-400 text-lg text-center max-w-sm font-medium leading-relaxed">
+                        The Future of Sovereign<br />Digital Forensics.
+                    </p>
+                </div>
             </motion.div>
 
             {/* Right Side: Interaction Panel (60%) */}
@@ -133,9 +175,18 @@ const Login = () => {
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full lg:w-[60%] bg-white flex flex-col items-center justify-center p-8 sm:p-12 overflow-y-auto"
+                className="w-full lg:w-[60%] bg-[#f8fafc] flex flex-col items-center justify-center p-8 sm:p-12 overflow-y-auto relative"
             >
-                <div className="w-full max-w-md my-auto pb-8 pt-4">
+                <NetworkBackground />
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="w-full max-w-md my-auto p-10 bg-white/80 backdrop-blur-[10px] rounded-3xl border border-blue-500/10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative z-10"
+                    style={{ 
+                        borderImageSource: 'linear-gradient(to bottom right, rgba(59,130,246,0.3), transparent)',
+                        borderImageSlice: 1
+                    }}
+                >
                     <div className="text-center mb-10">
                         <h2 className="text-3xl font-extrabold text-[#020617] tracking-tight">Welcome Back</h2>
                         <p className="text-slate-500 mt-2 font-medium">Log in to your Sentinel-OS portal</p>
@@ -189,7 +240,7 @@ const Login = () => {
                                     placeholder="Enter your email"
                                     required
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-3 py-3.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#020617] focus:border-transparent transition-all bg-white text-[#020617] font-medium"
+                                    className="w-full pl-10 pr-3 py-3.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent focus:shadow-[inset_0_0_10px_rgba(59,130,246,0.1)] transition-all bg-white text-[#020617] font-medium"
                                 />
                             </div>
                         </div>
@@ -207,7 +258,7 @@ const Login = () => {
                                     placeholder="••••••••"
                                     required
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-10 py-3.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#020617] focus:border-transparent transition-all bg-white text-[#020617] font-medium"
+                                    className="w-full pl-10 pr-10 py-3.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent focus:shadow-[inset_0_0_10px_rgba(59,130,246,0.1)] transition-all bg-white text-[#020617] font-medium"
                                 />
                                 <button
                                     type="button"
@@ -230,8 +281,12 @@ const Login = () => {
                         <button 
                             type="submit" 
                             disabled={loading}
-                            className="w-full bg-[#020617] text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-2 mt-4 transition-all hover:bg-slate-800 hover:scale-[1.02] active:scale-95 shadow-[0_10px_20px_rgba(2,6,23,0.15)]"
+                            className="w-full group relative bg-[#020617] text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-2 mt-4 transition-all hover:bg-slate-800 hover:scale-[1.02] active:scale-95 shadow-[0_10px_20px_rgba(2,6,23,0.15)] overflow-hidden"
                         >
+                            {/* Shimmer Effect */}
+                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" 
+                                 style={{ animation: 'shimmer 3s infinite 1.5s' }} />
+                            
                             {loading ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                             ) : (
@@ -243,7 +298,7 @@ const Login = () => {
                     <div className="mt-10 text-center text-sm text-slate-600 font-medium">
                         Don't have an account? <Link to="/register" className="text-blue-600 font-bold hover:underline">Sign up now</Link>
                     </div>
-                </div>
+                </motion.div>
             </motion.div>
         </div>
     );

@@ -37,7 +37,7 @@ import {
     Briefcase,
     Scale
 } from 'lucide-react';
-import logo from '../assets/BL_logo.png';
+import logo from '../assets/BL.logo.png';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
 import './Navbar.css';
