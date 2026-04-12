@@ -203,12 +203,12 @@ const CompliancePortal = () => {
                                                     </div>
                                                     <div>
                                                         <h4 className="text-white font-black text-sm uppercase">Official Evidence Report</h4>
-                                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">START-UP BL FORENSICS v2.0</span>
+                                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">BLOCKCHAIN SENTINEL FORENSICS v2.0</span>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
                                                     <div className="text-[9px] text-slate-500 uppercase font-black">Report Serial No.</div>
-                                                    <div className="text-xs text-white font-mono">BL-FX-2026-X84-001</div>
+                                                    <div className="text-xs text-white font-mono">SENTINEL-FX-2026-X84-001</div>
                                                 </div>
                                             </div>
 

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "startup-bl",
+  "name": "blockchain-sentinel",
   "builds": [
     {
       "src": "package.json",

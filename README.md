@@ -1,7 +1,7 @@
 # 🌐 Blockchain Intelligence (BCI) v2.5
 ## [ The Institutional Standard for Blockchain Forensics & AML Surveillance ]
 
-[![Vercel](https://img.shields.io/badge/Vercel-Live_Deployment-brightgreen?logo=vercel&logoColor=white)](https://startup-bl.vercel.app)
+[![Vercel](https://img.shields.io/badge/Vercel-Live_Deployment-brightgreen?logo=vercel&logoColor=white)](https://blockchain-sentinel.vercel.app)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.0-purple.svg)](https://vitejs.dev/)
 [![Three.js](https://img.shields.io/badge/Three.js-0.150-black.svg)](https://threejs.org/)
@@ -50,8 +50,8 @@
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/RenuPrasad5/Startup-BL.git
-cd Startup-BL
+git clone https://github.com/RenuPrasad5/Blockchain-Sentinel.git
+cd Blockchain-Sentinel
 ```
 
 ### 2️⃣ Install Core Dependencies
@@ -104,5 +104,5 @@ npm run dev
 *Created for the Blockchain India Challenge by Renu Prasad.*
 
 ---
-**🚀 Production Status: Live on [Vercel](https://startup-bl.vercel.app)**  
+**🚀 Production Status: Live on [Vercel](https://blockchain-sentinel.vercel.app)**  
 **🔧 Cloud Architecture: [Firebase Cloud Functions](https://console.firebase.google.com/)**
