@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD0KWoQ_uQtIxksx-CIskur1S615pDufD4",
-    authDomain: "crypto-world-c1fe2.firebaseapp.com",
-    projectId: "crypto-world-c1fe2",
-    storageBucket: "crypto-world-c1fe2.firebasestorage.app",
-    messagingSenderId: "11867512536",
-    appId: "1:11867512536:web:c24b13500db8e98952c1ad",
-    measurementId: "G-JEM2X84ZB5"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);

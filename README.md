@@ -49,8 +49,8 @@
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/RenuPrasad5/CW.git
-cd CW
+git clone https://github.com/RenuPrasad5/Startup-BL.git
+cd Startup-BL
 ```
 
 ### 2️⃣ Install Core Dependencies

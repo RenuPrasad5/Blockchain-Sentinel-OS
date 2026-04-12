@@ -5,11 +5,14 @@ import useModeStore from '../store/modeStore';
 // 1. Use WebSocket (WSS) instead of HTTP for real-time "Push" data
 const client = createPublicClient({
     chain: mainnet,
-    transport: webSocket(import.meta.env.VITE_ALCHEMY_RPC_URL || 'wss://eth-mainnet.g.alchemy.com/v2/ZJNf33Hk7Dj5Jm5b5wH5yKCfWKAPeUWG')
+    transport: webSocket(import.meta.env.VITE_ALCHEMY_RPC_URL)
 });
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 let buffer = [];
-const FLUSH_INTERVAL = 800; // 800ms buffer for flick-free updates
+const FLUSH_INTERVAL = isMobile ? 1500 : 800; // Slower updates on mobile to save CPU
+const BATCH_SIZE = isMobile ? 3 : 6; // Process fewer transactions per tick on mobile
 let retryCount = 0;
 const MAX_RETRIES = 5;
 
@@ -29,7 +32,7 @@ export const startMempoolStream = () => {
                     setConnectionStatus('open');
 
                     // Take the top 5 most recent hashes
-                    const batch = hashes.slice(0, 5);
+                    const batch = hashes.slice(0, BATCH_SIZE);
 
                     // 2. Fetch all transaction details AT THE SAME TIME (Parallel)
                     // This prevents the UI from lagging

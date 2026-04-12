@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "name": "startup-bl",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_FIREBASE_API_KEY": "@fire_api_key",
+    "VITE_FIREBASE_AUTH_DOMAIN": "@fire_auth_domain",
+    "VITE_FIREBASE_PROJECT_ID": "@fire_project_id",
+    "VITE_FIREBASE_STORAGE_BUCKET": "@fire_storage_bucket",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "@fire_sender_id",
+    "VITE_FIREBASE_APP_ID": "@fire_app_id",
+    "VITE_FIREBASE_MEASUREMENT_ID": "@fire_measurement_id",
+    "VITE_ALCHEMY_RPC_URL": "@alchemy_rpc_url"
+  }
+}

@@ -33,6 +33,7 @@ import WhaleWatch from './pages/tools/WhaleWatch';
 import AISentinel from './pages/tools/AISentinel';
 import Sidebar from './components/Sidebar';
 import AISentinelAssistant from './components/AISentinelAssistant';
+import { useAuth } from './context/AuthContext';
 import Government from './pages/Government';
 import UseCases from './pages/UseCases';
 import CompliancePortal from './pages/CompliancePortal';
@@ -51,7 +52,22 @@ function App() {
 
   const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel'];
   const isFullWidth = fullWidthPaths.includes(location.pathname);
-  const isAuthPage = ['/login', '/register'].includes(location.pathname);
+  const isAuthPage = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/auth');
+
+  const { user } = useAuth();
+  const [showAssistant, setShowAssistant] = React.useState(false);
+
+  React.useEffect(() => {
+    // Only show assistant if authenticated AND not on auth pages
+    if (user && !isAuthPage) {
+      const timer = setTimeout(() => {
+        setShowAssistant(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowAssistant(false);
+    }
+  }, [user, isAuthPage]);
 
   const { isScanning, isExpanded } = useModeStore();
 
@@ -120,7 +136,7 @@ function App() {
               <Route path="/use-cases" element={<UseCases />} />
               <Route path="/compliance" element={<CompliancePortal />} />
             </Routes>
-            <AISentinelAssistant />
+            {showAssistant && <AISentinelAssistant />}
           </div>
         </main>
       </div>

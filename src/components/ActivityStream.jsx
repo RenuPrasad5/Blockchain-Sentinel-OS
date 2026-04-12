@@ -4,10 +4,12 @@ import { Activity, ShieldAlert, Clock, ChevronRight, Zap } from 'lucide-react';
 import { Alchemy, Network, Utils } from 'alchemy-sdk';
 
 const settings = {
-    apiKey: import.meta.env.VITE_ALCHEMY_API_KEY || "ZJNf33Hk7Dj5Jm5b5wH5yKCfWKAPeUWG",
+    apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
     network: Network.ETH_MAINNET,
 };
 const alchemy = new Alchemy(settings);
+
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 const ActivityStream = ({ onStatusChange }) => {
     const [alerts, setAlerts] = useState([]);
@@ -94,7 +96,8 @@ const ActivityStream = ({ onStatusChange }) => {
             setAlerts(prev => {
                 const isDuplicate = prev.some(a => a.fullHash === hashStr);
                 if (isDuplicate) return prev;
-                return [newAlert, ...prev].slice(0, 20); // Limit to 20 for performance
+                const limit = isMobile ? 8 : 20; // Drastically reduce list size on mobile
+                return [newAlert, ...prev].slice(0, limit);
             });
         };
 
