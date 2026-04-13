@@ -50,8 +50,8 @@
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/RenuPrasad5/Blockchain-Sentinel.git
-cd Blockchain-Sentinel
+git clone https://github.com/RenuPrasad5/Blockchain-Sentinel-OS.git
+cd Blockchain-Sentinel-OS
 ```
 
 ### 2️⃣ Install Core Dependencies
