@@ -1,0 +1,8 @@
+functions/
+node_modules/
+dist/
+.env*
+deploy.sh
+implementation_plan.md
+walkthrough.md
+repomix-output.xml
