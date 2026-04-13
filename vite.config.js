@@ -6,14 +6,16 @@ export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
-  
+
   return {
+    base: '/',
     plugins: [react()],
     esbuild: {
-      drop: ['console', 'debugger'],
+      drop: mode === 'production' ? ['console', 'debugger'] : [], // Only drop in production
     },
-    define: {
-      // Ensure specific env vars are defined for the build process if needed
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
     },
     server: {
       proxy: {

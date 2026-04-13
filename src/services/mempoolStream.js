@@ -3,9 +3,12 @@ import { mainnet } from 'viem/chains';
 import useModeStore from '../store/modeStore';
 
 // 1. Use WebSocket (WSS) instead of HTTP for real-time "Push" data
+// Added safety check to prevent white-screen crashes if env is missing
+const rpcUrl = import.meta.env.VITE_ALCHEMY_RPC_URL || 'wss://eth-mainnet.g.alchemy.com/v2/demo';
+
 const client = createPublicClient({
     chain: mainnet,
-    transport: webSocket(import.meta.env.VITE_ALCHEMY_RPC_URL)
+    transport: webSocket(rpcUrl)
 });
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
