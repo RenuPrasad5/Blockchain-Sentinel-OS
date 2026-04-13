@@ -8,14 +8,25 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
+    // Explicitly set the root to the current directory to fix path resolution errors
+    root: '.',
     base: '/',
     plugins: [react()],
     esbuild: {
-      drop: mode === 'production' ? ['console', 'debugger'] : [], // Only drop in production
+      // Clean up the production build by dropping logs and debuggers
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
+      // Ensure the old build folder is cleared before creating the new one
+      emptyOutDir: true,
+      rollupOptions: {
+        // This ensures Vite knows exactly where to start the bundle
+        input: {
+          main: './index.html',
+        },
+      },
     },
     server: {
       proxy: {
