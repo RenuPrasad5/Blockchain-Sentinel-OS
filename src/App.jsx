@@ -31,7 +31,7 @@ import useModeStore from './store/modeStore';
 import CyberScanOverlay from './components/tools/CyberScanOverlay';
 import WhaleWatch from './pages/tools/WhaleWatch';
 import AISentinel from './pages/tools/AISentinel';
-import Sidebar from './components/Sidebar';
+import Sidebar from './components/Sidebar.jsx';
 import AISentinelAssistant from './components/AISentinelAssistant';
 import { useAuth } from './context/AuthContext';
 import Government from './pages/Government';
@@ -76,7 +76,7 @@ function App() {
       {isScanning && <CyberScanOverlay />}
       {!isAuthPage && <Navbar />}
       {!isAuthPage && <Sidebar />}
-      
+
       <div className="main-wrapper">
         <main className="main-content">
           <GlobalAlert />
