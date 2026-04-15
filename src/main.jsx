@@ -59,6 +59,12 @@ class ErrorBoundary extends React.Component {
 }
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import ReactGA from 'react-ga4';
+
+const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+if (measurementId) {
+  ReactGA.initialize(measurementId);
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

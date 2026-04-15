@@ -40,10 +40,15 @@ import CompliancePortal from './pages/CompliancePortal';
 import './App.css';
 
 import ProtectedRoute from './components/ProtectedRoute';
+import ReactGA from 'react-ga4';
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  React.useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
+  }, [location]);
 
   React.useEffect(() => {
     const unwatch = startMempoolStream();
