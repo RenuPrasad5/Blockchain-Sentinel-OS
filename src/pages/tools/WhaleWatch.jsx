@@ -44,9 +44,16 @@ const SENTIMENTS = [
     { label: 'Institutional Buy', color: '#10b981', desc: 'Positive sentiment link to ETF inflows/OTC desk activity.' }
 ];
 
-const getSentiment = (txId) => {
-    const hash = txId.charCodeAt(10) % 3;
-    return SENTIMENTS[hash];
+const getSentiment = (txId = '') => {
+    // Robust hashing to ensure we always return a valid sentiment object
+    const idStr = String(txId);
+    let hash = 0;
+    for (let i = 0; i < idStr.length; i++) {
+        hash = ((hash << 5) - hash) + idStr.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+    }
+    const index = Math.abs(hash) % SENTIMENTS.length;
+    return SENTIMENTS[index] || SENTIMENTS[1];
 };
 
 const WhaleWatch = () => {
@@ -454,8 +461,9 @@ const WhaleWatch = () => {
                                                 <div
                                                     className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 rounded-lg group/sentiment relative"
                                                 >
-                                                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: tx.sentiment.color }}></div>
-                                                    <span className="text-[8px] font-black text-white/60 uppercase tracking-tighter">Intent: {tx.sentiment.label}</span>
+                                                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: tx.sentiment?.color || '#6366f1' }}></div>
+                                                    <span className="text-[8px] font-black text-white/60 uppercase tracking-tighter">Intent: {tx.sentiment?.label || 'Monitoring'}</span>
+
 
                                                     {/* Sentiment Tooltip */}
                                                     <div className="absolute bottom-full right-0 mb-2 w-48 p-3 glass border-white/10 rounded-xl opacity-0 scale-95 group-hover/sentiment:opacity-100 group-hover/sentiment:scale-100 transition-all pointer-events-none z-50">
