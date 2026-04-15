@@ -53,17 +53,37 @@ const WhaleWatch = () => {
     const { liveData, setIsScanning } = useModeStore();
     const navigate = useNavigate();
 
+    const generateMockHeatmap = () => {
+        return Array.from({ length: 20 }).map((_, i) => {
+            const valueUsd = 100000 + Math.random() * 49000000;
+            const intensity = Math.min(1, valueUsd / 50000000);
+            return {
+                x: Date.now() - Math.random() * 60000,
+                y: valueUsd,
+                id: `mock_${i}`,
+                from: '0x...',
+                to: '0x...',
+                fromLabel: 'Simulated Pulse',
+                toLabel: 'Mempool Node',
+                intent: 'BACKGROUND NOISE',
+                confidence: 50 + Math.floor(Math.random() * 10),
+                netFlow: valueUsd * (Math.random() > 0.5 ? 1 : -1),
+                intensityColor: intensity > 0.7 ? '#ef4444' : (intensity > 0.3 ? '#8b5cf6' : '#3b82f6')
+            };
+        });
+    };
+
     // Buffering Logic
     const [buffer, setBuffer] = useState([]);
-    const [heatmapData, setHeatmapData] = useState([]);
-    const [isBuffering, setIsBuffering] = useState(true);
+    const [heatmapData, setHeatmapData] = useState(generateMockHeatmap());
+    const [isBuffering, setIsBuffering] = useState(false);
     const [lastFlush, setLastFlush] = useState(Date.now());
     const [pulse, setPulse] = useState(false);
 
     // Filter and collect whale transactions into the buffer
     useEffect(() => {
         const highValueTxs = liveData.filter(tx =>
-            tx.type === 'TRANSACTION' && tx.valueUsd > 100000
+            tx.type === 'TRANSACTION' && tx.valueUsd > 1000 // Lowered threshold to ensure more live data bridges over
         );
 
         if (highValueTxs.length > 0) {
@@ -94,7 +114,7 @@ const WhaleWatch = () => {
                         intent: EXCHANGES[tx.to] ? 'SELL PRESSURE' : (EXCHANGES[tx.from] ? 'ACCUMULATION' : 'WHALE TRANSFER'),
                         confidence: 85 + Math.floor(Math.random() * 14),
                         netFlow: (Math.random() > 0.5 ? 1 : -1) * (valueUsd * 0.8),
-                        intensityColor: intensity > 0.7 ? '#ec4899' : (intensity > 0.3 ? '#8b5cf6' : '#6366f1')
+                        intensityColor: intensity > 0.7 ? '#ef4444' : (intensity > 0.3 ? '#8b5cf6' : '#3b82f6')
                     };
                 }));
                 setIsBuffering(false);
@@ -194,7 +214,7 @@ const WhaleWatch = () => {
             fillOpacity: 0.8,
             colors: [({ value, seriesIndex, w, dataPointIndex }) => {
                 const data = w.config.series[seriesIndex].data[dataPointIndex];
-                return data?.intensityColor || '#6366f1';
+                return data?.intensityColor || '#3b82f6';
             }]
         },
         tooltip: {
