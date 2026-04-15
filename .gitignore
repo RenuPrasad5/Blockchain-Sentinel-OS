@@ -26,3 +26,4 @@ dist-ssr
 # Temporary & Internal
 repomix-output.xml
 implementation_plan.md
+.vercel

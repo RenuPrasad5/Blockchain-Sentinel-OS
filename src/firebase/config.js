@@ -13,6 +13,10 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    console.warn("🚨 [Blockchain Intelligence] Environment variables missing! Ensure .env keys are populated or Vercel variables are set.");
+}
+
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);

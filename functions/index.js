@@ -13,7 +13,7 @@ const getAlchemyClient = () => {
         console.error("ALCHEMY_KEY not set in functions.config(). Proceeding with caution.");
     }
     return new Alchemy({
-        apiKey: alchemyKey || "ZJNf33Hk7Dj5Jm5b5wH5yKCfWKAPeUWG", // Fallback for local testing
+        apiKey: alchemyKey || process.env.ALCHEMY_API_KEY || "Missing_Alchemy_Key", // Fallback for local testing securely
         network: Network.ETH_MAINNET,
     });
 };
