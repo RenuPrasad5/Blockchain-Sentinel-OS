@@ -56,7 +56,7 @@ const SupportSection = () => {
                                 </div>
                                 <div className="info-content">
                                     <label>Email Intelligence</label>
-                                    <p>support@Blockchain Intelligence.int</p>
+                                    <p>support@blockchain-sentinel-os.vercel.app</p>
                                 </div>
                             </div>
                             <div className="info-item">
@@ -65,7 +65,7 @@ const SupportSection = () => {
                                 </div>
                                 <div className="info-content">
                                     <label>Institutional Line</label>
-                                    <p>+1 (888) CRYPTO-RE</p>
+                                    <p>Secure Digital Channel Only</p>
                                 </div>
                             </div>
                             <div className="info-item">
@@ -74,7 +74,7 @@ const SupportSection = () => {
                                 </div>
                                 <div className="info-content">
                                     <label>Availability</label>
-                                    <p>24/7 Priority Support Desk</p>
+                                    <p>Active Intelligence Monitoring</p>
                                 </div>
                             </div>
                         </div>
@@ -107,7 +107,10 @@ const SupportSection = () => {
                                 <p>Direct transmission for bug reports or technical anomalies.</p>
                                 <button
                                     className="category-btn"
-                                    onClick={() => setIsModalOpen(true)}
+                                    onClick={() => {
+                                        const waitlist = document.getElementById('waitlist-section');
+                                        if (waitlist) waitlist.scrollIntoView({ behavior: 'smooth' });
+                                    }}
                                 >
                                     Report Now
                                 </button>

@@ -5,6 +5,10 @@ import RoadmapSection from '../components/RoadmapSection';
 import SupportSection from '../components/SupportSection';
 import ServiceMarquee from '../components/ServiceMarquee';
 import NeuralDataNetwork from '../components/ui/NeuralDataNetwork';
+import ProblemSection from '../components/landing/ProblemSection';
+import ProcessSection from '../components/landing/ProcessSection';
+import TargetAudience from '../components/landing/TargetAudience';
+import WaitlistForm from '../components/landing/WaitlistForm';
 import './Home.css';
 
 const Home = () => {
@@ -75,6 +79,11 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            <WaitlistForm />
+            <ProblemSection />
+            <ProcessSection />
+            <TargetAudience />
 
             {/* The Pillars of Intelligence Section */}
             <section className="learning-matrix-section">
