@@ -37,6 +37,7 @@ import { useAuth } from './context/AuthContext';
 import Government from './pages/Government';
 import UseCases from './pages/UseCases';
 import CompliancePortal from './pages/CompliancePortal';
+import BottomNavigation from './components/BottomNavigation';
 import './App.css';
 
 import ProtectedRoute from './components/ProtectedRoute';
@@ -88,7 +89,6 @@ function App() {
 
           <div className="content-area">
             <Routes>
-              {/* ... routes ... */}
               <Route path="/" element={<Home />} />
               <Route path="/encyclopedia" element={<Encyclopedia />} />
               <Route path="/research" element={<ProtocolResearch />} />
@@ -145,6 +145,7 @@ function App() {
           </div>
         </main>
       </div>
+      {!isAuthPage && <BottomNavigation />}
     </div>
   );
 }

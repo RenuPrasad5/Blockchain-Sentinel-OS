@@ -26,11 +26,24 @@
   <meta property="twitter:title" content="Sovereign OS | Blockchain Intelligence & Digital Forensics" />
   <meta property="twitter:description"
     content="The standard in sovereign digital asset intelligence and forensic operations." />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#10b981" />
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(registration => {
+          console.log('SW registered: ', registration);
+        }).catch(registrationError => {
+          console.log('SW registration failed: ', registrationError);
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>

@@ -1,48 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-    TrendingUp,
-    TrendingDown,
-    Shield,
-    PieChart,
-    BarChart3,
-    Activity,
-    Zap,
-    Bell,
-    ArrowUpRight,
-    Search,
-    Globe,
-    Lock,
-    Cpu,
-    Waves,
-    AlertTriangle,
-    Eye,
-    BarChart,
-    Layers,
-    Navigation,
-    MousePointer2,
-    Download,
-    Flag,
-    AlertCircle,
-    Map as MapIcon,
-    FileText
+    Activity, Zap, Layers, Map as MapIcon, BrainCircuit, Plus, Waves, CheckCircle2
 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useSearchParams, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import './Dashboard.css';
 import useModeStore from '../store/modeStore';
 
-import ForensicIntake from '../components/dashboard/ForensicIntake';
-import YieldMatrix from '../components/dashboard/YieldMatrix';
-import CapitalFlow from '../components/dashboard/CapitalFlow';
-import TDSLeakagePanel from '../components/dashboard/TDSLeakagePanel';
-import SovereignNodeMap from '../components/dashboard/SovereignNodeMap';
+import OnboardingOverlay    from '../components/dashboard/OnboardingOverlay';
+import PriorityAlerts       from '../components/dashboard/PriorityAlerts';
+import InvestigationNarrative from '../components/dashboard/InvestigationNarrative';
+import IntelligenceFeed     from '../components/dashboard/IntelligenceFeed';
+import DetectionEngine      from '../components/dashboard/DetectionEngine';
+import CapitalFlow          from '../components/dashboard/CapitalFlow';
+import SovereignNodeMap     from '../components/dashboard/SovereignNodeMap';
 
-const IntelCard = ({ title, icon: Icon, children, badge, type = "default" }) => (
+import { INTELLIGENCE_DATABASE } from '../data/intelligenceDatabase';
+
+/* ── Shared IntelCard ─────────────────────────────────────────────── */
+const IntelCard = ({ title, icon: Icon, children, badge }) => (
     <motion.div
         initial={{ opacity: 0, y: 15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className={`intel-card-saas glass ${type}`}
+        className="intel-card-saas glass rounded-3xl overflow-hidden no-print"
     >
         <div className="card-header-dense">
             <div className="card-title-group">
@@ -51,278 +32,278 @@ const IntelCard = ({ title, icon: Icon, children, badge, type = "default" }) => 
             </div>
             {badge && <span className="card-badge-mini">{badge}</span>}
         </div>
-        <div className="card-body-dense">
-            {children}
-        </div>
+        <div className="card-body-dense">{children}</div>
     </motion.div>
 );
 
-const MarketStat = ({ label, value, colorClass = "" }) => (
-    <div className="market-stat-module">
-        <span className="stat-label-mini">{label}</span>
-        <span className={`stat-value-mini ${colorClass}`}>{value}</span>
-    </div>
-);
-
+/* ── Dashboard ────────────────────────────────────────────────────── */
 const Dashboard = () => {
     const { mode } = useModeStore();
-    const [searchParams] = useSearchParams();
     const location = useLocation();
-    const isEnterprise = searchParams.get('mode') === 'enterprise' || location.pathname === '/gov-ent';
-    const [isRegulatoryMode, setIsRegulatoryMode] = React.useState(false);
 
-    const handleExportPDF = () => {
-        // Mock PDF export
-        const alert = document.createElement('div');
-        alert.className = 'fixed top-20 right-8 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-2xl z-[1000] font-black uppercase text-xs animate-bounce';
-        alert.innerText = 'GENERATING ENCRYPTED FORENSIC PDF...';
-        document.body.appendChild(alert);
-        setTimeout(() => alert.remove(), 3000);
+    /* State */
+    const [isDemo, setIsDemo]               = useState(true);
+    const [showOnboarding, setShowOnboarding] = useState(true);
+    const [activeCase, setActiveCase]       = useState(INTELLIGENCE_DATABASE[0]);
+    const [isInitialized, setIsInitialized] = useState(false);
+    const [toast, setToast]                 = useState(null);
+    const [stats, setStats]                 = useState({ tps: 12450, risk: 14.2 });
+
+    /* Refs */
+    const narrativeRef = useRef(null);
+    const mapRef       = useRef(null);
+    const searchRef    = useRef(null);
+
+    /* showToast must be defined BEFORE useEffect to avoid temporal dead zone */
+    const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 4000);
     };
 
+    useEffect(() => {
+        const seen = localStorage.getItem('sentinel_onboarding_complete');
+        if (seen) setShowOnboarding(false);
+
+        /* ── Handle intent from Home page navigation ── */
+        const params = new URLSearchParams(location.search);
+        const intent = params.get('intent');
+        if (intent === 'hack') {
+            /* Auto-load Ledger Phishing Forensic case */
+            const phsCase = INTELLIGENCE_DATABASE.find(c => c.id === 'PHS-1120');
+            if (phsCase) {
+                setActiveCase(phsCase);
+                setTimeout(() => narrativeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 500);
+            }
+            showToast('Loaded: Ledger Phishing Forensic Investigation');
+        } else if (intent === 'wallet') {
+            /* Auto-focus search and load wallet case */
+            const walletCase = INTELLIGENCE_DATABASE.find(c => c.id === 'SRC-7721');
+            if (walletCase) setActiveCase(walletCase);
+            setTimeout(() => searchRef.current?.focus(), 500);
+            showToast('Ready: Wallet Trace Mode — Enter address to begin');
+        } else if (intent === 'pulse') {
+            /* Scroll to the Sovereign Infrastructure Monitor (map) */
+            setTimeout(() => mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 500);
+            showToast('Sovereign Infrastructure Monitor — Live View Active');
+        } else if (intent === 'search') {
+            setTimeout(() => searchRef.current?.focus(), 500);
+        }
+
+        /* Live pulse jitter every 3 s */
+        const pulse = setInterval(() => {
+            setStats(prev => ({
+                tps:  Math.floor(prev.tps  * (0.95 + Math.random() * 0.10)),
+                risk: +(prev.risk * (0.98 + Math.random() * 0.04)).toFixed(1)
+            }));
+        }, 3000);
+        return () => clearInterval(pulse);
+    }, []);
+
+    /* Shared handler — used by both PriorityAlerts and IntelligenceFeed Deep Dive */
+    const handleSelectCase = (item) => {
+        setActiveCase(item);
+        setIsInitialized(false);
+        showToast(`Synchronizing Blockchain Data for Case #${item.id}...`);
+
+        /* Smooth-scroll to narrative on mobile */
+        setTimeout(() => narrativeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    };
+
+    const handleInitializeComplete = (item) => {
+        setIsInitialized(true);
+        showToast(`Address ${item.originAddress.slice(0, 10)}... added to Global Watchlist.`);
+    };
+
+    /* showToast is defined above useEffect — removed duplicate */
+
     return (
-        <div className={`saas-terminal fade-in mode-${mode.toLowerCase()} ${isRegulatoryMode ? 'regulatory-active' : ''}`}>
-            {/* Global Market Status Bar */}
-            <div className="global-status-bar glass flex items-center justify-between px-6">
-                <div className="flex items-center gap-6">
-                    <MarketStat label="Global Cap" value="$3.42T" colorClass="text-emerald" />
-                    <div className="stat-sep"></div>
-                    <MarketStat label="BTC Dominance" value="54.2%" />
-                    <div className="stat-sep"></div>
-                    <MarketStat label="Sentiment" value="Extreme Greed (78)" colorClass="text-emerald" />
-                </div>
-                
-                <div className="flex items-center gap-6">
-                    {isEnterprise && (
-                        <>
-                            <div className="flex items-center gap-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/10">
-                                <span className="text-[10px] font-black text-slate-500 uppercase">Regulatory Mode</span>
-                                <button 
-                                    onClick={() => setIsRegulatoryMode(!isRegulatoryMode)}
-                                    className={`w-10 h-5 rounded-full relative transition-all ${isRegulatoryMode ? 'bg-orange-500' : 'bg-slate-700'}`}
-                                >
-                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${isRegulatoryMode ? 'left-6' : 'left-1'}`}></div>
-                                </button>
-                            </div>
-                            <button 
-                                onClick={handleExportPDF}
-                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all"
-                            >
-                                <Download size={14} /> Export Forensic Report
-                            </button>
-                        </>
-                    )}
-                    <div className="stat-sep"></div>
-                    <div className="user-tier-badge">
-                        <Shield size={12} />
-                        <span>{isEnterprise ? 'GOVERNMENT-LEVEL' : mode} PRO</span>
+        <div className={`saas-terminal fade-in mode-${mode.toLowerCase()} print:bg-white print:p-0`}>
+
+            <OnboardingOverlay
+                isOpen={showOnboarding}
+                onClose={() => setShowOnboarding(false)}
+                onAction={() => setShowOnboarding(false)}
+            />
+
+            {/* ── Toast Notification ── */}
+            <AnimatePresence>
+                {toast && (
+                    <motion.div
+                        initial={{ x: 120, opacity: 0 }}
+                        animate={{ x: 0,   opacity: 1 }}
+                        exit={{   x: 120, opacity: 0 }}
+                        className="fixed top-6 right-6 z-[5000] no-print bg-blue-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-[10px] font-black uppercase tracking-widest border border-white/20 max-w-xs"
+                    >
+                        <Zap size={15} className="text-white animate-pulse shrink-0" />
+                        {toast}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ── Header ── */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 no-print">
+                <div>
+                    <h1 className="text-3xl font-black text-white uppercase tracking-tight">Sentinel Command Center</h1>
+                    <div className="flex items-center gap-3 mt-1">
+                        <span className="text-[10px] font-black text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 uppercase">
+                            AI Core Active
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                            Case Context: {activeCase.id}
+                        </span>
                     </div>
                 </div>
-            </div>
-
-            {isEnterprise ? (
-                <div className="enterprise-view space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    {isRegulatoryMode && (
-                        <div className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-4">
-                                <AlertCircle className="text-orange-500" size={24} />
-                                <div>
-                                    <h4 className="text-xs font-black text-orange-500 uppercase">Active PMLA Protocol</h4>
-                                    <p className="text-[10px] text-orange-200/70 font-bold uppercase">All transactions {">"} ₹8.4 Lakhs ($10k) are being auto-flagged for FIU review.</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 px-3 py-1 bg-orange-500 text-white rounded text-[10px] font-black uppercase">
-                                Monitoring Active
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                        <div className="lg:col-span-4 flex flex-col gap-4">
-                            <IntelCard title="Wallet Investigation Unit" icon={Shield}>
-                                <div className="h-[400px]">
-                                    <ForensicIntake isRegulatoryMode={isRegulatoryMode} />
-                                </div>
-                            </IntelCard>
-                            <IntelCard title="TDS Leakage Monitor (Sec 194S)" icon={FileText}>
-                                <div className="h-[430px]">
-                                    <TDSLeakagePanel isRegulatoryMode={isRegulatoryMode} />
-                                </div>
-                            </IntelCard>
-                        </div>
-                        
-                        <div className="lg:col-span-8 flex flex-col gap-4">
-                            <IntelCard title="Sovereign Infrastructure Monitor" icon={MapIcon} badge="LIVE GEO-DATA">
-                                <div className="h-[500px]">
-                                    <SovereignNodeMap isRegulatoryMode={isRegulatoryMode} />
-                                </div>
-                            </IntelCard>
-                            <IntelCard title="Institutional Yield Matrix" icon={TrendingUp} badge="GOVERNANCE AUDIT">
-                                <YieldMatrix isRegulatoryMode={isRegulatoryMode} />
-                            </IntelCard>
-                        </div>
+                <div className="flex flex-wrap items-center gap-3">
+                    {/* Inline search input for wallet trace intent */}
+                    <div className="relative flex items-center">
+                        <input
+                            ref={searchRef}
+                            type="text"
+                            placeholder="Enter wallet / TX hash..."
+                            className="w-56 bg-white/5 border border-white/10 text-white placeholder-slate-600 text-[11px] font-bold rounded-xl pl-3 pr-10 py-2.5 outline-none focus:border-blue-500/60 transition-all"
+                        />
                     </div>
-                    
-                    <div className="center-panel-enterprise mt-4">
-                        <IntelCard title="Capital Flow Architecture v4.2" icon={Waves} badge="HIGH-FIDELITY">
-                            <div className="h-[550px]">
-                                <CapitalFlow isRegulatoryMode={isRegulatoryMode} />
-                            </div>
-                        </IntelCard>
-                    </div>
-                </div>
-            ) : (
-                /* Main Terminal Grid: 2 Columns */
-                <div className="terminal-layout-grid">
-
-                {/* COLUMN 1: STRATEGIC INTELLIGENCE (Left) */}
-                <div className="terminal-column">
-                    <div className="column-label">
-                        <Navigation size={14} /> Strategic Intelligence
-                    </div>
-
-                    <IntelCard title="AI Strategic Analysis" icon={Cpu} type="highlight">
-                        <div className="ai-report">
-                            <div className="report-meta">Today 09:30 UTC • Institutional Grade</div>
-                            <h4>Volatility Compression Early Warning</h4>
-                            <p>
-                                BTC volatility indices (BVIV) have dropped to 18-month lows. Historical clusters
-                                suggest a massive directional move ({">"}8%) within the next 4-6 days. Capitalize
-                                on low theta decay by positioning in long straddles.
-                            </p>
-                            <div className="confidence-track">
-                                <div className="track-info"><span>Confidence Interval</span> <span>96.4%</span></div>
-                                <div className="track-bar"><div className="track-fill" style={{ width: '96.4%' }}></div></div>
-                            </div>
-                        </div>
-                    </IntelCard>
-
-                    <IntelCard title="Risk Radar" icon={AlertTriangle}>
-                        <div className="risk-grid-dense">
-                            <div className="risk-metric-box">
-                                <span className="lbl">Audit Score</span>
-                                <span className="val text-emerald">9.8/10</span>
-                            </div>
-                            <div className="risk-metric-box">
-                                <span className="lbl">Liquidity Ratio</span>
-                                <span className="val">1.42</span>
-                            </div>
-                            <div className="risk-metric-box">
-                                <span className="lbl">Slippage Tolerance</span>
-                                <span className="val text-rose">High Expectation</span>
-                            </div>
-                        </div>
-                        <div className="risk-alert-ticker">
-                            <div className="ticker-item warning"><AlertTriangle size={12} /> LDO Liquidity Pool Imbalance detected</div>
-                            <div className="ticker-item success"><Shield size={12} /> Curve Finance Registry update verified</div>
-                        </div>
-                    </IntelCard>
-
-                    <IntelCard title="Institutional Alpha" icon={Layers}>
-                        <div className="alpha-feed-dense">
-                            <div className="alpha-post">
-                                <div className="post-head">
-                                    <span className="source">Grayscale Research</span>
-                                    <span className="time">5m ago</span>
-                                </div>
-                                <p>Large-scale rebalancing of Digital Large Cap Fund (GDLC) complete. SOL weight increased to 12.5%.</p>
-                            </div>
-                            <div className="alpha-post">
-                                <div className="post-head">
-                                    <span className="source">JPMorgan Digital</span>
-                                    <span className="time">22m ago</span>
-                                </div>
-                                <p>Tokenized T-Bill adoption accelerating on Avalanche network. Expected TVL growth: +$450M.</p>
-                            </div>
-                        </div>
-                    </IntelCard>
-                </div>
-
-                {/* COLUMN 2: LIVE MARKET PULSE (Right) */}
-                <div className="terminal-column">
-                    <div className="column-label">
-                        <Activity size={14} /> Live Market Pulse
-                    </div>
-
-                    <IntelCard title="On-Chain Activity" icon={Activity} badge="LIVE">
-                        <div className="activity-stats-dense">
-                            <div className="act-row">
-                                <span className="act-lbl">EVM Transactions</span>
-                                <span className="act-val">12,450 /sec</span>
-                            </div>
-                            <div className="act-row">
-                                <span className="act-lbl">Burn Rate (ETH)</span>
-                                <span className="act-val text-rose">1.4 ETH/min</span>
-                            </div>
-                            <div className="act-row">
-                                <span className="act-lbl">Active Stablecoins</span>
-                                <span className="act-val">$162.4B</span>
-                            </div>
-                        </div>
-                    </IntelCard>
-
-                    <IntelCard title="Whale Tracker" icon={Eye}>
-                        <div className="whale-log">
-                            <div className="log-entry">
-                                <div className="log-icon out"><MousePointer2 size={12} /></div>
-                                <div className="log-details">
-                                    <span className="main">42,000 ETH Outflow</span>
-                                    <span className="sub">Coinbase → Unknown Wallet (Cluster alpha-7)</span>
-                                </div>
-                                <span className="time">1m</span>
-                            </div>
-                            <div className="log-entry">
-                                <div className="log-icon in"><MousePointer2 size={12} /></div>
-                                <div className="log-details">
-                                    <span className="main">1,200 BTC Inflow</span>
-                                    <span className="sub">Unknown → Binance (Liquidation risk)</span>
-                                </div>
-                                <span className="time">8m</span>
-                            </div>
-                        </div>
-                    </IntelCard>
-
-                    <IntelCard title="Asset Performance" icon={BarChart3}>
-                        <div className="performance-list-dense">
-                            <div className="perf-item">
-                                <span className="sym">BTC</span>
-                                <span className="prc">$98,420</span>
-                                <span className="chg up">+1.4%</span>
-                            </div>
-                            <div className="perf-item">
-                                <span className="sym">ETH</span>
-                                <span className="prc">$3,240</span>
-                                <span className="chg down">-0.2%</span>
-                            </div>
-                            <div className="perf-item">
-                                <span className="sym">SOL</span>
-                                <span className="prc">$188.5</span>
-                                <span className="chg up">+3.8%</span>
-                            </div>
-                        </div>
-                    </IntelCard>
-
-                    <IntelCard title="Liquidity Depth" icon={Waves}>
-                        <div className="liquidity-viz-dense">
-                            <div className="viz-stats">
-                                <div className="v-stat">
-                                    <span className="v-lbl">Bids (2%)</span>
-                                    <span className="v-val">$185M</span>
-                                </div>
-                                <div className="v-stat">
-                                    <span className="v-lbl">Asks (2%)</span>
-                                    <span className="v-val">$212M</span>
-                                </div>
-                            </div>
-                            <div className="depth-bar-container">
-                                <div className="depth-green" style={{ width: '45%' }}></div>
-                                <div className="depth-red" style={{ width: '55%' }}></div>
-                            </div>
-                        </div>
-                    </IntelCard>
+                    <button
+                        onClick={() => setIsDemo(d => !d)}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase border transition-all ${
+                            isDemo
+                                ? 'bg-amber-500 text-black border-amber-500'
+                                : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
+                        }`}
+                    >
+                        {isDemo ? 'Reset System' : 'Demo Mode'}
+                    </button>
+                    <button className="px-4 py-2 bg-primary-bright text-white rounded-xl text-[10px] font-black uppercase shadow-lg flex items-center gap-2">
+                        <Plus size={14} /> Analyze Wallet
+                    </button>
                 </div>
             </div>
-            )}
+
+            {/* ── Priority Alerts ── */}
+            <section className="mb-12 no-print">
+                <PriorityAlerts
+                    activeId={activeCase.id}
+                    onSelectAlert={handleSelectCase}
+                />
+            </section>
+
+            {/* ── Main Grid: Narrative + Sidebar ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+
+                {/* Forensic Narrative (span-2) */}
+                <div ref={narrativeRef} className="lg:col-span-2 print:col-span-3">
+                    <InvestigationNarrative
+                        activeCase={activeCase}
+                        isInitialized={isInitialized}
+                        onInitialize={handleInitializeComplete}
+                    />
+                    {/* Export panel is rendered INSIDE InvestigationNarrative, directly below */}
+                </div>
+
+                {/* Right Sidebar */}
+                <aside className="space-y-5 no-print">
+
+                    {/* Intelligence Stream — every Deep Dive updates the Narrative */}
+                    <IntelCard title="Intelligence Stream" icon={Layers} badge="LIVE">
+                        <div className="max-h-[520px] overflow-y-auto pr-1 custom-scrollbar">
+                            <IntelligenceFeed
+                                isDemo={isDemo}
+                                activeCaseId={activeCase.id}
+                                onDeepDive={handleSelectCase}
+                            />
+                        </div>
+                    </IntelCard>
+
+                    {/* Detection Engine */}
+                    <IntelCard title="Neural Detection" icon={Zap} badge="ENCRYPTED">
+                        <div className="p-1">
+                            <DetectionEngine />
+                        </div>
+                    </IntelCard>
+
+                    {/* Live Pulse */}
+                    <IntelCard title="Tactical Pulse" icon={Activity} badge="LIVE">
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center p-3 rounded-xl bg-white/5">
+                                <span className="text-[11px] font-bold text-slate-500 uppercase">EVM Throughput</span>
+                                <motion.span key={stats.tps} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="text-sm font-black text-white">
+                                    {stats.tps.toLocaleString()} TPS
+                                </motion.span>
+                            </div>
+                            <div className="flex justify-between items-center p-3 rounded-xl bg-white/5">
+                                <span className="text-[11px] font-bold text-slate-500 uppercase">Risk Inflow</span>
+                                <motion.span key={stats.risk} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="text-sm font-black text-rose-500">
+                                    ${stats.risk}M /h
+                                </motion.span>
+                            </div>
+                        </div>
+                    </IntelCard>
+                </aside>
+            </div>
+
+            {/* ── Section: Global Node Infrastructure (full-width) ── */}
+            <section ref={mapRef} className="no-print mt-4 space-y-2">
+                <div className="flex items-center gap-3 px-1 mb-2">
+                    <MapIcon size={18} className="text-blue-400" />
+                    <div>
+                        <h2 className="text-lg font-black text-white uppercase tracking-tight">Global Node Infrastructure</h2>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                            Sovereign geo-spatial blockchain node distribution — real-time validated
+                        </p>
+                    </div>
+                    <span className="ml-auto px-2 py-0.5 text-[9px] font-black uppercase border border-emerald-500/30 text-emerald-500 bg-emerald-500/10 rounded">GEO-DATA LIVE</span>
+                </div>
+                <div className="bg-[#0D1117] border border-white/5 rounded-3xl overflow-hidden">
+                    <div className="h-[520px]">
+                        <SovereignNodeMap isDemo={isDemo} />
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-1">
+                    {[
+                        { label: 'Active Domestic Nodes',   value: '128',      color: 'text-emerald-500' },
+                        { label: 'Foreign Relay Points',    value: '3',        color: 'text-blue-400' },
+                        { label: 'Avg. Latency',            value: '< 12ms',    color: 'text-white' },
+                        { label: 'Sovereign Verification',  value: 'Ver. 91.2', color: 'text-amber-400' },
+                    ].map(s => (
+                        <div key={s.label} className="bg-white/5 border border-white/5 rounded-2xl p-4">
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">{s.label}</span>
+                            <span className={`text-lg font-black ${s.color}`}>{s.value}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ── Section: Capital Flow Architecture (full-width) ── */}
+            <section className="no-print mt-10 space-y-2">
+                <div className="flex items-center gap-3 px-1 mb-2">
+                    <Waves size={18} className="text-blue-400" />
+                    <div>
+                        <h2 className="text-lg font-black text-white uppercase tracking-tight">Capital Flow Architecture</h2>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                            Real-time exchange-to-cluster fund movement — live forensic ledger
+                        </p>
+                    </div>
+                    <span className="ml-auto px-2 py-0.5 text-[9px] font-black uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10 rounded">V4.2 ENCRYPTED</span>
+                </div>
+                <div className="bg-[#0D1117] border border-white/5 rounded-3xl overflow-hidden">
+                    <div className="h-[540px]">
+                        <CapitalFlow isDemo={isDemo} />
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-1">
+                    {[
+                        { label: 'Detection Engine',  value: 'NEURAL-01',    color: 'text-white' },
+                        { label: 'Latency Threshold', value: '< 0.05ms',      color: 'text-emerald-500' },
+                        { label: 'Verification',      value: 'SIGSET-LVL8',  color: 'text-blue-400' },
+                        { label: 'Traffic Status',    value: 'Verified Live', color: 'text-amber-400' },
+                    ].map(s => (
+                        <div key={s.label} className="bg-white/5 border border-white/5 rounded-2xl p-4">
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">{s.label}</span>
+                            <span className={`text-lg font-black ${s.color}`}>{s.value}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
         </div>
     );
 };

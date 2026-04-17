@@ -4,6 +4,9 @@
     overflow-x: hidden;
     position: relative;
     z-index: 10;
+    margin-top: 0;     /* Task 4: hard reset — no gap under navbar */
+    padding-top: 0;
+    top: 0;
 }
 
 /* --- Layout Standardization Classes --- */
@@ -25,6 +28,20 @@
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
+}
+
+/* Task 4: Zero-gap hero — uses grid row already consumed by navbar */
+.hero-search-section {
+    position: relative;
+    min-height: calc(100vh - var(--navbar-height, 80px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0 1rem 3rem;
+    margin-top: 0;     /* explicit zero */
+    top: 0;
 }
 
 .hero-inner {

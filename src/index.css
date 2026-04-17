@@ -57,6 +57,26 @@ body {
   overflow-x: hidden;
 }
 
+/* Senior Architect UI Rules */
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Mobile-First Px-4 Padding */
+.content-area {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .content-area {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 h1,
 h2,
 h3,

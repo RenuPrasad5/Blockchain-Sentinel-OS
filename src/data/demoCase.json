@@ -1,0 +1,44 @@
+{
+  "caseName": "Ronin Bridge Exploitation (Lazarus Group)",
+  "vulnerability": "Validator Private Key Compromise",
+  "totalLoss": "$625M USD",
+  "blockchain": "Ronin Network / Ethereum",
+  "narrative": [
+    {
+      "step": "Origin",
+      "description": "Exploiter compromises 5 of 9 validator nodes via spear-phishing and social engineering.",
+      "isCritical": true
+    },
+    {
+      "step": "Extraction",
+      "description": "173,600 ETH and 25.5M USDC drained from Ronin Bridge contract in two transactions.",
+      "isCritical": true
+    },
+    {
+      "step": "Obfuscation",
+      "description": "Funds moved through multiple 'Peeling Chains' to aggregate deposits into Tornado Cash.",
+      "isCritical": false
+    },
+    {
+      "step": "Bridging",
+      "description": "Assets bridged to decentralized exchanges and converted to more stable pairings.",
+      "isCritical": false
+    }
+  ],
+  "alerts": [
+    {
+      "status": "CRITICAL",
+      "title": "Multisig Threshold Violation",
+      "confidence": 100,
+      "why": "Unusual validator signature pattern detected outside of standard operational hours.",
+      "time": "Initial Breach"
+    },
+    {
+      "status": "HIGH RISK",
+      "title": "Aggregated Peeling Activity",
+      "confidence": 92,
+      "why": "Systematic 42-address chain detected moving exactly 100 ETH per hop.",
+      "time": "Post-Exploit"
+    }
+  ]
+}
