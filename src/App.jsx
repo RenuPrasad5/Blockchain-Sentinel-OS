@@ -42,6 +42,7 @@ import './App.css';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import ReactGA from 'react-ga4';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   const navigate = useNavigate();
@@ -146,6 +147,7 @@ function App() {
         </main>
       </div>
       {!isAuthPage && <BottomNavigation />}
+      <Analytics />
     </div>
   );
 }
