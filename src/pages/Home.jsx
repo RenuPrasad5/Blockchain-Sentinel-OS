@@ -2,19 +2,15 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Search, ArrowRight, Zap, Eye, ShieldCheck,
-    Loader2, Globe, Activity, FileText
+    Loader2, Globe, Activity, FileText, ShieldAlert, Users2, CheckCircle2
 } from 'lucide-react';
-import { INTELLIGENCE_DATABASE } from '../data/intelligenceDatabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import RoadmapSection from '../components/RoadmapSection';
 import SupportSection from '../components/SupportSection';
 import ServiceMarquee from '../components/ServiceMarquee';
 import NeuralDataNetwork from '../components/ui/NeuralDataNetwork';
-import ProblemSection from '../components/landing/ProblemSection';
-import ProcessSection from '../components/landing/ProcessSection';
-import TargetAudience from '../components/landing/TargetAudience';
 import WaitlistForm from '../components/landing/WaitlistForm';
-import './Home.css';
+import useOnboardingStore from '../store/onboardingStore';
 
 /* ── Loading overlay ────────────────────────────────────────────── */
 const LoadingOverlay = ({ visible, label }) => (
@@ -51,12 +47,10 @@ const LoadingOverlay = ({ visible, label }) => (
 /* ── Main Home component ────────────────────────────────────────── */
 const Home = () => {
     const navigate = useNavigate();
-    const [query, setQuery] = useState('');
+    const { setDemoMode } = useOnboardingStore();
     const [loading, setLoading] = useState(false);
     const [loadLabel, setLoadLabel] = useState('');
-    const pulseRef = useRef(null);
 
-    /* Shared transition — can navigate to /dashboard OR /gov-ent */
     const launchDashboard = (label, caseParam = '', path = '/dashboard') => {
         setLoadLabel(label);
         setLoading(true);
@@ -66,268 +60,287 @@ const Home = () => {
         }, 2200);
     };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        if (!query.trim()) return;
-        launchDashboard(`Tracing: ${query.slice(0, 24)}...`, 'search', '/gov-ent');
-    };
-
-    const chips = [
-        { label: '🔍 Analyze Ledger Hack', intent: 'hack', desc: 'Ledger Phishing Forensic' },
-        { label: '🌀 Trace Tornado Cash Flow', intent: 'wallet', desc: 'Wallet Investigation' },
-        { label: '📡 Monitor Threat Pulse', intent: 'pulse', desc: 'Threat Pulse Monitor' },
-    ];
-
-    const handleChip = (chip) => {
-        launchDashboard(`Initializing ${chip.desc}...`, chip.intent, '/gov-ent');
-    };
-
-    const useCases = [
-        {
-            icon: Search,
-            title: 'Identify a Wallet',
-            desc: 'Unmask owners and exchange associations instantly. Our AI links addresses to real-world identities, KYC clusters, and risk entities.',
-            cta: 'Trace a Wallet',
-            intent: 'wallet',
-            label: 'Wallet Trace Investigation',
-            color: 'blue'
-        },
-        {
-            icon: ShieldCheck,
-            title: 'Analyze a Hack',
-            desc: 'Transform complex transaction chains into human-readable forensic stories. Understand what happened, when, and where funds went.',
-            cta: 'Investigate Now',
-            intent: 'hack',
-            label: 'Ledger Phishing Forensic',
-            color: 'rose'
-        },
-        {
-            icon: Activity,
-            title: 'Monitor Threat Pulse',
-            desc: 'Real-time global monitoring for AML and compliance teams. Get live alerts the moment a high-risk event is detected on-chain.',
-            cta: 'View Live Feed',
-            intent: 'pulse',
-            label: 'Sovereign Infrastructure Monitor',
-            color: 'emerald'
-        }
-    ];
-
-    const colorMap = {
-        blue: { bar: 'bg-blue-500', icon: 'bg-blue-500/10 text-blue-400', btn: 'bg-blue-600 hover:bg-blue-500' },
-        rose: { bar: 'bg-rose-500', icon: 'bg-rose-500/10 text-rose-400', btn: 'bg-rose-600 hover:bg-rose-500' },
-        emerald: { bar: 'bg-emerald-500', icon: 'bg-emerald-500/10 text-emerald-400', btn: 'bg-emerald-600 hover:bg-emerald-500' },
-    };
-
     return (
-        <div className="home-container" style={{ background: '#0f172a' }}>
+        <div className="home-container" style={{ background: 'transparent' }}>
             <LoadingOverlay visible={loading} label={loadLabel} />
             <NeuralDataNetwork />
 
             {/* ════════════════════════════════════════
-                HERO — Search-First Architecture
+                WELCOME ENTRY SCREEN (HERO)
             ════════════════════════════════════════ */}
-            <section className="relative flex flex-col items-center justify-center px-4 pb-12 overflow-hidden" style={{ minHeight: 'calc(100vh - 80px)' }}>
-                {/* Subtle radial glow behind search */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full bg-blue-600/8 blur-3xl pointer-events-none" />
+            <section className="relative flex flex-col items-center justify-center px-4 pb-20" style={{ minHeight: '90vh' }}>
+                <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+                    <svg width="100%" height="100%" className="w-full h-full">
+                        <pattern id="nodes" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1.5" fill="#3b82f6" />
+                            <path d="M 2 2 L 100 100" stroke="#3b82f6" strokeWidth="0.2" opacity="0.1" />
+                        </pattern>
+                        <rect width="100%" height="100%" fill="url(#nodes)" />
+                    </svg>
+                </div>
 
-                {/* Status pill */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-blue-600/5 blur-3xl pointer-events-none" />
+
                 <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 mb-8"
-                >
-                    <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                    <span className="text-[11px] font-black text-blue-400 uppercase tracking-[0.25em]">
-                        Blockchain Intelligence OS — Live
-                    </span>
-                </motion.div>
-
-                {/* Main headline */}
-                <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-center text-4xl sm:text-5xl lg:text-[72px] font-black text-white leading-[1.05] tracking-tighter max-w-4xl mx-auto mb-5"
+                    className="text-center max-w-4xl mx-auto relative z-10 flex flex-col items-center"
                 >
-                    Blockchain Intelligence,
-                    <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-300">
-                        Translated.
-                    </span>
-                </motion.h1>
-
-                {/* Sub-headline */}
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.18 }}
-                    className="text-center text-slate-400 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed font-medium"
-                >
-                    Identify threats, trace exploits, and generate forensic narratives in plain English.
-                </motion.p>
-
-                {/* Search bar */}
-                <motion.form
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.26 }}
-                    onSubmit={handleSearch}
-                    className="w-full max-w-2xl mx-auto mb-5"
-                >
-                    <div className="relative flex items-center">
-                        <Search className="absolute left-5 text-slate-500 shrink-0" size={20} />
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={e => setQuery(e.target.value)}
-                            placeholder="Enter Wallet, TX Hash, or Contract..."
-                            className="w-full bg-[#1e293b] border border-white/10 text-white placeholder-slate-500 text-sm font-medium rounded-2xl pl-14 pr-36 py-5 outline-none focus:border-blue-500/60 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] transition-all"
-                        />
-                        <button
-                            type="submit"
-                            className="absolute right-2.5 flex items-center gap-2 px-5 py-3 bg-[#3b82f6] hover:bg-blue-500 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-lg"
-                        >
-                            Trace <ArrowRight size={14} />
-                        </button>
+                    <div className="flex items-center justify-center gap-2 mb-8">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">Sovereign Intelligence</span>
                     </div>
-                </motion.form>
 
-                {/* Quick Start Chips */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.35 }}
-                    className="flex flex-wrap justify-center gap-3 mb-6"
-                >
-                    {chips.map((chip, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => handleChip(chip)}
-                            className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/40 text-slate-300 hover:text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all"
-                        >
-                            {chip.label}
-                        </button>
-                    ))}
-                </motion.div>
+                    <h1 className="text-xl md:text-2xl font-bold text-blue-400 mb-2 tracking-[0.3em] uppercase">
+                        Welcome to Blockchain Sentinel OS
+                    </h1>
 
-                {/* Hint text */}
-                <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest text-center">
-                    No account required to try · Demo data loads instantly
-                </p>
-
-                {/* Scroll cue */}
-                <motion.div
-                    animate={{ y: [0, 6, 0] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-30"
-                >
-                    <div className="w-px h-8 bg-white" />
-                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                </motion.div>
-            </section>
-
-            {/* ════════════════════════════════════════
-                USE CASE VALUE PROPS
-            ════════════════════════════════════════ */}
-            <section className="px-4 sm:px-6 lg:px-8 pb-20 max-w-6xl mx-auto">
-                <div className="text-center mb-12">
-                    <p className="text-[11px] font-black text-blue-400 uppercase tracking-[0.3em] mb-3">
-                        Entry Points
-                    </p>
-                    <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                        Choose your investigation path
+                    <h2 className="text-5xl md:text-7xl font-black text-white mb-10 tracking-tight leading-tight pt-4">
+                        What do you want to do Today?
                     </h2>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {useCases.map((uc, idx) => {
-                        const c = colorMap[uc.color];
-                        const Icon = uc.icon;
-                        return (
-                            <motion.div
+                    <div className="w-full max-w-2xl bg-blue-500/5 border-y border-white/5 py-3 mb-12 px-6 overflow-hidden rounded-full backdrop-blur-sm">
+                        <div className="flex whitespace-nowrap gap-12 animate-marquee text-[10px] font-black text-blue-400/70 uppercase tracking-[0.2em]">
+                            <span className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                [LIVE] Global Threat Level: Stable
+                            </span>
+                            <span>Active Nodes: 1,420</span>
+                            <span>BTC/USD: $64,210.82</span>
+                            <span className="opacity-40">Sentries Operational</span>
+                            <span>Network Health: 99.9%</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 w-full">
+                        {[
+                            {
+                                label: 'Analyze Wallet',
+                                icon: Search,
+                                desc: 'Trace fund flows',
+                                color: 'blue',
+                                action: () => {
+                                    setDemoMode(false);
+                                    launchDashboard('Ready: Wallet Trace Mode', 'wallet', '/dashboard');
+                                }
+                            },
+                            {
+                                label: 'View Alerts',
+                                icon: Activity,
+                                desc: 'Monitor threats',
+                                color: 'emerald',
+                                action: () => {
+                                    setDemoMode(false);
+                                    launchDashboard('Live View Active', 'pulse', '/dashboard');
+                                }
+                            },
+                            {
+                                label: 'Try Demo',
+                                icon: Zap,
+                                desc: 'Pre-filled sample',
+                                color: 'amber',
+                                action: () => {
+                                    setDemoMode(true);
+                                    launchDashboard('Loading Ronin Bridge Simulation...', 'hack', '/dashboard');
+                                }
+                            }
+                        ].map((btn, idx) => (
+                            <motion.button
                                 key={idx}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: idx * 0.1 }}
-                                className="relative bg-[#1e293b] border border-white/5 rounded-3xl p-7 hover:border-white/10 transition-all group flex flex-col gap-5 overflow-hidden"
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 + idx * 0.1 }}
+                                whileHover={{ y: -8, scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={btn.action}
+                                className="group relative bg-[#1e293b]/50 backdrop-blur-md border border-white/5 hover:border-blue-500/30 p-10 rounded-[2.5rem] transition-all flex flex-col items-center text-center gap-5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_50px_rgba(59,130,246,0.1)]"
                             >
-                                {/* Top accent bar */}
-                                <div className={`absolute top-0 left-0 w-full h-0.5 ${c.bar}`} />
-
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${c.icon}`}>
-                                    <Icon size={22} />
+                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${btn.color === 'blue' ? 'bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20' :
+                                    btn.color === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20' :
+                                        'bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20'
+                                    }`}>
+                                    <btn.icon size={28} />
                                 </div>
-
-                                <div className="flex-1">
-                                    <h3 className="text-lg font-black text-white mb-2 group-hover:text-blue-300 transition-colors">
-                                        {uc.title}
-                                    </h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                                        {uc.desc}
-                                    </p>
+                                <div>
+                                    <h3 className="text-white font-black uppercase tracking-widest text-xs mb-1">{btn.label}</h3>
+                                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">{btn.desc}</p>
                                 </div>
+                            </motion.button>
+                        ))}
+                    </div>
 
-                                <button
-                                    onClick={() => launchDashboard(`Initializing ${uc.label}...`, uc.intent, '/gov-ent')}
-                                    className={`w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-all flex items-center justify-center gap-2 ${c.btn}`}
-                                >
-                                    {uc.cta} <ArrowRight size={13} />
-                                </button>
-                            </motion.div>
-                        );
-                    })}
+                    <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+                        First time? We'll guide you through every step.
+                    </p>
+                </motion.div>
+            </section>
+
+            {/* ════════════════════════════════════════
+                CLARITY SECTION: WHAT THIS DOES (Task 1)
+            ════════════════════════════════════════ */}
+            <section className="px-4 py-24 max-w-7xl mx-auto border-t border-white/5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-1 h-8 bg-blue-500 rounded-full" />
+                            <h2 className="text-sm font-black text-blue-400 uppercase tracking-[0.4em]">The Sentinel Solution</h2>
+                        </div>
+                        <h3 className="text-4xl md:text-5xl font-black text-white mb-8 tracking-tight leading-tight">
+                            Analyze Wallets. <br />
+                            Detect Patterns. <br />
+                            <span className="text-slate-500">Simplify Forensics.</span>
+                        </h3>
+                        <p className="text-lg text-slate-400 font-medium leading-relaxed mb-8">
+                            Sentinel-OS helps analyze crypto wallets and detect suspicious transaction patterns using risk scoring and investigation insights. We turn raw blockchain data into clear transaction stories that anyone can understand.
+                        </p>
+                        
+                        <div className="grid grid-cols-2 gap-8">
+                            <div>
+                                <h4 className="text-white font-black uppercase text-xs tracking-widest mb-3">Core Focus</h4>
+                                <ul className="space-y-2">
+                                    {['Risk Scoring', 'Pattern Detection', 'Fund Flow Tracing'].map(i => (
+                                        <li key={i} className="flex items-center gap-2 text-xs text-slate-500 font-bold uppercase">
+                                            <div className="w-1 h-1 rounded-full bg-blue-500" /> {i}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 className="text-white font-black uppercase text-xs tracking-widest mb-3">Output Type</h4>
+                                <ul className="space-y-2">
+                                    {['Strategic Reports', 'Visual Traces', 'AI Summaries'].map(i => (
+                                        <li key={i} className="flex items-center gap-2 text-xs text-slate-500 font-bold uppercase">
+                                            <div className="w-1 h-1 rounded-full bg-blue-500" /> {i}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* EXAMPLE OUTPUT (Task 5) */}
+                    <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        className="bg-[#1e293b]/50 border border-white/5 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl"
+                    >
+                        <div className="absolute top-0 right-0 p-6 opacity-20"><Zap size={40} className="text-blue-500" /></div>
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
+                            <span className="text-[10px] font-black text-white uppercase tracking-widest">Example Insight Output</span>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <div>
+                                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Wallet Risk</p>
+                                    <p className="text-2xl font-black text-rose-500">HIGH (82)</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</p>
+                                    <p className="text-xs font-black text-white">Action Required</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Reasoning</p>
+                                <ul className="space-y-2">
+                                    {[
+                                        'Connected to flagged address',
+                                        'Rapid multi-hop transactions observed'
+                                    ].map(r => (
+                                        <li key={r} className="flex items-start gap-3 text-xs text-slate-300 font-medium">
+                                            <ShieldAlert size={14} className="text-rose-500 shrink-0 mt-0.5" />
+                                            {r}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="pt-4 border-t border-white/5">
+                                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">Recommended Action</p>
+                                <p className="text-[11px] text-slate-400 font-medium leading-relaxed italic">
+                                    Monitor and investigate linked wallets.
+                                </p>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
             {/* ════════════════════════════════════════
-                EXISTING SECTIONS PRESERVED BELOW
+                WHO / WHEN / DIFFERENT SECTIONS
             ════════════════════════════════════════ */}
-            <WaitlistForm />
-            <ProblemSection />
-            <ProcessSection />
+            <section className="px-4 py-24 bg-white/[0.02] border-y border-white/5">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        {/* Who This Is For (Task 2) */}
+                        <div className="space-y-6">
+                            <h3 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                <Users2 size={20} className="text-blue-500" /> Who It's For
+                            </h3>
+                            <div className="grid grid-cols-1 gap-3">
+                                {[
+                                    { t: 'Blockchain Investigators', d: 'Tracing illicit fund movements' },
+                                    { t: 'Security Analysts', d: 'Monitoring platform safety' },
+                                    { t: 'AML Learners', d: 'Mastering compliance forensics' },
+                                    { t: 'Gov & Legal Agencies', d: 'Institutional case management' }
+                                ].map(i => (
+                                    <div key={i.t} className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                        <h4 className="text-sm font-black text-white mb-1 uppercase tracking-tight">{i.t}</h4>
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase">{i.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-            {/* Tactical Pulse anchor (scroll-target for chip) */}
-            <div ref={pulseRef} id="threat-pulse" />
-            <TargetAudience />
+                        {/* When To Use (Task 3) */}
+                        <div className="space-y-6">
+                            <h3 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                <Activity size={20} className="text-blue-500" /> When To Use
+                            </h3>
+                            <div className="space-y-4">
+                                {[
+                                    'Investigating suspicious wallets',
+                                    'Monitoring risky transactions',
+                                    'Understanding fund flows',
+                                    'Routine AML auditing',
+                                    'Project due diligence'
+                                ].map(i => (
+                                    <div key={i} className="flex items-center gap-4 text-xs font-bold text-slate-400">
+                                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                                            <CheckCircle2 size={14} className="text-blue-400" />
+                                        </div>
+                                        {i}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-            {/* Intelligence Pipeline grid (preserved from original) */}
-            <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-                <div className="text-center mb-14">
-                    <p className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-3">Intelligence Pipeline</p>
-                    <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
-                        Operational{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-                            Intelligence Flow
-                        </span>
-                    </h2>
-                    <p className="text-slate-400 text-lg mt-4 font-medium">
-                        The global standard for blockchain surveillance: Track → Detect → Investigate → Act.
-                    </p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[
-                        { num: '01', title: 'Track', desc: 'Real-time monitoring of global blockchain activity and institutional-grade node surveillance.' },
-                        { num: '02', title: 'Detect', desc: 'AI-based anomaly and fraud detection flagging suspicious financial patterns instantly.' },
-                        { num: '03', title: 'Investigate', desc: 'Deep forensic analysis and visualization tools for case management and entity linking.' },
-                        { num: '04', title: 'Legalize', desc: 'Generate court-ready evidence, immutable audit trails, and global regulatory compliance reports.' },
-                    ].map((item, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.1 }}
-                            className="bg-[#1e293b] border border-white/5 rounded-3xl p-7 hover:border-blue-500/30 transition-all group"
-                        >
-                            <p className="text-[11px] font-black text-blue-400 uppercase tracking-[0.3em] mb-3">{item.num}</p>
-                            <h3 className="text-xl font-black text-white mb-3 group-hover:text-blue-300 transition-colors">{item.title}</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
-                        </motion.div>
-                    ))}
+                        {/* What Makes It Different (Task 4) */}
+                        <div className="space-y-6">
+                            <h3 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                <Zap size={20} className="text-blue-500" /> What Makes Us Different
+                            </h3>
+                            <div className="space-y-4">
+                                {[
+                                    { t: 'Simple Explanations', d: 'Human-readable labels instead of raw data.' },
+                                    { t: 'AI investigation summaries', d: 'Narrative context for every movement.' },
+                                    { t: 'Action Focus', d: 'Prioritizing insights that lead to decisions.' }
+                                ].map(i => (
+                                    <div key={i.t} className="group">
+                                        <h4 className="text-sm font-black text-blue-400 uppercase tracking-widest mb-1 group-hover:text-blue-300 transition-colors uppercase tracking-widest">{i.t}</h4>
+                                        <p className="text-xs text-slate-500 font-medium leading-relaxed">{i.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
+            <WaitlistForm />
             <div className="w-full max-w-full overflow-hidden"><RoadmapSection /></div>
             <div className="w-full max-w-full overflow-hidden"><ServiceMarquee /></div>
             <div className="w-full max-w-full overflow-hidden"><SupportSection /></div>

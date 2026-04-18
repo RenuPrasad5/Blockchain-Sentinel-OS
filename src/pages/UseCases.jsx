@@ -1,187 +1,166 @@
 import React, { useState } from 'react';
 import { 
     Search, 
-    Truck, 
-    BarChart, 
     ArrowRight, 
-    CheckCircle, 
     ShieldCheck, 
     Activity, 
     AlertTriangle,
     Database,
-    Lock,
-    Globe,
-    Zap
+    Zap,
+    Scale,
+    Gavel,
+    FileSearch,
+    Shield,
+    Users
 } from 'lucide-react';
 import './UseCases.css';
 
 const UseCases = () => {
-    const [activeCase, setActiveCase] = useState('forensics');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    const cases = [
-        { id: 'forensics', title: 'Digital Forensics', icon: <Search size={22} /> },
-        { id: 'supply', title: 'Supply Chain Fraud', icon: <Truck size={22} /> },
-        { id: 'finance', title: 'Financial Monitoring', icon: <BarChart size={22} /> }
+    const activeInvestigations = [
+        { id: 'SRC-7721', title: 'Ledger Mixer Flow', risk: 'Critical', color: 'rose' },
+        { id: 'AML-9904', title: 'Structuring Cluster', risk: 'High', color: 'orange' },
+        { id: 'PHS-1120', title: 'Phishing Source Triage', risk: 'Critical', color: 'rose' }
     ];
 
     return (
-        <div className="use-cases-container">
-            <header className="use-cases-header">
-                <span className="text-blue-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 block">Strategic Applications</span>
-                <h1 className="text-white text-5xl font-black tracking-tighter m-0 mb-4">Operational Use Cases</h1>
-                <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">
-                    National-grade intelligence solutions designed to address the most complex blockchain-based security and compliance challenges facing modern regulators.
+        <div className="use-cases-container relative overflow-hidden">
+            {/* ── Case Management Side-Toggle (Task 3) ── */}
+            <div className={`fixed right-0 top-[80px] bottom-0 z-50 transition-all duration-500 ${sidebarOpen ? 'w-80' : 'w-0'}`}>
+                <div className="h-full bg-[#0D1117] border-l border-white/5 backdrop-blur-xl p-6 shadow-2xl relative">
+                    <button 
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className="absolute left-[-40px] top-1/2 -translate-y-1/2 w-10 h-24 bg-blue-600 text-white rounded-l-2xl flex items-center justify-center hover:bg-blue-500 transition-colors shadow-lg"
+                    >
+                        <div className="rotate-90 whitespace-nowrap text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <Activity size={12} /> {sidebarOpen ? 'Close Case Files' : 'Open Case Management'}
+                        </div>
+                    </button>
+                    
+                    <div className="space-y-6 overflow-hidden">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                            <h3 className="text-white font-black uppercase text-xs tracking-widest">Active Investigations</h3>
+                            <span className="bg-blue-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">3</span>
+                        </div>
+                        <div className="space-y-4">
+                            {activeInvestigations.map(inv => (
+                                <div key={inv.id} className="p-4 bg-white/5 border border-white/10 rounded-2xl group hover:border-blue-500/30 transition-all cursor-pointer">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-[9px] font-black text-slate-500 uppercase">{inv.id}</span>
+                                        <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded bg-${inv.color}-500/10 text-${inv.color}-500 border border-${inv.color}-500/20`}>
+                                            {inv.risk}
+                                        </span>
+                                    </div>
+                                    <h4 className="text-white text-xs font-bold leading-tight group-hover:text-blue-400 transition-colors">{inv.title}</h4>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="w-full py-4 mt-6 bg-white/5 text-slate-400 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:text-white hover:bg-white/10 transition-all">
+                            View Archive
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Hero Section (Task 1) ── */}
+            <header className="use-cases-header pt-20">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                    <div className="w-1 h-6 bg-blue-500 rounded-full" />
+                    <span className="text-blue-500 font-black uppercase text-[10px] tracking-[0.4em]">Government Portal</span>
+                </div>
+                <h1 className="text-white text-6xl md:text-7xl font-black tracking-tight m-0 mb-6 text-center leading-tight">
+                    Sovereign Forensic <br /> Intelligence
+                </h1>
+                <p className="text-slate-400 text-lg md:text-xl max-w-3xl leading-relaxed text-center mx-auto font-medium">
+                    National-grade solutions for Cyber-Investigators, AML Compliance Officers, and Legal Agencies 
+                    to de-anonymize illicit activities on-chain.
                 </p>
+                <div className="flex items-center justify-center gap-6 mt-10">
+                    <span className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase bg-white/5 px-4 py-2 rounded-full border border-white/5">
+                        <Shield size={12} className="text-blue-500" /> Forensic Standard
+                    </span>
+                    <span className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase bg-white/5 px-4 py-2 rounded-full border border-white/5">
+                        <Scale size={12} className="text-emerald-500" /> Legal Admissibility
+                    </span>
+                </div>
             </header>
 
-            <nav className="use-cases-nav">
-                {cases.map(c => (
-                    <button 
-                        key={c.id}
-                        className={`use-case-tab-btn ${activeCase === c.id ? 'active' : ''}`}
-                        onClick={() => setActiveCase(c.id)}
-                    >
-                        {c.icon}
-                        <span>{c.title}</span>
-                    </button>
-                ))}
-            </nav>
+            {/* ── Targeted Enforcement Pillars (Task 2) ── */}
+            <div className="max-w-7xl mx-auto px-6 py-24">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <EnforcementCard 
+                        title="Automated Evidence Chains" 
+                        desc="Generate human-readable 'Forensic Narratives' that can be used directly in legal filings with cryptographic proof-of-state."
+                        icon={<Gavel size={26} />}
+                        badge="Verified by AI Core"
+                        color="blue"
+                    />
+                    <EnforcementCard 
+                        title="Institutional Exposure Mapping" 
+                        desc="Identify when illicit funds touch KYC-verified exchanges or high-risk jurisdictions using deep cluster unmasking."
+                        icon={<FileSearch size={26} />}
+                        badge="Cluster IQ Grade"
+                        color="indigo"
+                    />
+                    <EnforcementCard 
+                        title="Regulatory Alert Engine" 
+                        desc="Real-time flagging of 'Structuring' (Section 194-S) and Mixer-hop patterns before funds reach the bridge layers."
+                        icon={<AlertTriangle size={26} />}
+                        badge="Sovereign Standard"
+                        color="rose"
+                    />
+                </div>
 
-            <main className="use-case-content">
-                {activeCase === 'forensics' && <DigitalForensicsContent />}
-                {activeCase === 'supply' && <SupplyChainContent />}
-                {activeCase === 'finance' && <FinancialMonitoringContent />}
-            </main>
+                {/* ── Additional Platform Features ── */}
+                <div className="mt-20 grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[
+                        { title: 'De-Anonymizer', desc: 'Neural unmasking of wallet owner identities.', icon: <Users size={18}/> },
+                        { title: 'Multi-Chain Trace', desc: 'Parallel investigation across 60+ ecosystems.', icon: <Database size={18}/> },
+                        { title: 'Asset Recovery', desc: 'Strategic paths for frozen fund exfiltration.', icon: <Zap size={18}/> },
+                        { title: 'Compliance Audit', desc: 'Automated SAR filing documentation ready.', icon: <ShieldCheck size={18}/> }
+                    ].map(f => (
+                        <div key={f.title} className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] hover:bg-white/5 transition-all group">
+                            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4 group-hover:bg-blue-500/20 text-blue-400 transition-all">
+                                {f.icon}
+                            </div>
+                            <h4 className="text-white text-xs font-black uppercase tracking-widest mb-2">{f.title}</h4>
+                            <p className="text-slate-500 text-[11px] font-medium leading-relaxed m-0">{f.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Subtle background glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/[0.01] blur-[120px] pointer-events-none -z-10" />
         </div>
     );
 };
 
-const DigitalForensicsContent = () => (
-    <div className="use-case-detail-grid">
-        <div className="use-case-card glass p-8">
-            <div className="flex flex-col gap-8">
-                <div>
-                    <h3 className="text-rose-500 font-black uppercase text-[10px] tracking-widest mb-4 border-b border-rose-500/20 pb-2">The Critical Problem</h3>
-                    <p className="text-white text-xl font-medium leading-relaxed m-0">
-                        The explosion of decentralized finance (DeFi) has created a lack of traceability, enabling complex money laundering and ransomware payouts that bypass traditional surveillance.
-                    </p>
-                </div>
-                <div>
-                    <h3 className="text-blue-500 font-black uppercase text-[10px] tracking-widest mb-4 border-b border-blue-500/20 pb-2">The Forensic Solution</h3>
-                    <p className="text-slate-300 text-lg leading-relaxed m-0">
-                        AI-powered real-time tracking that maps entity cluster relationships, identifies obfuscation techniques (mixers/bridges), and enables deep-dive wallet visualization.
-                    </p>
-                </div>
-                <div className="gov-action-flow p-6 bg-white/5 rounded-2xl border border-white/5">
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 text-center">Operational Timeline</div>
-                    <div className="flex justify-between items-center relative">
-                        <div className="absolute top-1/2 left-0 w-full h-px bg-white/10 -translate-y-1/2"></div>
-                        <Step label="TRACK" active={true} icon={<Globe size={14} />} />
-                        <Step label="DETECT" active={true} icon={<Zap size={14} />} />
-                        <Step label="INVESTIGATE" active={true} icon={<Search size={14} />} />
-                        <Step label="ACT" active={false} icon={<AlertTriangle size={14} />} />
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className="use-case-visuals">
-            <div className="grid grid-cols-2 gap-6">
-                <FeatureCard title="Forensic Mapping" desc="Trace funds through complex smart contracts and bridge layers automatically." icon={<Search size={18} />} />
-                <FeatureCard title="Cluster Analysis" desc="Identify high-risk clusters using AI-based node classification." icon={<Database size={18} />} />
-                <FeatureCard title="Evidence Export" desc="Generate legally admissible reports with cryptographic verification." icon={<CheckCircle size={18} />} />
-                <FeatureCard title="Real-Time Alerts" desc="Instant notification for flagged entity movements across 60+ chains." icon={<Activity size={18} />} />
-            </div>
-        </div>
-    </div>
-);
-
-const SupplyChainContent = () => (
-    <div className="use-case-detail-grid">
-        <div className="use-case-card glass p-8">
-            <div className="flex flex-col gap-8">
-                <div>
-                    <h3 className="text-rose-500 font-black uppercase text-[10px] tracking-widest mb-4 border-b border-rose-500/20 pb-2">The Vulnerability</h3>
-                    <p className="text-white text-xl font-medium leading-relaxed m-0">
-                        Global supply chains suffer from a lack of transparency, leading to counterfeit goods, tax evasion through under-invoicing, and illicit cargo diversion in international waters.
-                    </p>
-                </div>
-                <div>
-                    <h3 className="text-blue-500 font-black uppercase text-[10px] tracking-widest mb-4 border-b border-blue-500/20 pb-2">The Surveillance Strategy</h3>
-                    <p className="text-slate-300 text-lg leading-relaxed m-0">
-                        Immutable asset tracking on-chain combined with AI anomaly detection triggers alerts when movement or financial signals deviate from verified institutional protocols.
-                    </p>
-                </div>
-                <button className="py-4 bg-blue-500 text-white font-black uppercase text-sm tracking-[0.2em] rounded-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3">
-                    Initialize Supply Surveillance <ShieldCheck size={18} />
-                </button>
-            </div>
-        </div>
-        <div className="use-case-visuals">
-             <div className="grid grid-cols-2 gap-6">
-                <FeatureCard title="Asset Lineage" desc="Trace Every component from raw material to final point of sale." icon={<Truck size={18} />} />
-                <FeatureCard title="Anomaly Detection" desc="Instant alerts for geographic or volume deviations." icon={<AlertTriangle size={18} />} />
-                <FeatureCard title="Tax Compliance" desc="Automated audit logs for international shipping and customs." icon={<CheckCircle size={18} />} />
-                <FeatureCard title="Private Ledger Sync" desc="Secure integration with existing legacy ERP databases." icon={<Lock size={18} />} />
-            </div>
-        </div>
-    </div>
-);
-
-const FinancialMonitoringContent = () => (
-    <div className="use-case-detail-grid">
-        <div className="use-case-card glass p-8">
-            <div className="flex flex-col gap-8">
-                <div>
-                    <h3 className="text-rose-500 font-black uppercase text-[10px] tracking-widest mb-4 border-b border-rose-500/20 pb-2">The Oversight Gap</h3>
-                    <p className="text-white text-xl font-medium leading-relaxed m-0">
-                        Regulators lack real-time oversight of fund movements between centralized exchanges and private wallets, creating blind spots for illicit international transfers.
-                    </p>
-                </div>
-                <div>
-                    <h3 className="text-blue-500 font-black uppercase text-[10px] tracking-widest mb-4 border-b border-blue-500/20 pb-2">The Regulatory Solution</h3>
-                    <p className="text-slate-300 text-lg leading-relaxed m-0">
-                        Real-time dashboard integration mapping all cross-border flows, combined with predictive risk analysis to flag suspicious entities before the final transaction layers.
-                    </p>
-                </div>
-                <div className="stats-row flex gap-6">
-                    <div className="flex-1 p-4 bg-white/5 rounded-xl border border-white/5">
-                        <div className="text-[10px] font-black text-slate-500 uppercase mb-2">Flow Monitored</div>
-                        <div className="text-2xl font-black text-white">$2.8B / HR</div>
-                    </div>
-                    <div className="flex-1 p-4 bg-white/5 rounded-xl border border-white/5">
-                        <div className="text-[10px] font-black text-slate-500 uppercase mb-2">Detection Rate</div>
-                        <div className="text-2xl font-black text-blue-500">99.8%</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className="use-case-visuals">
-            <div className="grid grid-cols-2 gap-6">
-                <FeatureCard title="AML Surveillance" desc="Global monitoring of high-risk wallets and mixing clusters." icon={<ShieldCheck size={18} />} />
-                <FeatureCard title="Risk Analysis" desc="Predictive modeling of entity behavior for risk scoring." icon={<BarChart size={18} />} />
-                <FeatureCard title="Regulatory Audits" desc="Generate compliance certificates for institutional actors." icon={<CheckCircle size={18} />} />
-                <FeatureCard title="Sanctions Sync" desc="Live daily updates from global sanctions lists (OFAC/UN)." icon={<Activity size={18} />} />
-            </div>
-        </div>
-    </div>
-);
-
-const Step = ({ label, active, icon }) => (
-    <div className={`flex flex-col items-center gap-2 z-10 p-3 rounded-xl transition-all ${active ? 'bg-blue-500/10 border border-blue-500/30' : 'bg-white/5 border border-white/5'}`}>
-        <div className={`p-2 rounded-full ${active ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-400'}`}>
+const EnforcementCard = ({ title, desc, icon, badge, color }) => (
+    <div className="use-case-card glass p-10 flex flex-col gap-8 group hover:-translate-y-1 transition-all duration-500 relative overflow-hidden">
+        <div className={`absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-${color}-500 group-hover:scale-125 transition-transform duration-700`}>
             {icon}
         </div>
-        <span className={`text-[8px] font-black uppercase tracking-widest ${active ? 'text-blue-500' : 'text-slate-500'}`}>{label}</span>
-    </div>
-);
-
-const FeatureCard = ({ title, desc, icon }) => (
-    <div className="p-6 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/[0.08] hover:border-white/10 transition-all group">
-        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:bg-blue-500/20 group-hover:text-blue-400 transition-all">
-            {icon}
+        
+        <div className="space-y-4 relative z-10">
+            <span className={`px-3 py-1 bg-white/5 text-slate-500 text-[8px] font-black uppercase tracking-[0.2em] rounded-full border border-white/10 group-hover:border-${color}-500/30 group-hover:text-${color}-400 transition-colors`}>
+                {badge}
+            </span>
+            <div className={`w-14 h-14 rounded-2xl bg-${color}-500/10 flex items-center justify-center text-${color}-400 mb-6 border border-${color}-500/20`}>
+                {icon}
+            </div>
+            <h3 className="text-2xl font-black text-white tracking-tight leading-tight group-hover:text-blue-400 transition-colors">
+                {title}
+            </h3>
+            <p className="text-slate-400 text-sm leading-relaxed font-medium">
+                {desc}
+            </p>
         </div>
-        <h4 className="text-white text-sm font-black uppercase tracking-widest mb-3">{title}</h4>
-        <p className="text-slate-400 text-xs leading-relaxed m-0">{desc}</p>
+        
+        <button className={`mt-auto py-3.5 bg-white/5 hover:bg-${color}-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/10 hover:border-${color}-500 transition-all flex items-center justify-center gap-2 group-hover:shadow-[0_10px_30px_rgba(0,0,0,0.3)]`}>
+            Initialize Intelligence <ArrowRight size={13} />
+        </button>
     </div>
 );
 

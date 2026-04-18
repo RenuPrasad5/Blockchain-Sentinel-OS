@@ -45,6 +45,18 @@
     letter-spacing: 0.2em;
 }
 
+.walkthrough-highlight {
+    position: relative;
+    z-index: 10001 !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3) !important;
+    transition: all 0.3s ease;
+    background-color: rgba(15, 23, 42, 0.9) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
 .saas-terminal {
     background: var(--terminal-dark);
     min-height: 100vh;

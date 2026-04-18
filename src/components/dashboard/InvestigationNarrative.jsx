@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     History, ArrowRight, User, Layers, ShieldCheck,
-    Loader2, CheckCircle2, Download, FileText
+    Loader2, CheckCircle2, Download, FileText, Zap,
+    Fingerprint, Network
 } from 'lucide-react';
 
 const Node = ({ type, title, label, isFlagged }) => (
@@ -121,6 +122,102 @@ const InvestigationNarrative = ({ activeCase, onInitialize, isInitialized }) => 
                         <Node type="exchange" title="Recipient" label={activeCase?.recipientAddress}  isFlagged={true} />
                     </motion.div>
                 </AnimatePresence>
+            </div>
+
+            {/* AI Strategic Insights Layer */}
+            <div className="mb-12 relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                    <Zap size={18} className="text-blue-500 animate-pulse" />
+                    <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">AI Strategic Insights</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2 bg-[#1e293b]/40 border border-blue-500/10 rounded-3xl p-6 backdrop-blur-md">
+                        <div className="flex items-start gap-4 mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                <FileText size={18} className="text-blue-400" />
+                            </div>
+                            <div>
+                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Executive Summary</h4>
+                                <p className="text-sm font-medium text-slate-200 leading-relaxed italic">
+                                    "{activeCase?.investigationSummaryShort || 'System is identifying major fund movement patterns...'}"
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-6 pt-4 border-t border-white/5">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">AI Confidence</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-lg font-black text-blue-400">{activeCase?.confidence || 85}%</span>
+                                    <div className="w-16 h-1 bg-white/5 rounded-full overflow-hidden">
+                                        <div className="h-full bg-blue-500" style={{ width: `${activeCase?.confidence || 85}%` }} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="h-8 w-[1px] bg-white/5" />
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">System Logic</span>
+                                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Autonomous Trace</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-3xl p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                            <CheckCircle2 size={14} className="text-emerald-500" />
+                            <h4 className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Suggested Protocol</h4>
+                        </div>
+                        <p className="text-[12px] font-bold text-white leading-relaxed mb-4">
+                            {activeCase?.suggestedAction || 'Continue monitoring destination addresses.'}
+                        </p>
+                        <button className="w-full py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded-xl text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 transition-all">
+                            Execute Response
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Forensic behavioral indicators — NEW */}
+            <div className="mb-12 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* behavioral indicators */}
+                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Fingerprint size={16} className="text-blue-400" />
+                            <h3 className="text-[10px] font-black text-white uppercase tracking-widest">Behavioral Indicators</h3>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {(activeCase?.behavioralIndicators || ['Mass Movement', 'Automated Triage']).map(tag => (
+                                <span key={tag} className="px-3 py-1.5 bg-blue-500/5 border border-blue-500/20 rounded-lg text-[10px] font-black text-blue-400 uppercase tracking-widest">
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Clustering & Hops */}
+                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Network size={16} className="text-indigo-400" />
+                            <h3 className="text-[10px] font-black text-white uppercase tracking-widest">Cluster Context</h3>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 bg-white/[0.03] border border-white/5 rounded-2xl">
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Hop Count</span>
+                                <span className="text-xl font-black text-white">{activeCase?.hopCount || 0} Layers</span>
+                            </div>
+                            <div className="p-4 bg-white/[0.03] border border-white/5 rounded-2xl">
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Cluster Size</span>
+                                <span className="text-xl font-black text-white">~{activeCase?.clustering?.addressCount || 0} Adr</span>
+                            </div>
+                        </div>
+                        <div className="mt-4 px-1">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5 opacity-60">Primary Cluster Identity</p>
+                            <p className="text-xs font-black text-indigo-400 uppercase tracking-tighter truncate">
+                                {activeCase?.clustering?.primaryEntity || 'Unknown Individual Cluster'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Narrative Steps (Timeline) */}

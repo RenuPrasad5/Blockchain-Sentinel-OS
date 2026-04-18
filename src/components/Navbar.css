@@ -7,8 +7,11 @@
     padding: 0 2rem;
     z-index: 1100;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: #0D1117;
-    position: relative;
+    background: rgba(13, 17, 23, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: sticky;
+    top: 0;
     width: 100%;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
