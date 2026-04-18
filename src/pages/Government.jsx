@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     ShieldAlert, 
     Search, 
@@ -15,7 +15,8 @@ import {
     Wifi,
     BrainCircuit,
     Code2,
-    Hash
+    Hash,
+    Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ActivityStream from '../components/ActivityStream';
@@ -187,6 +188,12 @@ const GovernmentAndEnforcement = () => {
     const [networkStatus, setNetworkStatus] = useState('Connecting');
     const [viewMode, setViewMode] = useState('intelligence'); // Default: Intelligence View
     const [activeFCase, setActiveFCase] = useState(FORENSIC_CASES[0]);
+    const [isAuthenticating, setIsAuthenticating] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsAuthenticating(false), 1200);
+        return () => clearTimeout(timer);
+    }, []);
 
     const tabs = [
         { id: 'fraud', title: 'Fraud Detection', icon: <ShieldAlert size={18} /> },
@@ -196,64 +203,86 @@ const GovernmentAndEnforcement = () => {
     ];
 
     return (
-        <div className="gov-terminal-wrapper">
-            <header className="gov-header-section">
-                <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Forensic Intelligence Layer</span>
-                    </div>
-                    <h1 className="gov-main-title">Enforcement &amp; Surveillance Portal</h1>
-                    <p className="gov-header-desc text-slate-400">Secure gateway for government agencies. National-level blockchain monitoring, fraud detection, and multi-entity relationship mapping.</p>
-                </div>
-                
-                <div className="header-actions">
-                    <div className="flex items-center gap-3">
-                        <div className={`network-status-badge ${networkStatus.toLowerCase()}`}>
-                            <Wifi size={14} className={networkStatus === 'Live' ? "text-emerald-400" : "text-amber-400"} />
-                            <span className="text-[10px] font-black text-white uppercase tracking-widest">Network Status: {networkStatus}</span>
-                        </div>
-                        <div className="compliance-badge">
-                            <Scale size={14} className="text-blue-500" />
-                            <span className="text-[10px] font-black text-white uppercase tracking-widest">Compliance Ver: 8.4.2</span>
-                        </div>
-                    </div>
-                    <button className="export-btn">
-                        <Download size={14} />
-                        <span>Export Evidence</span>
-                    </button>
-                </div>
-            </header>
-
-            {/* ═══ MODE SWITCHER (Task 3) ═══ */}
-            <ModeSwitcher viewMode={viewMode} setViewMode={setViewMode} />
-
-            <div className="gov-nav-tabs">
-                {tabs.map(tab => (
-                    <button 
-                        key={tab.id}
-                        className={`gov-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-                        onClick={() => setActiveTab(tab.id)}
+        <div className="gov-terminal-wrapper relative min-h-screen">
+            <AnimatePresence>
+                {isAuthenticating && (
+                    <motion.div 
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[1000] bg-[#0D1117] flex flex-col items-center justify-center p-6 text-center"
                     >
-                        {tab.icon}
-                        <span>{tab.title}</span>
-                    </button>
-                ))}
-            </div>
-
-            <main className="gov-content-area">
-                {activeTab === 'fraud' && (
-                    <FraudDetectionDashboard
-                        onStatusChange={setNetworkStatus}
-                        viewMode={viewMode}
-                        activeFCase={activeFCase}
-                        setActiveFCase={setActiveFCase}
-                    />
+                        <Loader2 className="text-blue-500 animate-spin mb-6" size={50} />
+                        <h2 className="text-3xl font-black text-white uppercase tracking-[0.2em] mb-2">Authenticating Node</h2>
+                        <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Verifying Sovereign Access Credentials...</p>
+                    </motion.div>
                 )}
-                {activeTab === 'case' && <CaseBuilder />}
-                {activeTab === 'risk' && <RiskScoringSystem />}
-                {activeTab === 'alerts' && <AlertManagement />}
-            </main>
+            </AnimatePresence>
+
+            {!isAuthenticating && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <header className="gov-header-section">
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                                <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Forensic Intelligence Layer</span>
+                            </div>
+                            <h1 className="gov-main-title">Enforcement &amp; Surveillance Portal</h1>
+                            <p className="gov-header-desc text-slate-400">Secure gateway for government agencies. National-level blockchain monitoring, fraud detection, and multi-entity relationship mapping.</p>
+                        </div>
+                        
+                        <div className="header-actions">
+                            <div className="flex items-center gap-3">
+                                <div className={`network-status-badge ${networkStatus.toLowerCase()}`}>
+                                    <Wifi size={14} className={networkStatus === 'Live' ? "text-emerald-400" : "text-amber-400"} />
+                                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Network Status: {networkStatus}</span>
+                                </div>
+                                <div className="compliance-badge">
+                                    <Scale size={14} className="text-blue-500" />
+                                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Compliance Ver: 8.4.2</span>
+                                </div>
+                            </div>
+                            <button className="export-btn">
+                                <Download size={14} />
+                                <span>Export Evidence</span>
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* ═══ MODE SWITCHER (Task 3) ═══ */}
+                    <ModeSwitcher viewMode={viewMode} setViewMode={setViewMode} />
+
+                    <div className="gov-nav-tabs">
+                        {tabs.map(tab => (
+                            <button 
+                                key={tab.id}
+                                className={`gov-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+                                onClick={() => setActiveTab(tab.id)}
+                            >
+                                {tab.icon}
+                                <span>{tab.title}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <main className="gov-content-area">
+                        {activeTab === 'fraud' && (
+                            <FraudDetectionDashboard
+                                onStatusChange={setNetworkStatus}
+                                viewMode={viewMode}
+                                activeFCase={activeFCase}
+                                setActiveFCase={setActiveFCase}
+                            />
+                        )}
+                        {activeTab === 'case' && <CaseBuilder />}
+                        {activeTab === 'risk' && <RiskScoringSystem />}
+                        {activeTab === 'alerts' && <AlertManagement />}
+                    </main>
+                </motion.div>
+            )}
         </div>
     );
 };

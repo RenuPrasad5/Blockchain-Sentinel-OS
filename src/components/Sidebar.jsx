@@ -65,10 +65,10 @@ const Sidebar = () => {
 
     const navItems = [
         { id: 'terminal', title: 'Home', icon: <Globe size={20} />, path: '/' },
-        { id: 'govent', title: 'Gov & Enterprise', icon: <Shield size={20} />, path: '/gov-ent' },
+        { id: 'govent', title: 'Intelligence Portal', icon: <Shield size={20} />, path: '/gov-ent' },
         { id: 'enterprise', title: 'Enforcement', icon: <ShieldAlert size={20} />, path: '/government' },
         { id: 'compliance', title: 'Compliance & Legal', icon: <Scale size={20} />, path: '/compliance' },
-        { id: 'usecases', title: 'Use Cases', icon: <Briefcase size={20} />, path: '/use-cases' },
+        { id: 'usecases', title: 'Agency Solutions', icon: <Briefcase size={20} />, path: '/use-cases' },
         { id: 'cc', title: 'Dashboard', icon: <Cpu size={20} />, path: '/dashboard' },
         { id: 'encyclopedia', title: 'Encyclopedia', icon: <Database size={20} />, path: '/encyclopedia' },
         { id: 'research', title: 'Research', icon: <FileSearch size={20} />, path: '/research' },

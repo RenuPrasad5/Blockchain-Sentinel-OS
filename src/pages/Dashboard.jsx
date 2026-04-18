@@ -54,6 +54,7 @@ const Dashboard = () => {
     const [activeCase, setActiveCase]       = useState(INTELLIGENCE_DATABASE[0]);
     const [isInitialized, setIsInitialized] = useState(false);
     const [toast, setToast]                 = useState(null);
+    const [isAuthenticatingPortal, setIsAuthenticatingPortal] = useState(true);
 
     /* Refs */
     const narrativeRef = useRef(null);
@@ -65,6 +66,9 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
+        // Quick authentication simulation (800ms)
+        const authTimer = setTimeout(() => setIsAuthenticatingPortal(false), 800);
+
         // Start walkthrough if first time
         if (!hasCompletedOnboarding) {
             setTimeout(() => setShowWalkthrough(true), 1000);
@@ -93,6 +97,8 @@ const Dashboard = () => {
         } else if (intent === 'pulse') {
             showToast('Live Threat Monitor Active');
         }
+
+        return () => clearTimeout(authTimer);
     }, [hasCompletedOnboarding]);
 
     const handleSelectCase = (item) => {
@@ -108,8 +114,34 @@ const Dashboard = () => {
     };
 
     return (
-        <div className={`saas-terminal fade-in mode-${mode.toLowerCase()} min-h-screen bg-[#0D1117] p-6 lg:p-10 print:bg-white print:p-0`}>
+        <div className={`saas-terminal fade-in mode-${mode.toLowerCase()} min-h-screen bg-[#0D1117] p-6 lg:p-10 print:bg-white print:p-0 relative`}>
             
+            {/* ── Secure Session Overlay ── */}
+            <AnimatePresence>
+                {isAuthenticatingPortal && (
+                    <motion.div
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="fixed inset-0 z-[9999] bg-[#0D1117] flex flex-col items-center justify-center no-print"
+                    >
+                        <div className="flex flex-col items-center gap-4">
+                            <motion.div 
+                                animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
+                                transition={{ repeat: Infinity, duration: 1.5 }}
+                                className="w-16 h-16 rounded-full border-2 border-blue-500/30 flex items-center justify-center"
+                            >
+                                <Zap className="text-blue-500" size={24} />
+                            </motion.div>
+                            <div className="text-center">
+                                <h2 className="text-white font-black uppercase tracking-[0.3em] text-[11px] mb-1">Authenticating Secure Session...</h2>
+                                <p className="text-slate-500 font-bold uppercase tracking-widest text-[8px] animate-pulse">Establishing Sovereign Link</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <GuidedWalkthrough />
 
             {/* ── Toast Notification ── */}
@@ -132,7 +164,7 @@ const Dashboard = () => {
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em]">Sentinel Intelligence Center</span>
+                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">Sovereign Intelligence Portal</span>
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tight uppercase">Dashboard</h1>
                 </div>

@@ -135,13 +135,13 @@ const Home = () => {
                                 }
                             },
                             {
-                                label: 'Try Demo',
+                                label: 'Access Portal',
                                 icon: Zap,
-                                desc: 'Pre-filled sample',
-                                color: 'amber',
+                                desc: 'Enter Secure Environment',
+                                color: 'blue', // Changing to blue for consistent portal feel
                                 action: () => {
                                     setDemoMode(true);
-                                    launchDashboard('Loading Ronin Bridge Simulation...', 'hack', '/dashboard');
+                                    launchDashboard('Loading Secure Intelligence Portal...', 'hack', '/dashboard');
                                 }
                             }
                         ].map((btn, idx) => (
@@ -150,10 +150,16 @@ const Home = () => {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.4 + idx * 0.1 }}
-                                whileHover={{ y: -8, scale: 1.02 }}
+                                whileHover={{ 
+                                    y: -8, 
+                                    scale: 1.02,
+                                    boxShadow: btn.label === 'Access Portal' ? '0 0 25px rgba(59, 130, 246, 0.4)' : '0 20px 50px rgba(59, 130, 246, 0.1)'
+                                }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={btn.action}
-                                className="group relative bg-[#1e293b]/50 backdrop-blur-md border border-white/5 hover:border-blue-500/30 p-10 rounded-[2.5rem] transition-all flex flex-col items-center text-center gap-5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_50px_rgba(59,130,246,0.1)]"
+                                className={`group relative bg-[#1e293b]/50 backdrop-blur-md border border-white/5 p-10 rounded-[2.5rem] transition-all flex flex-col items-center text-center gap-5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] ${
+                                    btn.label === 'Access Portal' ? 'hover:border-blue-500/50' : 'hover:border-blue-500/30'
+                                }`}
                             >
                                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${btn.color === 'blue' ? 'bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20' :
                                     btn.color === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20' :
@@ -191,7 +197,7 @@ const Home = () => {
                             <span className="text-slate-500">Simplify Forensics.</span>
                         </h3>
                         <p className="text-lg text-slate-400 font-medium leading-relaxed mb-8">
-                            Sentinel-OS helps analyze crypto wallets and detect suspicious transaction patterns using risk scoring and investigation insights. We turn raw blockchain data into clear transaction stories that anyone can understand.
+                            Sentinel-OS powers the <strong className="text-blue-400">Intelligence Portal</strong>, helping investigators analyze wallets and detect suspicious patterns via a unified command center. We turn raw blockchain data into clear transaction stories that anyone can understand.
                         </p>
                         
                         <div className="grid grid-cols-2 gap-8">

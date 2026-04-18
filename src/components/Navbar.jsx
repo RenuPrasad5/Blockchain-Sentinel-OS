@@ -82,10 +82,10 @@ const Navbar = () => {
     const navItems = [
         { title: 'Home', icon: <Globe size={18} />, path: '/' },
         { title: 'Dashboard', icon: <Cpu size={18} />, path: '/dashboard' },
-        { title: 'Gov & Enterprise', icon: <Shield size={18} />, path: '/gov-ent' },
+        { title: 'Intelligence Portal', icon: <Shield size={18} />, path: '/gov-ent' },
         { title: 'Enforcement', icon: <ShieldAlert size={18} />, path: '/government' },
         { title: 'Compliance & Legal', icon: <Scale size={18} />, path: '/compliance' },
-        { title: 'Use Cases', icon: <Briefcase size={18} />, path: '/use-cases' },
+        { title: 'Agency Solutions', icon: <Briefcase size={18} />, path: '/use-cases' },
         { title: 'Encyclopedia', icon: <Database size={18} />, path: '/encyclopedia' },
         { title: 'Research', icon: <FileSearch size={18} />, path: '/research' },
         { title: 'Monitoring Layer', icon: <Activity size={18} />, path: '/mempool' },
@@ -139,7 +139,7 @@ const Navbar = () => {
                     <NavLink to="/mempool" className="nav-link-btn">Monitoring Layer</NavLink>
                     <NavLink to="/gov-ent" className="nav-link-btn flex items-center gap-2">
                         <Shield size={16} className="text-blue-400" />
-                        <span>Gov & Enterprise</span>
+                        <span>Intelligence Portal</span>
                     </NavLink>
                     <NavLink to="/government" className="nav-link-btn flex items-center gap-2">
                         <ShieldAlert size={16} className="text-emerald-500" />
@@ -149,7 +149,7 @@ const Navbar = () => {
                         <Scale size={16} className="text-blue-500" />
                         <span>Compliance & Legal</span>
                     </NavLink>
-                    <NavLink to="/use-cases" className="nav-link-btn">Use Cases</NavLink>
+                    <NavLink to="/use-cases" className="nav-link-btn">Agency Solutions</NavLink>
 
                     <div
                         className="tools-dropdown-container"
