@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   return {
     // Explicitly set the root to the current directory to fix path resolution errors
     root: '.',
-    base: '/',
+    base: './',
     plugins: [react()],
     esbuild: {
       // Clean up the production build by dropping logs and debuggers

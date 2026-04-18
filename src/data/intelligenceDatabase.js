@@ -13,7 +13,7 @@ export const INTELLIGENCE_DATABASE = [
         why: "Sequential 100 ETH hops detected targeting a known Tornado Cash relayer cluster.",
         whyRisky: "This wallet is using advanced automation to move large sums of ETH into a privacy mixer. This behavior is almost exclusively associated with fund obfuscation following a high-value exploit.",
         suggestedAction: "Immediately freeze associated exchange accounts and flag the destination relayer in real-time monitors.",
-        investigationSummaryShort: "Funds moved from a high-risk origin -> split into small batches -> deposited into Tornado Cash.",
+        investigationSummaryShort: "Funds moved from a high-risk origin -> split into small batches -> deposited into Tornado Cash. Pattern indicates violation of FIU Section 194-S (Structuring).",
         originAddress: "0x742d...492d",
         recipientAddress: "Tornado.Cash Router",
         narrativeSteps: [

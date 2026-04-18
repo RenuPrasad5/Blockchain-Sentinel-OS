@@ -73,12 +73,18 @@ const Dashboard = () => {
         /* ── Handle intent from Home page navigation ── */
         const params = new URLSearchParams(location.search);
         const intent = params.get('intent');
+        const autoPrint = params.get('autoPrint');
         
         if (intent === 'hack') {
-            const phsCase = INTELLIGENCE_DATABASE.find(c => c.id === 'PHS-1120');
+            const phsCase = INTELLIGENCE_DATABASE.find(c => c.id === (autoPrint === 'true' ? 'SRC-7721' : 'PHS-1120'));
             if (phsCase) setActiveCase(phsCase);
             setDemoMode(true);
-            showToast('Demo Mode: Ronin Bridge Simulation Loaded');
+            showToast(autoPrint === 'true' ? 'Forensic Evidence Chain Verified' : 'Demo Mode: Ronin Bridge Simulation Loaded');
+            
+            if (autoPrint === 'true') {
+                setIsInitialized(true);
+                setTimeout(() => window.print(), 3500);
+            }
         } else if (intent === 'wallet') {
             const walletCase = INTELLIGENCE_DATABASE.find(c => c.id === 'SRC-7721');
             if (walletCase) setActiveCase(walletCase);
