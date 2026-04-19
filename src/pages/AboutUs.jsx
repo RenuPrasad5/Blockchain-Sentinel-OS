@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './AboutUs.css';
-import architectImg from '../assets/images/founder.jpg';
-import leadImg from '../assets/images/co-founder.png';
 
 const TerminalIntro = ({ onComplete }) => {
     const [lines, setLines] = useState([]);
@@ -272,8 +270,8 @@ const AboutUs = () => {
                     >
                         <div className="card-top-label">FOUNDER</div>
                         <div className="founder-visual">
-                            <div className="founder-image-box">
-                                <img src={architectImg} alt="System Architect" className="founder-img portrait-founder" />
+                            <div className="founder-image-box flex items-center justify-center bg-white/5">
+                                <User size={48} className="text-indigo-400 opacity-50" />
                                 <div className="founder-overlay-glow"></div>
                             </div>
                             <span className="founder-role-tag">LEAD_ENGINEER</span>
@@ -291,8 +289,8 @@ const AboutUs = () => {
                     >
                         <div className="card-top-label">CO-FOUNDER</div>
                         <div className="founder-visual">
-                            <div className="founder-image-box">
-                                <img src={leadImg} alt="Intelligence Lead" className="founder-img" />
+                            <div className="founder-image-box flex items-center justify-center bg-white/5">
+                                <User size={48} className="text-indigo-400 opacity-50" />
                                 <div className="founder-overlay-glow"></div>
                             </div>
                             <span className="founder-role-tag">INTEL_OPS</span>
