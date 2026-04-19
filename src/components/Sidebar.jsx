@@ -65,7 +65,16 @@ const Sidebar = () => {
 
     const navItems = [
         { id: 'terminal', title: 'Home', icon: <Globe size={20} />, path: '/' },
-        { id: 'govent', title: 'Intelligence Portal', icon: <Shield size={20} />, path: '/gov-ent' },
+        { 
+            id: 'govent', 
+            title: 'Intelligence Portal', 
+            icon: <Shield size={20} />, 
+            path: '/gov-ent',
+            subItems: [
+                { title: 'Command Center', icon: <Cpu size={18} />, path: '/gov-ent' },
+                { title: 'Forensic Lab', icon: <Database size={18} />, path: '/intelligence-portal/forensic-lab' },
+            ]
+        },
         { id: 'enterprise', title: 'Enforcement', icon: <ShieldAlert size={20} />, path: '/government' },
         { id: 'compliance', title: 'Compliance & Legal', icon: <Scale size={20} />, path: '/compliance' },
         { id: 'usecases', title: 'Agency Solutions', icon: <Briefcase size={20} />, path: '/use-cases' },

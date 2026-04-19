@@ -43,6 +43,8 @@ import './App.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import ReactGA from 'react-ga4';
 
+import ForensicLab from './pages/intelligence-portal/ForensicLab';
+
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,7 +58,7 @@ function App() {
     return () => unwatch();
   }, []);
 
-  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel'];
+  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/intelligence-portal/forensic-lab'];
   const isFullWidth = fullWidthPaths.includes(location.pathname);
   const isAuthPage = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/auth');
 
@@ -140,6 +142,7 @@ function App() {
               <Route path="/gov-ent" element={<Dashboard />} />
               <Route path="/use-cases" element={<UseCases />} />
               <Route path="/compliance" element={<CompliancePortal />} />
+              <Route path="/intelligence-portal/forensic-lab" element={<ForensicLab />} />
             </Routes>
             {showAssistant && <AISentinelAssistant />}
           </div>
