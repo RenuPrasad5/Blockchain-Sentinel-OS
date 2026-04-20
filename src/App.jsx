@@ -42,6 +42,7 @@ import './App.css';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import ReactGA from 'react-ga4';
+import { Analytics } from '@vercel/analytics/react';
 
 import ForensicLab from './pages/intelligence-portal/ForensicLab';
 
@@ -149,6 +150,7 @@ function App() {
         </main>
       </div>
       {!isAuthPage && <BottomNavigation />}
+      <Analytics />
     </div>
   );
 }
