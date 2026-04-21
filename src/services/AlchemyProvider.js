@@ -37,3 +37,25 @@ export const getWalletTransactionHistory = async (address) => {
         return [];
     }
 };
+
+/**
+ * Perform a deep forensic analysis of a wallet.
+ */
+export const getWalletAnalysis = async (address) => {
+    try {
+        const [txCount, ethBalance, history] = await Promise.all([
+            alchemy.core.getTransactionCount(address),
+            alchemy.core.getBalance(address),
+            getWalletTransactionHistory(address)
+        ]);
+
+        return {
+            txCount,
+            balance: parseFloat(ethBalance.toString()) / 1e18,
+            history
+        };
+    } catch (error) {
+        console.error("Forensic Analysis Error:", error);
+        throw error;
+    }
+};

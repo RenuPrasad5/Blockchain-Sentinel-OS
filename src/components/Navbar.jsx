@@ -35,16 +35,19 @@ import {
     ToggleRight,
     ShieldAlert,
     Briefcase,
-    Scale
+    Scale,
+    Eye
 } from 'lucide-react';
 import logo from '../assets/BL.logo.png';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
+import { useWatchlist } from '../context/WatchlistContext';
 import './Navbar.css';
 
 const Navbar = () => {
     const { user, userData, logout } = useAuth();
     const { isMobileOpen, setIsMobileOpen, isExpanded, regulatoryMode, setRegulatoryMode } = useModeStore();
+    const { alerts } = useWatchlist();
     const location = useLocation();
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -98,9 +101,9 @@ const Navbar = () => {
     ];
 
     const notifications = [
-        { id: 1, title: 'Security Alert', message: 'New login detected', time: '2m ago', icon: <AlertCircle size={16} className="text-red" /> },
-        { id: 2, title: 'Research Node', message: 'Solana v1.18 update verified', time: '1h ago', icon: <Info size={16} className="text-blue" /> },
-        { id: 3, title: 'Network Pulse', message: 'Congestion detected on Ethereum', time: '3h ago', icon: <Activity size={16} className="text-amber" /> },
+        { id: 1, title: 'Security Alert', message: 'New login detected', time: '2m ago', icon: <AlertCircle size={16} className="text-rose-500" /> },
+        { id: 2, title: 'Watchlist Activity', message: 'Watched address 0x742... added 420 ETH', time: '15m ago', icon: <Eye size={16} className="text-emerald-500" /> },
+        { id: 3, title: 'Case Update', message: 'Operation Cyber-Shield integrity verified', time: '1h ago', icon: <ShieldCheck size={16} className="text-blue-500" /> },
     ];
 
     const handleLogout = async () => {
@@ -222,7 +225,7 @@ const Navbar = () => {
                     <div className="notification-container" ref={notificationRef}>
                         <button className="icon-btn" onClick={() => setIsNotificationOpen(!isNotificationOpen)}>
                             <Bell size={20} />
-                            <span className="notification-dot"></span>
+                            {alerts.length > 0 && <span className="notification-dot"></span>}
                         </button>
                         {isNotificationOpen && (
                             <div className="notification-dropdown glass active">
@@ -231,18 +234,28 @@ const Navbar = () => {
                                     <span className="mark-read">Mark all as read</span>
                                 </div>
                                 <div className="notification-list">
-                                    {notifications.map(note => (
-                                        <div key={note.id} className="notification-item">
-                                            <div className="note-icon-wrap">
-                                                {note.icon}
-                                            </div>
-                                            <div className="note-content">
-                                                <p className="note-title">{note.title}</p>
-                                                <p className="note-msg">{note.message}</p>
-                                                <span className="note-time">{note.time}</span>
-                                            </div>
+                                    {alerts.length === 0 ? (
+                                        <div className="empty-alerts">
+                                            <ShieldAlert size={24} className="text-slate-700 mb-2" />
+                                            <p>No real-time threats detected</p>
                                         </div>
-                                    ))}
+                                    ) : (
+                                        alerts.slice().reverse().map(note => (
+                                            <div key={note.id} className={`notification-item ${note.type === 'Critical' ? 'critical-bg' : ''}`}>
+                                                <div className="note-icon-wrap">
+                                                    {note.type === 'Critical' ? <ShieldAlert size={16} className="text-rose-500" /> : <Activity size={16} className="text-emerald-500" />}
+                                                </div>
+                                                <div className="note-content">
+                                                    <p className="note-title">{note.title}</p>
+                                                    <p className="note-msg">{note.message}</p>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="note-time">{new Date(note.timestamp).toLocaleTimeString()}</span>
+                                                        {note.amount && <span className="alert-amount">{note.amount} ETH</span>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                                 <div className="dropdown-footer">
                                     <button className="view-all">View All Activity</button>
@@ -280,6 +293,9 @@ const Navbar = () => {
                                         <div className="dropdown-divider"></div>
                                         <button className="dropdown-item" onClick={() => handleNavigate('/dashboard')}>
                                             <Cpu size={16} /> Command Center
+                                        </button>
+                                        <button className="dropdown-item" onClick={() => handleNavigate('/cases')}>
+                                            <Briefcase size={16} /> Forensic Command
                                         </button>
                                         <button className="dropdown-item" onClick={() => handleNavigate('/profile')}>
                                             <User size={16} /> Profile

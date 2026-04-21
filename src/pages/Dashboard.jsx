@@ -12,6 +12,7 @@ import GuidedWalkthrough    from '../components/dashboard/GuidedWalkthrough';
 import PriorityAlerts       from '../components/dashboard/PriorityAlerts';
 import InvestigationNarrative from '../components/dashboard/InvestigationNarrative';
 import IntelligenceFeed     from '../components/dashboard/IntelligenceFeed';
+import { useWatchlist }     from '../context/WatchlistContext';
 
 import { INTELLIGENCE_DATABASE } from '../data/intelligenceDatabase';
 
@@ -48,6 +49,7 @@ const Dashboard = () => {
         hasCompletedOnboarding, 
         setShowWalkthrough 
     } = useOnboardingStore();
+    const { watchlist, alerts } = useWatchlist();
     const location = useLocation();
 
     /* Local State */
@@ -57,6 +59,7 @@ const Dashboard = () => {
     const [isAuthenticatingPortal, setIsAuthenticatingPortal] = useState(true);
 
     /* Refs */
+    const [searchQuery, setSearchQuery] = useState('');
     const narrativeRef = useRef(null);
     const searchRef    = useRef(null);
 
@@ -111,6 +114,19 @@ const Dashboard = () => {
     const handleInitializeComplete = (item) => {
         setIsInitialized(true);
         showToast(`Analysis Complete: ${item.id}`);
+    };
+
+    const handleStartAnalysis = () => {
+        if (!searchQuery.trim()) {
+            showToast("Please enter a valid wallet address");
+            return;
+        }
+        // Basic eth address validation
+        if (!/^0x[a-fA-F0-9]{40}$/.test(searchQuery)) {
+            showToast("Investigative Error: Invalid address format");
+            return;
+        }
+        navigate(`/intelligence-portal/forensic-lab?address=${searchQuery}`);
     };
 
     return (
@@ -168,6 +184,25 @@ const Dashboard = () => {
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tight uppercase">Dashboard</h1>
                 </div>
+
+                <div className="flex items-center gap-6 no-print">
+                    <div className="hidden xl:flex items-center gap-6 px-8 py-5 rounded-3xl bg-blue-500/5 border border-blue-500/10">
+                        <div className="flex flex-col">
+                            <span className="text-[8px] font-black text-blue-500/60 uppercase tracking-widest mb-1">Watched Nodes</span>
+                            <span className="text-xl font-black text-white leading-none">{watchlist.length}</span>
+                        </div>
+                        <div className="w-[1px] h-8 bg-white/5" />
+                        <div className="flex flex-col">
+                            <span className="text-[8px] font-black text-rose-500/60 uppercase tracking-widest mb-1">Threat Alerts</span>
+                            <span className="text-xl font-black text-rose-500 leading-none">{alerts.length}</span>
+                        </div>
+                        <div className="w-[1px] h-8 bg-white/5" />
+                        <div className="flex items-center gap-2">
+                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Surveillance Live</span>
+                        </div>
+                    </div>
+                </div>
                 
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="relative flex items-center group">
@@ -176,6 +211,9 @@ const Dashboard = () => {
                             ref={searchRef}
                             type="text"
                             placeholder="Enter wallet / hash / contract..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleStartAnalysis()}
                             className="w-72 bg-white/5 border border-white/10 text-white placeholder-slate-600 text-[11px] font-bold rounded-2xl pl-12 pr-4 py-4 outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all shadow-inner"
                         />
                     </div>
@@ -191,7 +229,10 @@ const Dashboard = () => {
                         {isDemoMode ? 'Reset System' : 'Demo Mode'}
                     </button>
                     
-                    <button className="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 flex items-center gap-3 transition-all hover:scale-105 active:scale-95">
+                    <button 
+                        onClick={handleStartAnalysis}
+                        className="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 flex items-center gap-3 transition-all hover:scale-105 active:scale-95"
+                    >
                         <Plus size={16} /> Start Analysis
                     </button>
                 </div>

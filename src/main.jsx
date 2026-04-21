@@ -21,6 +21,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 
 import { AuthProvider } from './context/AuthContext.jsx';
 import { WebSocketProvider } from './context/WebSocketContext.jsx';
+import { WatchlistProvider } from './context/WatchlistContext.jsx';
 
 const queryClient = new QueryClient();
 
@@ -76,7 +77,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <BrowserRouter>
                 <WebSocketProvider>
                   <AuthProvider>
-                    <App />
+                    <WatchlistProvider>
+                      <App />
+                    </WatchlistProvider>
                   </AuthProvider>
                 </WebSocketProvider>
               </BrowserRouter>

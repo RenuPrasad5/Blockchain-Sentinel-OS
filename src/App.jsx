@@ -44,6 +44,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ReactGA from 'react-ga4';
 
 import ForensicLab from './pages/intelligence-portal/ForensicLab';
+import CaseManagement from './pages/cases/CaseManagement';
+import { useMonitor } from './hooks/useMonitor';
 
 function App() {
   const navigate = useNavigate();
@@ -58,7 +60,10 @@ function App() {
     return () => unwatch();
   }, []);
 
-  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/intelligence-portal/forensic-lab'];
+  // Initialize global blockchain monitor
+  useMonitor();
+
+  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/intelligence-portal/forensic-lab', '/cases'];
   const isFullWidth = fullWidthPaths.includes(location.pathname);
   const isAuthPage = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/auth');
 
@@ -143,6 +148,14 @@ function App() {
               <Route path="/use-cases" element={<UseCases />} />
               <Route path="/compliance" element={<CompliancePortal />} />
               <Route path="/intelligence-portal/forensic-lab" element={<ForensicLab />} />
+              <Route
+                path="/cases"
+                element={
+                  <ProtectedRoute>
+                    <CaseManagement />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
             {showAssistant && <AISentinelAssistant />}
           </div>
