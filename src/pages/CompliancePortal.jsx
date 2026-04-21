@@ -29,7 +29,7 @@ import {
     calculateClusterCorrelation,
     RISK_LEVELS 
 } from '../services/ForensicEngine';
-import { getWalletTransactionHistory } from '../services/AlchemyProvider';
+import { getWalletTransactionHistory } from '../services/BlockchainProvider';
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 import './CompliancePortal.css';
 

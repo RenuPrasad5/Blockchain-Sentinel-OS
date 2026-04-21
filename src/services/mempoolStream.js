@@ -1,21 +1,20 @@
-import { createPublicClient, webSocket } from 'viem'; // Switched to webSocket
+import { createPublicClient, webSocket } from 'viem';
 import { mainnet } from 'viem/chains';
 import useModeStore from '../store/modeStore';
 
-// 1. Use WebSocket (WSS) instead of HTTP for real-time "Push" data
-// Added safety check to prevent white-screen crashes if env is missing
-const rpcUrl = import.meta.env.VITE_ALCHEMY_RPC_URL || 'wss://eth-mainnet.g.alchemy.com/v2/demo';
+// Switched to Alchemy WebSocket for real-time mempool ingestion
+const ALCHEMY_WSS = "wss://eth-mainnet.g.alchemy.com/v2/vHM8AL13dp5XCpIMZE58N";
 
 const client = createPublicClient({
     chain: mainnet,
-    transport: webSocket(rpcUrl)
+    transport: webSocket(ALCHEMY_WSS)
 });
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 let buffer = [];
-const FLUSH_INTERVAL = isMobile ? 1500 : 800; // Slower updates on mobile to save CPU
-const BATCH_SIZE = isMobile ? 3 : 6; // Process fewer transactions per tick on mobile
+const FLUSH_INTERVAL = isMobile ? 1200 : 500;
+const BATCH_SIZE = isMobile ? 5 : 25; // Significant increase for desktop ingestion
 let retryCount = 0;
 const MAX_RETRIES = 5;
 
@@ -23,22 +22,30 @@ export const startMempoolStream = () => {
     const { setConnectionStatus, addLiveData } = useModeStore.getState();
     let unwatch;
     let flushInterval;
+    let isActive = true;
+
+    const cleanup = () => {
+        if (unwatch) {
+            try { unwatch(); } catch (e) { console.warn("Unwatch failed", e); }
+            unwatch = null;
+        }
+    };
 
     const connect = () => {
-        console.log(`📡 Real-Time OS: Attempting Connection (Retry: ${retryCount})`);
+        if (!isActive) return;
+        
+        cleanup();
+        console.log(`📡 QuickNode Stream: Initializing Uplink (Attempt ${retryCount})`);
         setConnectionStatus('connecting');
 
         try {
             unwatch = client.watchPendingTransactions({
                 onTransactions: async (hashes) => {
-                    retryCount = 0; // Reset on success
+                    if (!isActive) return;
+                    retryCount = 0;
                     setConnectionStatus('open');
 
-                    // Take the top 5 most recent hashes
                     const batch = hashes.slice(0, BATCH_SIZE);
-
-                    // 2. Fetch all transaction details AT THE SAME TIME (Parallel)
-                    // This prevents the UI from lagging
                     const txPromises = batch.map(hash =>
                         client.getTransaction({ hash }).catch(() => null)
                     );
@@ -46,7 +53,7 @@ export const startMempoolStream = () => {
                     const transactions = await Promise.all(txPromises);
 
                     transactions.forEach(tx => {
-                        if (!tx || !tx.value) return; // Skip failed or empty txs
+                        if (!tx || !tx.value || !isActive) return;
 
                         const ethValue = Number(tx.value) / 1e18;
                         const valueUsd = ethValue * 2700;
@@ -61,51 +68,55 @@ export const startMempoolStream = () => {
                             to: tx.to || 'Contract Creation',
                             timestamp: new Date(),
                             status: 'PENDING',
-                            input: tx.input // HEX data for forensic decoding
+                            input: tx.input
                         };
 
-                        // 3. Push to global state
                         buffer.push(data);
                     });
                 },
                 onError: (err) => {
-                    console.error('Mempool Stream Error:', err);
-                    handleReconnect();
+                    console.error('QuickNode Stream Error:', err);
+                    if (isActive) handleReconnect();
                 }
             });
         } catch (e) {
-            console.error('Mempool Stream Connection Error:', e);
-            handleReconnect();
+            console.error('QuickNode Connection Error:', e);
+            if (isActive) handleReconnect();
         }
     };
 
     const handleReconnect = () => {
+        if (!isActive) return;
         setConnectionStatus('error');
         if (retryCount < MAX_RETRIES) {
             retryCount++;
             const timeout = Math.pow(2, retryCount) * 1000;
-            console.log(`🔄 Reconnecting in ${timeout}ms...`);
             setTimeout(connect, timeout);
         } else {
-            console.error('Max reconnection attempts reached. Please check your connection.');
+            console.error('Max QuickNode reconnection attempts reached.');
             setConnectionStatus('failed');
+            // Try one more time after 30 seconds
+            setTimeout(() => {
+                if (isActive) {
+                    retryCount = 0;
+                    connect();
+                }
+            }, 30000);
         }
     };
 
-    // Initial connection
     connect();
 
-    // Flush buffer periodically
     flushInterval = setInterval(() => {
-        if (buffer.length > 0) {
-            // Sort by timestamp or just push
+        if (buffer.length > 0 && isActive) {
             buffer.forEach(data => addLiveData(data));
             buffer = [];
         }
     }, FLUSH_INTERVAL);
 
     return () => {
-        if (unwatch) unwatch();
+        isActive = false;
+        cleanup();
         if (flushInterval) clearInterval(flushInterval);
         setConnectionStatus('closed');
     };

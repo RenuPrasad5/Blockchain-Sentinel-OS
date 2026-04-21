@@ -25,7 +25,8 @@ import {
     Zap,
     Briefcase,
     ShieldAlert,
-    Scale
+    Scale,
+    Microscope
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
@@ -69,11 +70,13 @@ const Sidebar = () => {
             id: 'govent', 
             title: 'Intelligence Portal', 
             icon: <Shield size={20} />, 
-            path: '/gov-ent',
-            subItems: [
-                { title: 'Command Center', icon: <Cpu size={18} />, path: '/gov-ent' },
-                { title: 'Forensic Lab', icon: <Database size={18} />, path: '/intelligence-portal/forensic-lab' },
-            ]
+            path: '/gov-ent'
+        },
+        { 
+            id: 'forensics', 
+            title: 'Forensic Lab', 
+            icon: <Microscope size={20} />, 
+            path: '/forensic-lab'
         },
         { id: 'enterprise', title: 'Enforcement', icon: <ShieldAlert size={20} />, path: '/government' },
         { id: 'compliance', title: 'Compliance & Legal', icon: <Scale size={20} />, path: '/compliance' },

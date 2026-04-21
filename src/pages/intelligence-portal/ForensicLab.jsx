@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getWalletAnalysis } from '../../services/AlchemyProvider';
+import { getWalletAnalysis, provider } from '../../services/BlockchainProvider';
 import { 
     Shield, 
     Search, 
@@ -30,260 +30,43 @@ import {
     ArrowRight,
     MessageSquare,
     Terminal,
-    Fingerprint
+    Fingerprint,
+    Microscope
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PDFDownloadLink, Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import SaveToCaseModal from '../../components/modals/SaveToCaseModal';
+import ForensicReportPDF from '../../components/reports/ForensicReportPDF';
 import { useWatchlist } from '../../context/WatchlistContext';
+import useModeStore from '../../store/modeStore';
 import './ForensicLab.css';
-
-// Register fonts if needed or use defaults
-
-const styles = StyleSheet.create({
-    page: {
-        padding: 40,
-        backgroundColor: '#FFFFFF',
-        fontFamily: 'Helvetica',
-    },
-    header: {
-        marginBottom: 20,
-        borderBottom: '2pt solid #0D1117',
-        paddingBottom: 10,
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#0D1117',
-        textTransform: 'uppercase',
-        letterSpacing: 2,
-    },
-    confidential: {
-        fontSize: 10,
-        color: '#ef4444',
-        fontWeight: 'bold',
-        marginTop: 5,
-    },
-    section: {
-        marginVertical: 10,
-    },
-    sectionTitle: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        color: '#0D1117',
-        textTransform: 'uppercase',
-        borderBottom: '1pt solid #EEEEEE',
-        paddingBottom: 4,
-        marginBottom: 8,
-    },
-    row: {
-        flexDirection: 'row',
-        marginBottom: 5,
-    },
-    label: {
-        width: 150,
-        fontSize: 10,
-        color: '#666666',
-        fontWeight: 'bold',
-    },
-    value: {
-        flex: 1,
-        fontSize: 10,
-        color: '#000000',
-    },
-    narrative: {
-        fontSize: 10,
-        lineHeight: 1.5,
-        textAlign: 'justify',
-    },
-    clause: {
-        marginTop: 30,
-        padding: 15,
-        backgroundColor: '#F9FAFB',
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-    },
-    clauseText: {
-        fontSize: 8,
-        fontStyle: 'italic',
-        color: '#4B5563',
-    },
-    footer: {
-        position: 'absolute',
-        bottom: 30,
-        left: 40,
-        right: 40,
-        fontSize: 7,
-        textAlign: 'center',
-        color: '#999999',
-        borderTop: '1pt solid #EEEEEE',
-        paddingTop: 10,
-    },
-    fingerprint: {
-        marginTop: 5,
-        fontFamily: 'Courier',
-        fontSize: 6,
-        color: '#666666',
-        textAlign: 'center',
-    },
-    table: {
-        display: 'table',
-        width: 'auto',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#EEEEEE',
-        borderRightWidth: 0,
-        borderBottomWidth: 0,
-        marginVertical: 10,
-    },
-    tableRow: {
-        flexDirection: 'row',
-    },
-    tableColHeader: {
-        width: '25%',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#EEEEEE',
-        borderLeftWidth: 0,
-        borderTopWidth: 0,
-        backgroundColor: '#F3F4F6',
-        padding: 5,
-    },
-    tableCol: {
-        width: '25%',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#EEEEEE',
-        borderLeftWidth: 0,
-        borderTopWidth: 0,
-        padding: 5,
-    },
-    tableCellHeader: {
-        fontSize: 8,
-        fontWeight: 'bold',
-        color: '#374151',
-    },
-    tableCell: {
-        fontSize: 8,
-        color: '#4B5563',
-    },
-    riskGaugeContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 20,
-        marginVertical: 10,
-        padding: 10,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 4,
-    },
-    riskScoreText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#ef4444',
-    }
-});
-
-const ForensicReportPDF = ({ data }) => {
-    // Simple SHA-256 placeholder (in real scenario, we'd use a crypto library)
-    const digitalFingerprint = "SHA256:" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-
-    return (
-        <Document>
-            <Page size="A4" style={styles.page}>
-                <View style={styles.header}>
-                    <Text style={styles.title}>Confidential Forensic Intelligence Report</Text>
-                    <Text style={styles.confidential}>CASE UID: {data.caseUid}</Text>
-                </View>
-
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Wallet Entry Metadata</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Subject Wallet:</Text>
-                        <Text style={styles.value}>{data.wallet}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Risk Index:</Text>
-                        <Text style={styles.value}>{data.riskScore}/100 (HIGH)</Text>
-                    </View>
-                </View>
-
-                <View style={styles.riskGaugeContainer}>
-                    <View>
-                        <Text style={styles.sectionTitle}>Risk Gauge</Text>
-                        <Text style={styles.riskScoreText}>{data.riskScore}</Text>
-                        <Text style={{ fontSize: 8, color: '#666' }}>COMPOSITE SCORE</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 9, color: '#444', lineHeight: 1.4 }}>
-                            Critical Risk Assessment: This wallet is flagged for high-velocity obfuscation and direct linkage to sanctioned entities. Assets are prioritized for enforcement action.
-                        </Text>
-                    </View>
-                </View>
-
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Cluster Analysis Findings</Text>
-                    <Text style={styles.narrative}>{data.clusterFindings}</Text>
-                </View>
-
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Forensic Narrative</Text>
-                    <Text style={styles.narrative}>{data.narrative}</Text>
-                </View>
-
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>High-Risk Transactions</Text>
-                    <View style={styles.table}>
-                        <View style={styles.tableRow}>
-                            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Timestamp</Text></View>
-                            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Hash</Text></View>
-                            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Amount</Text></View>
-                            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Risk Flag</Text></View>
-                        </View>
-                        {data.transactions.map((tx, index) => (
-                            <View style={styles.tableRow} key={index}>
-                                <View style={styles.tableCol}><Text style={styles.tableCell}>{tx.time}</Text></View>
-                                <View style={styles.tableCol}><Text style={styles.tableCell}>{tx.hash.substring(0, 10)}...</Text></View>
-                                <View style={styles.tableCol}><Text style={styles.tableCell}>{tx.amount} ETH</Text></View>
-                                <View style={styles.tableCol}><Text style={[styles.tableCell, {color: '#ef4444', fontWeight: 'bold'}]}>{tx.flag}</Text></View>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-
-                <View style={styles.clause}>
-                    <Text style={styles.sectionTitle}>Legal Compliance Statement</Text>
-                    <Text style={styles.clauseText}>
-                        SECTION 65B (INDIAN EVIDENCE ACT) COMPLIANCE: This document represents a computer-generated output of blockchain intelligence 
-                        data processed through the Sentinel OS Forensic Engine. I certify that during the period over which the computer output was 
-                        produced, the computer was operating properly and the information contained in the electronic record reproduces or is 
-                        derived from information fed into the computer in the ordinary course of activities.
-                    </Text>
-                </View>
-
-                <View style={styles.footer}>
-                    <Text>Generated by Sentinel OS Forensic Lab — {new Date().toLocaleString()} — Page 1 of 1</Text>
-                    <Text style={styles.fingerprint}>DIGITAL FINGERPRINT (SHA-256): {digitalFingerprint}</Text>
-                </View>
-            </Page>
-        </Document>
-    );
-};
 
 const ForensicLab = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const walletAddress = searchParams.get('address') || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-    const caseUid = `SENTINEL-${walletAddress.substring(2, 8).toUpperCase()}`;
+    const { mode } = useModeStore();
+    const walletAddress = searchParams.get('address');
+    const [searchQuery, setSearchQuery] = useState('');
+    
+    // If no address, we show empty state
+    const caseUid = walletAddress ? `SENTINEL-${walletAddress.substring(2, 8).toUpperCase()}` : null;
 
     const [analysisData, setAnalysisData] = useState(null);
     const [narrative, setNarrative] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
-    const [isScanning, setIsScanning] = useState(true);
+    const [isScanning, setIsScanning] = useState(false);
     const [error, setError] = useState(null);
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     
     const { watchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
-    const isWatched = watchlist.includes(walletAddress.toLowerCase());
+    const isWatched = walletAddress ? watchlist.includes(walletAddress.toLowerCase()) : false;
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim().length === 42) {
+            navigate(`/forensic-lab?address=${searchQuery}`);
+        }
+    };
 
     const attributionRef = useRef({
         label: "Unknown Entity",
@@ -293,14 +76,18 @@ const ForensicLab = () => {
 
     useEffect(() => {
         const performAnalysis = async () => {
+            // Instant clear of old data to fix "stuck" state
+            setAnalysisData(null);
+            setNarrative('');
             setIsScanning(true);
             setError(null);
+            
             try {
                 const data = await getWalletAnalysis(walletAddress);
                 
                 // Live Attribution Logic
-                const roundNumbers = data.history.filter(tx => tx.value % 1 === 0).length;
-                const mixerPatterns = data.history.filter(tx => [0.1, 1.0, 10, 100].includes(tx.value)).length;
+                const roundNumbers = data.history.filter(tx => Number(tx.value) % 1 === 0).length;
+                const mixerPatterns = data.history.filter(tx => [0.1, 1.0, 10, 100].includes(Number(tx.value))).length;
                 
                 let label = "Private Wallet";
                 let confidence = 45;
@@ -332,14 +119,57 @@ const ForensicLab = () => {
                 setNarrative(story);
             } catch (err) {
                 console.error(err);
-                setError("Investigative Error: Wallet not found on-chain or API limit reached.");
+                setError("Investigative Error: Wallet not found on-chain or Alchemy limit reached.");
             } finally {
                 setIsScanning(false);
             }
         };
 
         if (walletAddress) performAnalysis();
+        else {
+            setAnalysisData(null);
+            setNarrative('');
+        }
     }, [walletAddress]);
+
+    // REAL-TIME ACTIONABLE INTEL STREAM (Optimized Alchemy WebSockets)
+    useEffect(() => {
+        if (!walletAddress || !analysisData) return;
+
+        console.log(`📡 High-Perf Monitor: Listening for subject ${walletAddress}...`);
+        
+        const onEvent = async () => {
+            console.log("🔥 ALCHEMY REAL-TIME INTEL: Activity Detected!");
+            setError(`LIVE ALERT: Transaction activity detected for subject ${walletAddress.slice(0, 8)}!`);
+            
+            try {
+                const freshData = await getWalletAnalysis(walletAddress);
+                setAnalysisData(freshData);
+            } catch (e) {
+                console.error("Refresh failed:", e);
+            }
+            setTimeout(() => setError(null), 8000);
+        };
+
+        // Optimized listener: Only triggers on events involving the target address
+        // This is significantly lighter than scanning entire blocks
+        const filter = {
+            address: walletAddress,
+        };
+
+        try {
+            alchemy.ws.on(filter, onEvent);
+        } catch (e) {
+            console.warn("WSS fallback to block-polling due to network restriction");
+        }
+
+        return () => {
+            try {
+                alchemy.ws.off(filter, onEvent);
+            } catch (e) {}
+            setError(null);
+        };
+    }, [walletAddress, analysisData]);
 
     const toggleWatchlist = async () => {
         if (isWatched) {
@@ -406,59 +236,144 @@ const ForensicLab = () => {
         transactions: mockData.transactions
     };
 
+    if (!walletAddress) {
+        return (
+            <div className={`forensic-empty-state mode-${mode.toLowerCase()}`}>
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="empty-state-content glass"
+                >
+                    <div className="icon-pulse">
+                        <Microscope size={64} className="text-blue-500" />
+                    </div>
+                    <h2>Awaiting Forensic Subject</h2>
+                    <p>Enter a target wallet address to initialize deep multi-vector analysis.</p>
+                    <form onSubmit={handleSearch} className="centered-search">
+                        <Search size={20} className="search-icon" />
+                        <input 
+                            type="text" 
+                            placeholder="Input 0x Target Address..." 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <button type="submit">INITIALIZE SCAN</button>
+                    </form>
+                    <div className="scan-suggestions">
+                        <span>Suggested:</span>
+                        <button onClick={() => navigate('/forensic-lab?address=0x742d35Cc6634C0532925a3b844Bc454e4438f44e')}>Sample Hot Vault</button>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
+
     return (
-        <div className="forensic-lab-wrapper">
-            <header className="forensic-header">
-                <div className="flex items-center gap-4">
-                    <div className="lab-icon-box">
-                        <Database className="text-blue-500" size={24} />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Sovereign Intelligence Unit</span>
+        <div className={`forensic-lab-wrapper workstation-mode mode-${mode.toLowerCase()}`}>
+            <AnimatePresence>
+                {isScanning && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="forensic-scanner-overlay no-print"
+                    >
+                        <div className="scanner-status">
+                            <Loader2 className="animate-spin text-blue-500 mb-6" size={48} />
+                            <div className="status-text flex flex-col items-center gap-2">
+                                <span className="text-white text-lg font-black uppercase tracking-[0.2em] animate-pulse">Tapping into Alchemy Supernode for Forensic Audit...</span>
+                                <span className="text-blue-500/60 text-[10px] font-black uppercase tracking-widest">Analyzing multi-vector transaction telemetry...</span>
+                            </div>
                         </div>
-                        <h1 className="lab-title">Forensic Lab</h1>
-                    </div>
-                </div>
-                {error && (
-                    <div className="error-banner flex items-center gap-3 px-4 py-2 bg-rose-500/10 border border-rose-500/20 rounded-lg">
-                        <CircleSlash size={16} className="text-rose-500" />
-                        <span className="text-xs font-bold text-rose-500 uppercase tracking-widest">{error}</span>
-                        <button onClick={() => navigate('/dashboard')} className="ml-auto text-[10px] text-white/50 hover:text-white underline font-bold">ABORT ANALYSIS</button>
-                    </div>
+                    </motion.div>
                 )}
-                <div className="header-meta">
-                    <div className="meta-item">
-                        <span className="label">CASE UID</span>
-                        <span className="value text-slate-300 font-mono">{caseUid}</span>
+            </AnimatePresence>
+
+            {error && (
+                <div className="forensic-alert-banner">
+                    <div className="flex items-center gap-3">
+                        <Zap size={16} className="text-blue-500 animate-pulse" />
+                        <span className="text-xs font-black uppercase tracking-widest">{error}</span>
                     </div>
-                    <div className="meta-item">
-                        <span className="label">TERMINAL STATUS</span>
-                        <span className="value text-emerald-400">ENCRYPTED</span>
+                    <button onClick={() => setError(null)} className="close-alert-btn">DISMISS</button>
+                </div>
+            )}
+            
+            <header className="forensic-header">
+                <div className="header-left-section">
+                    <div className="lab-branding">
+                        <div className="lab-icon-box">
+                            <Database className="text-blue-500" size={28} />
+                        </div>
+                        <div className="title-block">
+                            <div className="system-identifier">
+                                <div className="pulse-dot-blue"></div>
+                                <span>SOVEREIGN INTELLIGENCE UNIT</span>
+                                <div className="live-status-pill">
+                                    <div className="pulse-dot-green"></div>
+                                    <span>LIVE FEED</span>
+                                </div>
+                            </div>
+                            <h1 className="lab-title">Forensic Lab</h1>
+                        </div>
                     </div>
-                    <button 
-                        className="save-case-btn"
-                        onClick={() => setIsSaveModalOpen(true)}
-                    >
-                        <Database size={16} />
-                        <span>Save to Case</span>
-                    </button>
-                    <button 
-                        className={`watchlist-btn ${isWatched ? 'active' : ''}`}
-                        onClick={toggleWatchlist}
-                    >
-                        {isWatched ? <Eye size={16} className="text-emerald-400" /> : <Eye size={16} />}
-                        <span>{isWatched ? 'Watching' : 'Watchlist'}</span>
-                    </button>
-                    <PDFDownloadLink document={<ForensicReportPDF data={pdfData} />} fileName={`SENTINEL_REPORT_${caseUid}.pdf`}>
-                        {({ blob, url, loading, error }) => (
-                            <button className="export-pdf-btn" disabled={loading}>
-                                <Download size={16} />
-                                <span>{loading ? 'PREPARING...' : 'EXPORT EVIDENCE'}</span>
-                            </button>
-                        )}
-                    </PDFDownloadLink>
+
+                    {analysisData && (
+                        <div className="header-target-meta">
+                            <div className="meta-divider" />
+                            <div className="target-pill-group">
+                                <div className="target-address-pill">
+                                    <span className="pill-label">SUBJECT</span>
+                                    <span className="pill-value">{walletAddress.substring(0, 6)}...{walletAddress.substring(38)}</span>
+                                </div>
+                                <div className="attribution-pill">
+                                    <Shield size={14} />
+                                    <span>{attributionRef.current.label}</span>
+                                </div>
+                                <div className="confidence-pill">
+                                    <div className="mini-progress">
+                                        <svg viewBox="0 0 36 36">
+                                            <path className="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <path className="ring-fill" strokeDasharray={`${attributionRef.current.confidence}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        </svg>
+                                    </div>
+                                    <span>{attributionRef.current.confidence}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="header-right-section">
+                    <div className="system-status-group">
+                        <div className="status-item">
+                            <span className="status-label">TERMINAL STATUS</span>
+                            <span className="status-value text-emerald-400 font-black">ENCRYPTED</span>
+                        </div>
+                        <div className="status-item">
+                            <span className="status-label">ACTIVE CASE UID</span>
+                            <span className="status-value font-mono">{caseUid}</span>
+                        </div>
+                    </div>
+
+                    <div className="header-action-row">
+                        <button className="action-btn-outline" onClick={() => setIsSaveModalOpen(true)}>
+                            <Database size={14} />
+                            <span>Save Case</span>
+                        </button>
+                        <button className={`action-btn-outline ${isWatched ? 'watched' : ''}`} onClick={toggleWatchlist}>
+                            <Eye size={14} />
+                            <span>{isWatched ? 'Watched' : 'Watch'}</span>
+                        </button>
+                        <PDFDownloadLink document={<ForensicReportPDF data={pdfData} />} fileName={`SENTINEL_REPORT_${caseUid}.pdf`}>
+                            {({ loading }) => (
+                                <button className="action-btn-primary" disabled={loading}>
+                                    <Download size={14} />
+                                    <span>{loading ? '...' : 'EXPORT'}</span>
+                                </button>
+                            )}
+                        </PDFDownloadLink>
+                    </div>
                 </div>
             </header>
 
@@ -515,7 +430,39 @@ const ForensicLab = () => {
                                             <p>{narrative.split('\n\n')[3]?.replace('VERDICT: ', '')}</p>
                                         </div>
                                     </div>
+                                    <div className="narrative-content">
+                                        {isGenerating ? (
+                                            <div className="generating-loader">
+                                                <Loader2 className="animate-spin text-blue-500" size={24} />
+                                                <span>Synthesizing Forensic Statement...</span>
+                                            </div>
+                                        ) : (
+                                            <pre className="narrative-text">{narrative || 'Forensic scanning in progress... Awaiting behavioral synthesis.'}</pre>
+                                        )}
+                                    </div>
                                 </div>
+                            </div>
+                        </div>
+                        
+                        {/* Actionable Intel Live Stream */}
+                        <div className="actionable-intel-stream glass p-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Zap size={14} className="animate-pulse" /> Actionable Intel Stream
+                                </h3>
+                                <div className="text-[8px] text-slate-500 font-mono text-right">NODE: ALCHEMY-SUPER-V2</div>
+                            </div>
+                            <div className="intel-scroller">
+                                <div className="intel-item incoming">
+                                    <div className="intel-dot" />
+                                    <span className="intel-txt">System monitoring block propagation...</span>
+                                </div>
+                                {analysisData?.history?.map((tx, idx) => (
+                                    <div key={idx} className="intel-item">
+                                        <div className="intel-dot active" />
+                                        <span className="intel-txt">Detected historical hop {tx.id.substring(0, 10)}... in cluster {idx + 1}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </motion.div>

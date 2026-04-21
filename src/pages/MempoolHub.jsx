@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useModeStore from '../store/modeStore';
-import alchemy from '../utils/AlchemyManager';
+import { provider } from '../services/BlockchainProvider';
 import { calculateRiskScore, createAuditLog, RISK_LEVELS } from '../services/ForensicEngine';
 import { formatIntelligence, resolveAddress, simulateGas } from '../utils/EthersUtils';
 import { ethers } from 'ethers';
@@ -68,15 +68,15 @@ const MempoolHub = () => {
     useEffect(() => {
         const updateStats = async () => {
             try {
-                const gasPrice = await alchemy.core.getGasPrice();
-                const block = await alchemy.core.getBlock('latest');
+                const feeData = await provider.getFeeData();
+                const block = await provider.getBlock('latest');
                 const baseFee = block.baseFeePerGas;
 
                 setStats(prev => ({
                     ...prev,
-                    avgGas: (Number(gasPrice) / 1e9).toFixed(1),
-                    baseFee: (Number(baseFee) / 1e9).toFixed(1),
-                    highPriority: ((Number(gasPrice) / 1e9) * 1.25).toFixed(1),
+                    avgGas: (Number(feeData.gasPrice) / 1e9).toFixed(1),
+                    baseFee: baseFee ? (Number(baseFee) / 1e9).toFixed(1) : 0,
+                    highPriority: (Number(feeData.maxPriorityFeePerGas) / 1e9).toFixed(1),
                     pendingCount: 2400 + Math.floor(Math.random() * 800),
                     mempoolSize: (0.8 + Math.random() * 0.4).toFixed(2) + ' GB',
                     blockFill: 80 + Math.floor(Math.random() * 15)
@@ -92,43 +92,69 @@ const MempoolHub = () => {
     }, []);
 
     // INTELLIGENCE BUFFER LOGIC
-    // 1. Collect incoming liveData into a queue (buffer)
+    // Use a ref to track seen transactions across renders to avoid duplicates and missing data
+    const processedIds = React.useRef(new Set());
+
     useEffect(() => {
         if (liveData.length > 0) {
-            const newestTx = liveData[0];
-            setBuffer(prev => {
-                const isDuplicate = prev.some(tx => tx.id === newestTx.id) ||
-                    visibleTx.some(tx => tx.id === newestTx.id);
-                if (isDuplicate) return prev;
-                return [...prev, newestTx];
-            });
-        }
-    }, [liveData, visibleTx]);
+            // Get all transactions from liveData that haven't been processed yet
+            const newTxs = liveData.filter(tx => !processedIds.current.has(tx.id));
+            
+            if (newTxs.length > 0) {
+                newTxs.forEach(tx => processedIds.current.add(tx.id));
+                
+                // Keep the processedIds set size in check
+                if (processedIds.current.size > 500) {
+                    const idsToKeep = [...processedIds.current].slice(-200);
+                    processedIds.current = new Set(idsToKeep);
+                }
 
-    // 2. Release one transaction every 800ms for smooth streaming
+                setBuffer(prev => {
+                    // Final safety check for duplicates in the current buffer
+                    const filtered = newTxs.filter(tx => !prev.some(p => p.id === tx.id));
+                    return [...prev, ...filtered];
+                });
+            }
+        }
+    }, [liveData]);
+
+    // 2. Adaptive Release Logic: Catch up if buffer gets too large
     useEffect(() => {
-        const releaseInterval = setInterval(() => {
+        const getReleaseRate = (bufferLength) => {
+            if (bufferLength > 20) return 100; // Turbo mode
+            if (bufferLength > 10) return 300; // Fast mode
+            return 800; // Normal smooth mode
+        };
+
+        const tick = () => {
             setBuffer(currentBuffer => {
                 if (currentBuffer.length > 0) {
                     const [nextTx, ...remaining] = currentBuffer;
 
                     setVisibleTx(prevVisible => {
-                        const newList = [nextTx, ...prevVisible].slice(0, 50); // Memory Management: Limit 50
-                        return newList;
+                        // Check for duplicates in visible list
+                        if (prevVisible.some(v => v.id === nextTx.id)) return prevVisible;
+                        return [nextTx, ...prevVisible].slice(0, 100); // Expanded limit
                     });
 
-                    // Trigger pulse animation
                     setIsStreaming(true);
-                    setTimeout(() => setIsStreaming(false), 600);
+                    setTimeout(() => setIsStreaming(false), 500);
 
                     return remaining;
                 }
                 return currentBuffer;
             });
-        }, 800);
+        };
 
-        return () => clearInterval(releaseInterval);
-    }, []);
+        let timer;
+        const run = () => {
+            tick();
+            timer = setTimeout(run, getReleaseRate(buffer.length));
+        };
+
+        run();
+        return () => clearTimeout(timer);
+    }, [buffer.length]);
 
     // Filtered data based on visible transactions
     const filteredTx = useMemo(() => {
@@ -251,10 +277,12 @@ const MempoolHub = () => {
                     <section className="block-projection-section mb-10">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="live-badge bg-emerald-500">ON-STREAM</div>
+                                <div className="live-badge bg-emerald-500 animate-pulse">QUICKNODE_LIVE</div>
                                 <h2 className="section-title">Nodal Block Projections <span className="text-[10px] opacity-30 italic ml-2">SIMULATING TRANSACTION LAYERS...</span></h2>
                             </div>
-                            <div className="text-[10px] font-medium opacity-40 uppercase tracking-widest">Surveillance Active</div>
+                            <div className="text-[10px] font-medium opacity-40 uppercase tracking-widest flex items-center gap-2">
+                                <Activity size={10} className="text-emerald-400" /> Surveillance Active
+                            </div>
                         </div>
 
                         <div className="projection-grid h-40">
@@ -303,9 +331,9 @@ const MempoolHub = () => {
                                     <span className="text-xs font-black uppercase tracking-widest text-slate-300">Forensic Monitoring Layer</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-[10px] font-bold">
-                                    <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-emerald-400" /> VERIFIED ORIGIN</span>
+                                    <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-emerald-400" /> VERIFIED EXCHANGE</span>
                                     <span className="flex items-center gap-1.5 text-slate-500">|</span>
-                                    <span className="flex items-center gap-1.5"><AlertTriangle size={12} className="text-rose-400" /> UNTRUSTED SOURCE</span>
+                                    <span className="flex items-center gap-1.5"><AlertTriangle size={12} className="text-rose-400" /> RISK DETECTED</span>
                                 </div>
                             </div>
 

@@ -63,7 +63,7 @@ function App() {
   // Initialize global blockchain monitor
   useMonitor();
 
-  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/intelligence-portal/forensic-lab', '/cases'];
+  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/forensic-lab', '/cases'];
   const isFullWidth = fullWidthPaths.includes(location.pathname);
   const isAuthPage = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/auth');
 
@@ -147,7 +147,8 @@ function App() {
               <Route path="/gov-ent" element={<Dashboard />} />
               <Route path="/use-cases" element={<UseCases />} />
               <Route path="/compliance" element={<CompliancePortal />} />
-              <Route path="/intelligence-portal/forensic-lab" element={<ForensicLab />} />
+              <Route path="/portal" element={<CompliancePortal />} />
+              <Route path="/forensic-lab" element={<ForensicLab />} />
               <Route
                 path="/cases"
                 element={

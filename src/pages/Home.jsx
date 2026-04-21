@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Search, ArrowRight, Zap, Eye, ShieldCheck,
-    Loader2, Globe, Activity, FileText, ShieldAlert, Users2, CheckCircle2
+    Loader2, Globe, Activity, FileText, ShieldAlert, Users2, CheckCircle2, Microscope
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RoadmapSection from '../components/RoadmapSection';
@@ -121,7 +121,7 @@ const Home = () => {
                                 color: 'blue',
                                 action: () => {
                                     setDemoMode(false);
-                                    launchDashboard('Ready: Wallet Trace Mode', 'wallet', '/dashboard');
+                                    launchDashboard('Initializing Intelligence Portal...', '', '/portal');
                                 }
                             },
                             {
@@ -135,13 +135,13 @@ const Home = () => {
                                 }
                             },
                             {
-                                label: 'Access Portal',
-                                icon: Zap,
-                                desc: 'Enter Secure Environment',
-                                color: 'blue', // Changing to blue for consistent portal feel
+                                label: 'Forensic Lab',
+                                icon: Microscope,
+                                desc: 'Deep Audit & Legal Reporting',
+                                color: 'cyan',
                                 action: () => {
-                                    setDemoMode(true);
-                                    launchDashboard('Loading Secure Intelligence Portal...', 'hack', '/dashboard');
+                                    setDemoMode(false);
+                                    launchDashboard('Powering Forensic Workstation...', '', '/forensic-lab');
                                 }
                             }
                         ].map((btn, idx) => (
@@ -153,15 +153,16 @@ const Home = () => {
                                 whileHover={{
                                     y: -8,
                                     scale: 1.02,
-                                    boxShadow: btn.label === 'Access Portal' ? '0 0 25px rgba(59, 130, 246, 0.4)' : '0 20px 50px rgba(59, 130, 246, 0.1)'
+                                    boxShadow: btn.label === 'Forensic Lab' ? '0 0 35px rgba(34, 211, 238, 0.4)' : '0 20px 50px rgba(59, 130, 246, 0.1)'
                                 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={btn.action}
-                                className={`group relative bg-[#1e293b]/50 backdrop-blur-md border border-white/5 p-10 rounded-[2.5rem] transition-all flex flex-col items-center text-center gap-5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] ${btn.label === 'Access Portal' ? 'hover:border-blue-500/50' : 'hover:border-blue-500/30'
+                                className={`group relative bg-[#1e293b]/50 backdrop-blur-md border border-white/5 p-10 rounded-[2.5rem] transition-all flex flex-col items-center text-center gap-5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] ${btn.label === 'Forensic Lab' ? 'hover:border-cyan-500/50' : 'hover:border-blue-500/30'
                                     }`}
                             >
                                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${btn.color === 'blue' ? 'bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20' :
                                     btn.color === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20' :
+                                    btn.color === 'cyan' ? 'bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20' :
                                         'bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20'
                                     }`}>
                                     <btn.icon size={28} />
