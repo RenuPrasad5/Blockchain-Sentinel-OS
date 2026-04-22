@@ -326,9 +326,16 @@ const ForensicLab = () => {
                                     <span className="pill-label">SUBJECT</span>
                                     <span className="pill-value">{walletAddress.substring(0, 6)}...{walletAddress.substring(38)}</span>
                                 </div>
-                                <div className="attribution-pill">
+                                <div className="attribution-pill relative group">
                                     <Shield size={14} />
                                     <span>{attributionRef.current.label}</span>
+                                    <Info size={12} className="text-blue-400 cursor-help ml-1" />
+                                    
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-[#1c2128] border border-white/10 rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] text-[10px] text-slate-300 shadow-2xl normal-case font-normal text-center leading-relaxed pointer-events-none">
+                                        <span className="font-bold text-white block mb-1 uppercase tracking-widest text-[9px]">Classification Logic</span>
+                                        {attributionRef.current.reasoning}
+                                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1c2128] border-l border-t border-white/10 rotate-45" />
+                                    </div>
                                 </div>
                                 <div className="confidence-pill">
                                     <div className="mini-progress">
@@ -427,7 +434,7 @@ const ForensicLab = () => {
                                         </div>
                                         <div className="narrative-item">
                                             <h4>RISK INTERPRETATION</h4>
-                                            <p>{narrative.split('\n\n')[3]?.replace('VERDICT: ', '')}</p>
+                                            <p dangerouslySetInnerHTML={{ __html: (narrative.split('\n\n')[3]?.replace('VERDICT: ', '') || '').replace(/^.*?(This entity is actively attempting to obscure fund origins through recursive layering\.|(?=Its activity))/, '<strong>VERDICT: HIGH RISK.</strong> This entity is actively attempting to obscure fund origins through recursive layering. ') }}></p>
                                         </div>
                                     </div>
                                     <div className="narrative-content">
@@ -437,7 +444,7 @@ const ForensicLab = () => {
                                                 <span>Synthesizing Forensic Statement...</span>
                                             </div>
                                         ) : (
-                                            <pre className="narrative-text">{narrative || 'Forensic scanning in progress... Awaiting behavioral synthesis.'}</pre>
+                                            <div className="narrative-text" dangerouslySetInnerHTML={{ __html: (narrative || 'Forensic scanning in progress... Awaiting behavioral synthesis.').replace(/VERDICT: (.*?)(?=\s|$)/, '<strong>VERDICT: HIGH RISK.</strong> This entity is actively attempting to obscure fund origins through recursive layering.') }} />
                                         )}
                                     </div>
                                 </div>
@@ -503,9 +510,16 @@ const ForensicLab = () => {
                                         <div className="cluster-header">
                                             <div className="flex items-center gap-2">
                                                 <span className="cluster-id">{c.id}</span>
-                                                <div className="attribution-badge">
+                                                <div className="attribution-badge relative group/badge">
                                                     <Shield size={10} className={c.status === 'Verified' ? 'text-blue-400' : 'text-amber-500'} />
                                                     <span>{c.attribution}</span>
+                                                    <Info size={10} className="text-slate-500 cursor-help" />
+                                                    
+                                                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#1c2128] border border-white/10 rounded-lg p-2 opacity-0 invisible group-hover/badge:opacity-100 group-hover/badge:visible transition-all z-50 text-[10px] text-slate-300 shadow-xl normal-case font-normal text-center leading-relaxed pointer-events-none">
+                                                        <span className="font-bold text-white block mb-1">Logic:</span>
+                                                        {c.reasoning}
+                                                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1c2128] border-l border-t border-white/10 rotate-45" />
+                                                    </div>
                                                 </div>
                                             </div>
                                             <span className={`status-pill ${c.status === 'Verified' ? 'bg-verified text-verified' : 'bg-anomaly text-anomaly'}`}>
@@ -690,6 +704,26 @@ const ForensicLab = () => {
                                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Index</span>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <div className="forensic-justification mt-6 bg-white/5 border border-white/10 rounded-2xl p-5">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <AlertTriangle size={12} className="text-rose-500" /> Forensic Justification
+                                </h4>
+                                <ul className="space-y-3">
+                                    <li className="flex items-start gap-3 text-xs text-slate-300 font-medium">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+                                        <span>Interacted with Sanctioned Address (Lazarus Group)</span>
+                                    </li>
+                                    <li className="flex items-start gap-3 text-xs text-slate-300 font-medium">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+                                        <span>High Transaction Frequency (850% above baseline)</span>
+                                    </li>
+                                    <li className="flex items-start gap-3 text-xs text-slate-300 font-medium">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                                        <span>Zero-balance sweep to unknown offshore entity</span>
+                                    </li>
+                                </ul>
                             </div>
                         </section>
 

@@ -2,8 +2,8 @@ import { createPublicClient, webSocket } from 'viem';
 import { mainnet } from 'viem/chains';
 import useModeStore from '../store/modeStore';
 
-// Switched to Alchemy WebSocket for real-time mempool ingestion
-const ALCHEMY_WSS = "wss://eth-mainnet.g.alchemy.com/v2/vHM8AL13dp5XCpIMZE58N";
+const ALCHEMY_KEY = import.meta.env.VITE_ALCHEMY_API_KEY || "vHM8AL13dp5XCpIMZE58N";
+const ALCHEMY_WSS = `wss://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
 
 const client = createPublicClient({
     chain: mainnet,

@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
@@ -57,7 +57,11 @@ export const AuthProvider = ({ children }) => {
         const userId = userCredential.user.uid;
 
         // Send verification email
-        await sendEmailVerification(userCredential.user);
+        const actionCodeSettings = {
+            url: `${import.meta.env.VITE_BASE_URL || 'http://localhost:5173'}/login`,
+            handleCodeInApp: true,
+        };
+        await sendEmailVerification(userCredential.user, actionCodeSettings);
 
         // Save profile data to Firestore
         await setDoc(doc(db, "users", userId), {

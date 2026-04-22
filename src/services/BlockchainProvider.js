@@ -1,7 +1,7 @@
 import { Network, Alchemy } from "alchemy-sdk";
 import { ethers } from "ethers";
 
-const ALCHEMY_KEY = "vHM8AL13dp5XCpIMZE58N";
+const ALCHEMY_KEY = import.meta.env.VITE_ALCHEMY_API_KEY || "vHM8AL13dp5XCpIMZE58N";
 const ALCHEMY_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
 
 const settings = {
@@ -41,7 +41,7 @@ export const getWalletTransactionHistory = async (address) => {
 
     try {
         console.log(`⚡ Optimized Alchemy Retrieval for: ${address}`);
-        
+
         // Fetch only most recent 20 assets with a focused block range to maximize response speed
         const response = await alchemy.core.getAssetTransfers({
             fromBlock: "0x1100000", // Start from a relatively recent block to speed up scan
