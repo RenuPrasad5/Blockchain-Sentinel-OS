@@ -121,7 +121,7 @@ const Home = () => {
                                 color: 'blue',
                                 action: () => {
                                     setDemoMode(false);
-                                    launchDashboard('Initializing Intelligence Portal...', '', '/portal');
+                                    launchDashboard('Initializing Wallet Analyzer...', '', '/tools/analyzer');
                                 }
                             },
                             {

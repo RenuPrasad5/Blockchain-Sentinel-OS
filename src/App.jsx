@@ -37,7 +37,6 @@ import AISentinelAssistant from './components/AISentinelAssistant';
 import { useAuth } from './context/AuthContext';
 import Government from './pages/Government';
 import UseCases from './pages/UseCases';
-import CompliancePortal from './pages/CompliancePortal';
 import BottomNavigation from './components/BottomNavigation';
 import './App.css';
 
@@ -148,8 +147,6 @@ function App() {
               <Route path="/government" element={<Government />} />
               <Route path="/gov-ent" element={<Dashboard />} />
               <Route path="/use-cases" element={<UseCases />} />
-              <Route path="/compliance" element={<CompliancePortal />} />
-              <Route path="/portal" element={<CompliancePortal />} />
               <Route path="/forensic-lab" element={<ForensicLab />} />
               <Route
                 path="/cases"

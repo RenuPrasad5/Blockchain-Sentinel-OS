@@ -79,7 +79,6 @@ const Sidebar = () => {
             path: '/forensic-lab'
         },
         { id: 'enterprise', title: 'Enforcement', icon: <ShieldAlert size={20} />, path: '/government' },
-        { id: 'compliance', title: 'Compliance & Legal', icon: <Scale size={20} />, path: '/compliance' },
         { id: 'usecases', title: 'Agency Solutions', icon: <Briefcase size={20} />, path: '/use-cases' },
         { id: 'cc', title: 'Dashboard', icon: <Cpu size={20} />, path: '/dashboard' },
         { id: 'encyclopedia', title: 'Encyclopedia', icon: <Database size={20} />, path: '/encyclopedia' },

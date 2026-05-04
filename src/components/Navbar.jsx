@@ -87,7 +87,6 @@ const Navbar = () => {
         { title: 'Dashboard', icon: <Cpu size={18} />, path: '/dashboard' },
         { title: 'Intelligence Portal', icon: <Shield size={18} />, path: '/gov-ent' },
         { title: 'Enforcement', icon: <ShieldAlert size={18} />, path: '/government' },
-        { title: 'Compliance & Legal', icon: <Scale size={18} />, path: '/compliance' },
         { title: 'Agency Solutions', icon: <Briefcase size={18} />, path: '/use-cases' },
         { title: 'Encyclopedia', icon: <Database size={18} />, path: '/encyclopedia' },
         { title: 'Research', icon: <FileSearch size={18} />, path: '/research' },
@@ -147,10 +146,6 @@ const Navbar = () => {
                     <NavLink to="/government" className="nav-link-btn flex items-center gap-2">
                         <ShieldAlert size={16} className="text-emerald-500" />
                         <span>Enforcement</span>
-                    </NavLink>
-                    <NavLink to="/compliance" className="nav-link-btn flex items-center gap-2">
-                        <Scale size={16} className="text-blue-500" />
-                        <span>Compliance & Legal</span>
                     </NavLink>
                     <NavLink to="/use-cases" className="nav-link-btn">Agency Solutions</NavLink>
 
