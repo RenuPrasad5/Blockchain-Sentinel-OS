@@ -3,10 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, User, ShieldAlert, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { useGoogleLogin } from '@react-oauth/google';
-import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { db } from '../firebase/config';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 import logo from '../assets/BL.logo.png';
+
 
 const NetworkNodeLogo = () => (
     <motion.div
@@ -88,39 +90,36 @@ const Register = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleGoogleSuccess = async (tokenResponse) => {
+    const googleLogin = async () => {
         setGoogleLoading(true);
         setError('');
+        const provider = new GoogleAuthProvider();
         try {
-            // Fetch the user profile from Google's userinfo endpoint
-            const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-            });
-            const userInfo = await userInfoResponse.json();
-            
-            // In a fully integrated app, if the user doesn't exist we register them
-            // Firebase handles automatic linking or creation with Google Auth credential
-            const credential = GoogleAuthProvider.credential(null, tokenResponse.access_token);
-            try {
-                await signInWithCredential(auth, credential);
-                // Optionally update profile with userType here if needed
-                navigate('/dashboard', { replace: true });
-            } catch (fbError) {
-                console.error("Firebase auth error:", fbError);
-                setError("Failed to link Google account. Try using standard sign-up.");
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Check if user has a profile in Firestore, create one if not
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) {
+                await setDoc(docRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    fullName: user.displayName || user.email.split('@')[0],
+                    userType: userType,
+                    createdAt: new Date().toISOString()
+                });
             }
+
+            const from = '/dashboard';
+            navigate(from, { replace: true });
         } catch (error) {
             console.error("Google Auth process failed:", error);
-            setError("Google authentication failed.");
+            setError("Google sign-in failed.");
         } finally {
             setGoogleLoading(false);
         }
     };
-
-    const googleLogin = useGoogleLogin({
-        onSuccess: handleGoogleSuccess,
-        onError: () => setError("Google Sign-In was closed or failed.")
-    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
