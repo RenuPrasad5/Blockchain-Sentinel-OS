@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getWalletAnalysis, provider } from '../../services/BlockchainProvider';
+import { fetchForensicData, LiveSocket, getWalletAnalysis, provider } from '../../services/BlockchainProvider';
 import { 
     Shield, 
     Search, 
@@ -56,6 +56,7 @@ const ForensicLab = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [isScanning, setIsScanning] = useState(false);
     const [error, setError] = useState(null);
+    const [providerLevel, setProviderLevel] = useState(null);
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     
     const { watchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
@@ -83,7 +84,9 @@ const ForensicLab = () => {
             setError(null);
             
             try {
-                const data = await getWalletAnalysis(walletAddress);
+                const result = await fetchForensicData(walletAddress);
+                const data = result.data;
+                setProviderLevel(result.providerLevel);
                 
                 // Live Attribution Logic
                 const roundNumbers = data.history.filter(tx => Number(tx.value) % 1 === 0).length;
@@ -151,22 +154,13 @@ const ForensicLab = () => {
             setTimeout(() => setError(null), 8000);
         };
 
-        // Optimized listener: Only triggers on events involving the target address
-        // This is significantly lighter than scanning entire blocks
-        const filter = {
-            address: walletAddress,
-        };
-
-        try {
-            alchemy.ws.on(filter, onEvent);
-        } catch (e) {
-            console.warn("WSS fallback to block-polling due to network restriction");
-        }
+        LiveSocket.connect((wsData) => {
+            // Re-use onEvent logic
+            onEvent();
+        });
 
         return () => {
-            try {
-                alchemy.ws.off(filter, onEvent);
-            } catch (e) {}
+            LiveSocket.disconnect();
             setError(null);
         };
     }, [walletAddress, analysisData]);
@@ -361,6 +355,14 @@ const ForensicLab = () => {
                             <span className="status-label">ACTIVE CASE UID</span>
                             <span className="status-value font-mono">{caseUid}</span>
                         </div>
+                        {(providerLevel === 'SECONDARY' || providerLevel === 'TERTIARY') && (
+                            <div className="status-item">
+                                <span className="status-label text-amber-500">RPC NETWORK</span>
+                                <div className="flex items-center gap-1 status-value text-amber-500 font-black">
+                                    <Wifi size={12} className="animate-pulse" /> HIGH TRAFFIC MODE
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="header-action-row">

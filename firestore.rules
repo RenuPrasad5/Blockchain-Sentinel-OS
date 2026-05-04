@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // TEMPORARY DEBUG MODE — allows all authenticated users to read/write
+    // Re-enable strict rules after Save Case is confirmed working
+    match /cases/{caseId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

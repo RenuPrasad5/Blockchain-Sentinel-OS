@@ -206,6 +206,13 @@ const Navbar = () => {
                                         <span className="tools-item-desc">Automated anti-money laundering triage</span>
                                     </div>
                                 </Link>
+                                <Link to="/tools/analyzer" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                    <FileSearch size={16} className="text-blue-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Wallet Analyzer</span>
+                                        <span className="tools-item-desc">Forensic intelligence & risk scoring</span>
+                                    </div>
+                                </Link>
                                 <Link to="/tools/visualizer" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
                                     <Share2 size={16} className="text-indigo-400" />
                                     <div className="tools-item-text">

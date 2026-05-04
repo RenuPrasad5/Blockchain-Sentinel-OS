@@ -104,6 +104,13 @@ const Tools = () => {
             description: 'Advanced wallet trace mapping and transaction relationship visualization.',
             path: '/tools/visualizer',
             icon: <Globe size={24} className="text-indigo-400" />
+        },
+        {
+            id: 'analyzer',
+            label: 'Wallet Analyzer',
+            description: 'High-fidelity forensic intelligence, AML risk scoring, and PMLA dossier generation.',
+            path: '/tools/analyzer',
+            icon: <Activity size={24} className="text-blue-500" />
         }
     ];
 

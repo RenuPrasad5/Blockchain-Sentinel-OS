@@ -118,23 +118,26 @@ const MempoolHub = () => {
         }
     }, [liveData]);
 
-    // 2. Adaptive Release Logic: Catch up if buffer gets too large
+    // 2. Adaptive Release Logic: Smoothly pop transactions from buffer into visibility
     useEffect(() => {
+        if (buffer.length === 0) return;
+
         const getReleaseRate = (bufferLength) => {
-            if (bufferLength > 20) return 100; // Turbo mode
-            if (bufferLength > 10) return 300; // Fast mode
-            return 800; // Normal smooth mode
+            if (bufferLength > 50) return 50;   // High throughput catch-up
+            if (bufferLength > 20) return 150;
+            if (bufferLength > 10) return 300;
+            return 800; // Normal idle speed
         };
 
-        const tick = () => {
+        const timer = setTimeout(() => {
             setBuffer(currentBuffer => {
                 if (currentBuffer.length > 0) {
                     const [nextTx, ...remaining] = currentBuffer;
 
                     setVisibleTx(prevVisible => {
-                        // Check for duplicates in visible list
+                        // Avoid duplicates in visible list
                         if (prevVisible.some(v => v.id === nextTx.id)) return prevVisible;
-                        return [nextTx, ...prevVisible].slice(0, 100); // Expanded limit
+                        return [nextTx, ...prevVisible].slice(0, 100);
                     });
 
                     setIsStreaming(true);
@@ -144,15 +147,8 @@ const MempoolHub = () => {
                 }
                 return currentBuffer;
             });
-        };
+        }, getReleaseRate(buffer.length));
 
-        let timer;
-        const run = () => {
-            tick();
-            timer = setTimeout(run, getReleaseRate(buffer.length));
-        };
-
-        run();
         return () => clearTimeout(timer);
     }, [buffer.length]);
 

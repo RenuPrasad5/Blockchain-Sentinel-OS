@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -14,10 +14,13 @@ const firebaseConfig = {
 };
 
 if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-    console.warn("🚨 [Blockchain Intelligence] Environment variables missing! Ensure .env keys are populated or Vercel variables are set.");
+    console.warn("🚨 [Blockchain Intelligence] Environment variables missing!");
 }
 
-const app = initializeApp(firebaseConfig);
+// CRITICAL: Only initialize once across the app
+const app = getApps().length === 0
+    ? initializeApp(firebaseConfig)
+    : getApps()[0];
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);

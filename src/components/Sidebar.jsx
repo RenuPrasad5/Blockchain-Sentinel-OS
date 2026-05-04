@@ -97,6 +97,8 @@ const Sidebar = () => {
                 { title: 'Risk Intel', icon: <TrendingUp size={18} />, path: '/tools/market' },
                 { title: 'Suspicious Indicators', icon: <Activity size={18} />, path: '/tools/signals' },
                 { title: 'Compliance & AML', icon: <Shield size={18} />, path: '/tools/security' },
+                { title: 'Wallet Analyzer', icon: <FileSearch size={18} />, path: '/tools/analyzer' },
+                { title: 'Case Management', icon: <Briefcase size={18} />, path: '/cases' },
                 { title: 'Forensic Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
             ]
         },

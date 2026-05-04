@@ -48,7 +48,7 @@ const News = () => {
                 const processedNews = data.Data.map(item => ({
                     ...item,
                     impact: calculateImpact(item),
-                    category: item.categories?.split('|')[0] || 'GENERAL'
+                    category: mapToForensicCategory(item)
                 }));
                 setNews(processedNews);
             } else {
@@ -76,10 +76,18 @@ const News = () => {
         const processedNews = fallbacks.map(item => ({
             ...item,
             impact: calculateImpact(item),
-            category: item.categories.split('|')[0]
+            category: mapToForensicCategory(item)
         }));
         
         setNews(processedNews);
+    };
+
+    const mapToForensicCategory = (item) => {
+        const text = (item.title + (item.body || '') + (item.categories || '')).toUpperCase();
+        if (text.includes('HACK') || text.includes('EXPLOIT') || text.includes('CRIME')) return 'CYBER-CRIME';
+        if (text.includes('SEC') || text.includes('REGULATION') || text.includes('LAW') || text.includes('MiCA')) return 'REGULATORY';
+        if (text.includes('MIXER') || text.includes('AML') || text.includes('LAUNDERING') || text.includes('TORNADO')) return 'AML';
+        return 'FORENSICS';
     };
 
     useEffect(() => {
@@ -102,7 +110,7 @@ const News = () => {
             const newItem = {
                 ...lastMessage.data,
                 impact: calculateImpact(lastMessage.data),
-                category: lastMessage.data.categories?.split('|')[0] || 'GENERAL'
+                category: mapToForensicCategory(lastMessage.data)
             };
             setNews(prev => [newItem, ...prev].slice(0, 100));
             setLastRefreshed(new Date());
@@ -153,54 +161,14 @@ const News = () => {
                 </div>
             </div>
 
-            <div className="news-layout">
-                {/* Left Sidebar - Categories */}
-                <aside className="news-sidebar-left">
-                    <div className="sidebar-section">
-                        <div className="search-box-terminal">
-                            <Search size={14} className="search-icon" />
-                            <input
-                                type="text"
-                                placeholder="Search Intel..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="sidebar-section">
-                        <h3>Intelligence Channels</h3>
-                        {categories.map(cat => (
-                            <button
-                                key={cat.id}
-                                className={`filter-btn ${activeCategory === cat.id ? 'active' : ''}`}
-                                onClick={() => setActiveCategory(cat.id)}
-                            >
-                                {cat.icon}
-                                {cat.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="sidebar-section">
-                        <h3>Terminal Tools</h3>
-                        <button className="filter-btn" onClick={fetchNews}>
-                            <RefreshCw size={14} />
-                            Manual Sync
-                        </button>
-                        <button className="filter-btn">
-                            <Eye size={14} />
-                            Watchlist
-                        </button>
-                    </div>
-                </aside>
+            <div className="news-layout single-column">
 
                 {/* Center - News Feed */}
                 <main className="news-feed-center">
                     <div className="news-feed-container">
                         <div className="feed-header">
                             <div>
-                                <h2>Market Intelligence Stream</h2>
+                                <h2 className="intel-stream-title">Market Intelligence Stream</h2>
                                 <div className="feed-stats">
                                     Showing {filteredNews.length} active nodes • Latency: 24ms • Last Sync: {lastRefreshed.toLocaleTimeString()}
                                 </div>
@@ -220,88 +188,41 @@ const News = () => {
                         ) : (
                             <div className="news-cards-container">
                                 {filteredNews.map(item => (
-                                    <article key={item.id} className="news-card" onClick={() => window.open(item.url, '_blank')}>
-                                        <div className="card-top">
-                                            <span className="category-tag">{item.category}</span>
-                                            <div className={`impact-tag ${item.impact.toLowerCase()}`}>
-                                                <Shield size={10} />
-                                                {item.impact} IMPACT
+                                    <a 
+                                        key={item.id} 
+                                        href={item.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="news-card-link"
+                                    >
+                                        <article className="news-card">
+                                            <div className="card-top">
+                                                <span className="category-tag">{item.category}</span>
+                                                <div className={`impact-tag ${item.impact.toLowerCase()}`}>
+                                                    <Shield size={10} />
+                                                    {item.impact} IMPACT
+                                                </div>
                                             </div>
-                                        </div>
-                                        <h3>{item.title}</h3>
-                                        <p className="news-summary">{item.body.substring(0, 180)}...</p>
-                                        <div className="card-footer">
-                                            <div className="source-info">
-                                                <img src={item.source_info.img} alt={item.source_info.name} className="source-icon" />
-                                                <span>{item.source_info.name}</span>
-                                                <span className="divider">•</span>
-                                                <Clock size={12} />
-                                                <span>{new Date(item.published_on * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                            <h3>{item.title}</h3>
+                                            <p className="news-summary">{item.body.substring(0, 180)}...</p>
+                                            <div className="card-footer">
+                                                <div className="source-info">
+                                                    <img src={item.source_info.img} alt={item.source_info.name} className="source-icon" />
+                                                    <span>{item.source_info.name}</span>
+                                                    <span className="divider">•</span>
+                                                    <Clock size={12} />
+                                                    <span>{new Date(item.published_on * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                </div>
+                                                <ExternalLink size={14} className="external-link" />
                                             </div>
-                                            <ExternalLink size={14} className="external-link" />
-                                        </div>
-                                    </article>
+                                        </article>
+                                    </a>
                                 ))}
                             </div>
                         )}
                     </div>
                 </main>
 
-                {/* Right Sidebar - Intelligence Panels */}
-                <aside className="news-sidebar-right">
-                    <div className="intelligence-panel">
-                        <div className="panel-header">
-                            <TrendingUp size={14} />
-                            Global Sentiment
-                        </div>
-                        <div className="sentiment-bar">
-                            <div className="bar-fill" style={{ width: '68%', background: 'var(--terminal-accent)' }}></div>
-                        </div>
-                        <div className="sentiment-labels">
-                            <span>BULLISH</span>
-                            <span>68%</span>
-                        </div>
-                    </div>
-
-                    <div className="intelligence-panel">
-                        <div className="panel-header">
-                            <Shield size={14} />
-                            Regulatory Pulse
-                        </div>
-                        <div className="pulse-item">
-                            <span className="status-dot green"></span>
-                            <span className="label">EU MiCA Compliance</span>
-                            <span className="value">94%</span>
-                        </div>
-                        <div className="pulse-item">
-                            <span className="status-dot amber"></span>
-                            <span className="label">SEC Litigation</span>
-                            <span className="value">HIGH</span>
-                        </div>
-                    </div>
-
-                    <div className="intelligence-panel">
-                        <div className="panel-header">
-                            <AlertTriangle size={14} />
-                            Network Alerts
-                        </div>
-                        <div className="alert-item">
-                            <div className="alert-meta">ETH • GAS SPIKE</div>
-                            <div className="alert-val">84 Gwei</div>
-                        </div>
-                        <div className="alert-item">
-                            <div className="alert-meta">SOL • TPS</div>
-                            <div className="alert-val">2.4k</div>
-                        </div>
-                    </div>
-
-                    <div className="terminal-footer">
-                        <div className="system-status">
-                            <div className="blink"></div>
-                            SYSTEM LOGGED: OPERATOR_KARTHIK
-                        </div>
-                    </div>
-                </aside>
             </div>
         </div>
     );

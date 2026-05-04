@@ -31,6 +31,7 @@ import useModeStore from './store/modeStore';
 import CyberScanOverlay from './components/tools/CyberScanOverlay';
 import WhaleWatch from './pages/tools/WhaleWatch';
 import AISentinel from './pages/tools/AISentinel';
+import WalletAnalyzer from './pages/tools/WalletAnalyzer';
 import Sidebar from './components/Sidebar.jsx';
 import AISentinelAssistant from './components/AISentinelAssistant';
 import { useAuth } from './context/AuthContext';
@@ -44,7 +45,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ReactGA from 'react-ga4';
 
 import ForensicLab from './pages/intelligence-portal/ForensicLab';
-import CaseManagement from './pages/cases/CaseManagement';
+import Cases from './pages/Cases';
 import { useMonitor } from './hooks/useMonitor';
 
 function App() {
@@ -63,7 +64,7 @@ function App() {
   // Initialize global blockchain monitor
   useMonitor();
 
-  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/forensic-lab', '/cases'];
+  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/tools/analyzer', '/forensic-lab', '/cases'];
   const isFullWidth = fullWidthPaths.includes(location.pathname);
   const isAuthPage = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/auth');
 
@@ -109,6 +110,7 @@ function App() {
               <Route path="/tools/visualizer" element={<Visualizer />} />
               <Route path="/tools/whale-watch" element={<WhaleWatch />} />
               <Route path="/tools/sentinel" element={<AISentinel />} />
+              <Route path="/tools/analyzer" element={<WalletAnalyzer />} />
               <Route path="/community" element={<StrategicDiscussionHub />} />
               <Route path="/trust" element={<Premium />} />
               <Route
@@ -153,7 +155,7 @@ function App() {
                 path="/cases"
                 element={
                   <ProtectedRoute>
-                    <CaseManagement />
+                    <Cases />
                   </ProtectedRoute>
                 }
               />

@@ -1,5 +1,7 @@
 import { Network, Alchemy } from "alchemy-sdk";
 import { ethers } from "ethers";
+import { db } from "../firebase/config";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const ALCHEMY_KEY = import.meta.env.VITE_ALCHEMY_API_KEY || "vHM8AL13dp5XCpIMZE58N";
 const ALCHEMY_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
@@ -100,6 +102,130 @@ export const getWalletAnalysis = async (address) => {
         console.error("Alchemy Forensic Analysis Error:", error);
         throw error;
     }
+};
+
+
+export const LiveSocket = {
+    socket: null,
+    listeners: new Set(),
+    connect: function(onMessage) {
+        if (onMessage) this.listeners.add(onMessage);
+        
+        if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
+            return;
+        }
+
+        const wssUrl = import.meta.env.VITE_RPC_WSS_LIVE || "wss://eth-mainnet.g.alchemy.com/v2/ZJNf33Hk7Dj5Jm5b5wH5yKCfWKAPeUWG";
+        this.socket = new WebSocket(wssUrl);
+        
+        this.socket.onopen = () => {
+            console.log("LiveSocket Connected.");
+        };
+        
+        this.socket.onmessage = (event) => {
+            this.listeners.forEach(listener => {
+                try {
+                    listener(event.data);
+                } catch (err) {
+                    console.error("LiveSocket listener error:", err);
+                }
+            });
+        };
+        
+        this.socket.onclose = () => {
+            console.warn("LiveSocket dropped. Reconnecting in 3 seconds...");
+            setTimeout(() => this.connect(), 3000);
+        };
+        
+        this.socket.onerror = (err) => {
+            console.error("LiveSocket error:", err);
+            this.socket.close();
+        };
+    },
+    send: function(data) {
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify(data));
+        } else {
+            console.warn("LiveSocket not open. Cannot send message.");
+        }
+    },
+    disconnect: function(onMessage) {
+        if (onMessage) {
+            this.listeners.delete(onMessage);
+        }
+        
+        // Only close the actual socket if no listeners left
+        if (this.listeners.size === 0 && this.socket) {
+            this.socket.onclose = null;
+            this.socket.close();
+            this.socket = null;
+        }
+    }
+};
+
+export const fetchForensicData = async (walletAddress) => {
+    // 1. Check Firebase first (Persistence)
+    try {
+        const docRef = doc(db, "forensic_reports", walletAddress);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            console.log("Returned from Firebase cache");
+            return { data: docSnap.data(), providerLevel: 'CACHE' };
+        }
+    } catch (e) {
+        console.warn("Firebase cache read error", e);
+    }
+
+    const providers = [
+        { url: import.meta.env.VITE_RPC_HTTPS_PRIMARY, level: 'PRIMARY' },
+        { url: import.meta.env.VITE_RPC_HTTPS_SECONDARY, level: 'SECONDARY' },
+        { url: import.meta.env.VITE_RPC_HTTPS_TERTIARY, level: 'TERTIARY' }
+    ];
+
+    let lastError = null;
+
+    // 2. Retry Loop
+    for (let i = 0; i < providers.length; i++) {
+        const { url, level } = providers[i];
+        if (!url) continue;
+
+        try {
+            console.log(`Attempting fetch with ${level} provider...`);
+            const fallbackProvider = new ethers.JsonRpcProvider(url);
+            const [txCount, ethBalance, history] = await Promise.all([
+                fallbackProvider.getTransactionCount(walletAddress),
+                fallbackProvider.getBalance(walletAddress),
+                getWalletTransactionHistory(walletAddress) // Alchemy history
+            ]);
+            
+            const analysis = {
+                txCount: Number(txCount),
+                balance: parseFloat(ethers.formatEther(ethBalance)),
+                history
+            };
+
+            // Save to Firebase on successful fetch
+            try {
+                await setDoc(doc(db, "forensic_reports", walletAddress), analysis);
+            } catch (e) {
+                console.warn("Failed to persist to Firebase", e);
+            }
+
+            return { data: analysis, providerLevel: level };
+        } catch (error) {
+            console.warn(`Provider ${level} failed:`, error);
+            // Check if error is 429 Too Many Requests
+            if (error.info?.error?.code === 429 || (error.message && error.message.includes("429"))) {
+                lastError = error;
+                continue; // Switch to next provider
+            } else {
+                lastError = error;
+                continue;
+            }
+        }
+    }
+
+    throw lastError || new Error("All RPC providers failed");
 };
 
 export { provider, alchemy };

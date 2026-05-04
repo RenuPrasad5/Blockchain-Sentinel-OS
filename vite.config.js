@@ -9,6 +9,17 @@ export default defineConfig(({ mode }) => {
     // CHANGE THIS: From './' to '/' for absolute pathing on Vercel
     base: '/',
     plugins: [react()],
+    // CRITICAL FIX: Pre-bundle Firebase to prevent Vite HMR from
+    // re-evaluating Firebase modules and causing INTERNAL ASSERTION errors
+    optimizeDeps: {
+      include: [
+        'firebase/app',
+        'firebase/auth',
+        'firebase/firestore',
+        'firebase/storage',
+      ],
+      exclude: [],
+    },
     esbuild: {
       drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
