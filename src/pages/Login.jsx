@@ -92,17 +92,21 @@ const Login = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
-            // Check if user has a profile in Firestore, create one if not
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
-            if (!docSnap.exists()) {
-                await setDoc(docRef, {
-                    uid: user.uid,
-                    email: user.email,
-                    fullName: user.displayName || user.email.split('@')[0],
-                    userType: 'Individual',
-                    createdAt: new Date().toISOString()
-                });
+            try {
+                // Check if user has a profile in Firestore, create one if not
+                const docRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (!docSnap.exists()) {
+                    await setDoc(docRef, {
+                        uid: user.uid,
+                        email: user.email,
+                        fullName: user.displayName || user.email.split('@')[0],
+                        userType: 'Individual',
+                        createdAt: new Date().toISOString()
+                    });
+                }
+            } catch (firestoreError) {
+                console.error("Firestore user profile error:", firestoreError);
             }
 
             const from = location.state?.from?.pathname || '/dashboard';
