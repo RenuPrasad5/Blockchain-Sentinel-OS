@@ -188,35 +188,31 @@ const News = () => {
                         ) : (
                             <div className="news-cards-container">
                                 {filteredNews.map(item => (
-                                    <a 
+                                    <article 
                                         key={item.id} 
-                                        href={item.url} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer" 
-                                        className="news-card-link"
+                                        className="news-card rounded-sm"
+                                        onClick={() => window.open(item.url, '_blank')}
                                     >
-                                        <article className="news-card">
-                                            <div className="card-top">
-                                                <span className="category-tag">{item.category}</span>
-                                                <div className={`impact-tag ${item.impact.toLowerCase()}`}>
-                                                    <Shield size={10} />
-                                                    {item.impact} IMPACT
-                                                </div>
+                                        <div className="card-top">
+                                            <span className="category-tag">{item.category}</span>
+                                            <div className={`impact-tag ${item.impact.toLowerCase()}`}>
+                                                <Shield size={10} />
+                                                {item.impact} IMPACT
                                             </div>
-                                            <h3>{item.title}</h3>
-                                            <p className="news-summary">{item.body.substring(0, 180)}...</p>
-                                            <div className="card-footer">
-                                                <div className="source-info">
-                                                    <img src={item.source_info.img} alt={item.source_info.name} className="source-icon" />
-                                                    <span>{item.source_info.name}</span>
-                                                    <span className="divider">•</span>
-                                                    <Clock size={12} />
-                                                    <span>{new Date(item.published_on * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                </div>
-                                                <ExternalLink size={14} className="external-link" />
+                                        </div>
+                                        <h3>{item.title}</h3>
+                                        <p className="news-summary">{item.body.substring(0, 180)}...</p>
+                                        <div className="card-footer">
+                                            <div className="source-info">
+                                                <img src={item.source_info.img} alt={item.source_info.name} className="source-icon" />
+                                                <span>{item.source_info.name}</span>
+                                                <span className="divider">•</span>
+                                                <Clock size={12} />
+                                                <span>{new Date(item.published_on * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
-                                        </article>
-                                    </a>
+                                            <ExternalLink size={14} className="external-link" />
+                                        </div>
+                                    </article>
                                 ))}
                             </div>
                         )}

@@ -15,9 +15,10 @@ const Visualizer = () => {
         setLoading(true);
         setError(null);
         try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
             // Support local fallback if needed
             const urls = [
-                `http://localhost:5000/trace/${targetAddr}`,
+                `${API_URL}/trace/${targetAddr}`,
                 `/trace/${targetAddr}`
             ];
             

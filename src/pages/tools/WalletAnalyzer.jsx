@@ -49,6 +49,8 @@ const WalletAnalyzer = () => {
         }
     }, [location.search]);
 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     const handleAnalyze = async (e) => {
         if (e) e.preventDefault();
         performAnalysis(wallet, mode);
@@ -67,7 +69,7 @@ const WalletAnalyzer = () => {
 
         try {
             const endpoint = targetMode === 'history' ? 'wallet-history' : 'wallet-live';
-            const response = await fetch(`http://localhost:5000/${endpoint}/${targetWallet}`);
+            const response = await fetch(`${API_URL}/${endpoint}/${targetWallet}`);
             if (!response.ok) throw new Error(`Failed to fetch ${targetMode} data from Sentinel API`);
             const result = await response.json();
             setData(result);
@@ -81,12 +83,12 @@ const WalletAnalyzer = () => {
 
     const handleDownloadReport = () => {
         if (!wallet) return;
-        window.open(`http://localhost:5000/report/${wallet}?mode=${mode}`, '_blank');
+        window.open(`${API_URL}/report/${wallet}?mode=${mode}`, '_blank');
     };
 
     const handleExportTaxReport = () => {
         if (!wallet) return;
-        window.open(`http://localhost:5000/report/${wallet}?mode=${mode}&appMode=ca`, '_blank');
+        window.open(`${API_URL}/report/${wallet}?mode=${mode}&appMode=ca`, '_blank');
     };
 
     const handleSaveCase = async () => {
