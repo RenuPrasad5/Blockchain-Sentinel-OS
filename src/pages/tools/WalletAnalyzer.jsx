@@ -70,12 +70,12 @@ const WalletAnalyzer = () => {
         try {
             const endpoint = targetMode === 'history' ? 'wallet-history' : 'wallet-live';
             const response = await fetch(`${API_URL}/${endpoint}/${targetWallet}`);
-            if (!response.ok) throw new Error(`Failed to fetch ${targetMode} data from Sentinel API`);
+            if (!response.ok) throw new Error(`Failed to fetch ${targetMode} data from Sentinel API (HTTP ${response.status})`);
             const result = await response.json();
             setData(result);
         } catch (err) {
-            console.error(err);
-            setError(`Forensic uplink failed during ${targetMode} scan. Ensure backend is active.`);
+            console.error("Forensic Scan Error Details:", err);
+            setError(`Forensic uplink failed during ${targetMode} scan. Error: ${err.message}. Ensure backend is active.`);
         } finally {
             setLoading(false);
         }

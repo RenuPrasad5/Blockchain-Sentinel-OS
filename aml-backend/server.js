@@ -28,7 +28,11 @@ const TRANSFER_EVENT_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a116
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['https://blockchain-sentinel-os.vercel.app', 'http://localhost:5173'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Routes
