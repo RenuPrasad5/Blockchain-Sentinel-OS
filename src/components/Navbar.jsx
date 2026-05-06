@@ -53,7 +53,10 @@ const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
-    const [isToolsOpen, setIsToolsOpen] = useState(false);
+    const [isInvestigationsOpen, setIsInvestigationsOpen] = useState(false);
+    const [isIntelligenceOpen, setIsIntelligenceOpen] = useState(false);
+    const [isComplianceOpen, setIsComplianceOpen] = useState(false);
+    const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
 
     const dropdownRef = useRef(null);
     const hamburgerRef = useRef(null);
@@ -130,97 +133,199 @@ const Navbar = () => {
                     <Menu size={24} />
                 </button>
                 <Link to="/" className="nav-brand">
-                    <img src={logo} alt="Blockchain Intelligence Logo" className="logo-circular-nav" />
-                    <span className="brand-text-nav">Blockchain Intelligence</span>
+                    <img src={logo} alt="Blockchain Sentinel Logo" className="logo-circular-nav" />
+                    <span className="brand-text-nav">Blockchain Sentinel</span>
                 </Link>
             </div>
 
 
             <div className="navbar-right">
                 <nav className="nav-links-desktop lg:flex hidden">
-                    <NavLink to="/mempool" className="nav-link-btn">Monitoring Layer</NavLink>
-                    <NavLink to="/gov-ent" className="nav-link-btn flex items-center gap-2">
-                        <Shield size={16} className="text-blue-400" />
-                        <span>Intelligence Portal</span>
-                    </NavLink>
-                    <NavLink to="/government" className="nav-link-btn flex items-center gap-2">
-                        <ShieldAlert size={16} className="text-emerald-500" />
-                        <span>Enforcement</span>
-                    </NavLink>
-                    <NavLink to="/use-cases" className="nav-link-btn">Agency Solutions</NavLink>
-
+                    <Link to="/command-center" className="nav-link-btn">Command Center</Link>
+                    {/* 1. INVESTIGATIONS */}
                     <div
                         className="tools-dropdown-container"
-                        onMouseEnter={() => setIsToolsOpen(true)}
-                        onMouseLeave={() => setIsToolsOpen(false)}
+                        onMouseEnter={() => setIsInvestigationsOpen(true)}
+                        onMouseLeave={() => setIsInvestigationsOpen(false)}
                     >
-                        <NavLink
-                            to="/tools"
-                            className={({ isActive }) =>
-                                `nav-link-btn ${isActive || location.pathname.startsWith('/tools') ? 'active' : ''}`
-                            }
-                        >
-                            <span>Tools</span>
-                            <ChevronDown size={14} className={`dropdown-arrow ms-1 ${isToolsOpen ? 'rotate' : ''}`} />
-                        </NavLink>
-
-                        {isToolsOpen && (
+                        <span className={`nav-link-btn ${isInvestigationsOpen ? 'active' : ''}`}>
+                            <span>Investigations</span>
+                            <ChevronDown size={14} className={`dropdown-arrow ms-1 ${isInvestigationsOpen ? 'rotate' : ''}`} />
+                        </span>
+                        {isInvestigationsOpen && (
                             <div className="tools-dropdown-menu glass">
-                                <Link to="/tools/sentinel" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
-                                    <ShieldCheck size={16} className="text-emerald-500" />
-                                    <div className="tools-item-text">
-                                        <span className="tools-item-title">AI Sentinel</span>
-                                        <span className="tools-item-desc">Autonomous node & liquidity surveillance</span>
-                                    </div>
-                                </Link>
-                                <Link to="/tools/whale-watch" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
-                                    <Radar size={16} className="text-rose-500" />
-                                    <div className="tools-item-text">
-                                        <span className="tools-item-title">Surveillance</span>
-                                        <span className="tools-item-desc">High-value transaction surveillance systems</span>
-                                    </div>
-                                </Link>
-                                <Link to="/tools/market" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
-                                    <TrendingUp size={16} className="text-indigo-400" />
-                                    <div className="tools-item-text">
-                                        <span className="tools-item-title">Risk Intel</span>
-                                        <span className="tools-item-desc">Aggregate financial risk intelligence data</span>
-                                    </div>
-                                </Link>
-                                <Link to="/tools/signals" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
-                                    <Activity size={16} className="text-emerald-500" />
-                                    <div className="tools-item-text">
-                                        <span className="tools-item-title">Suspicious Indicators</span>
-                                        <span className="tools-item-desc">Real-time anomaly & cluster tracking</span>
-                                    </div>
-                                </Link>
-                                <Link to="/tools/security" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
-                                    <Shield size={16} className="text-rose-500" />
-                                    <div className="tools-item-text">
-                                        <span className="tools-item-title">Compliance & AML</span>
-                                        <span className="tools-item-desc">Automated anti-money laundering triage</span>
-                                    </div>
-                                </Link>
-                                <Link to="/tools/analyzer" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                <Link to="/tools/analyzer" className="tools-dropdown-item" onClick={() => setIsInvestigationsOpen(false)}>
                                     <FileSearch size={16} className="text-blue-500" />
                                     <div className="tools-item-text">
                                         <span className="tools-item-title">Wallet Analyzer</span>
                                         <span className="tools-item-desc">Forensic intelligence & risk scoring</span>
                                     </div>
                                 </Link>
-                                <Link to="/tools/visualizer" className="tools-dropdown-item" onClick={() => setIsToolsOpen(false)}>
+                                <Link to="/tools/visualizer" className="tools-dropdown-item" onClick={() => setIsInvestigationsOpen(false)}>
                                     <Share2 size={16} className="text-indigo-400" />
                                     <div className="tools-item-text">
-                                        <span className="tools-item-title">Forensic Visualizer</span>
-                                        <span className="tools-item-desc">Advanced wallet relationship mapping</span>
+                                        <span className="tools-item-title">Multi-Hop Visualizer</span>
+                                        <span className="tools-item-desc">Advanced relationship mapping</span>
+                                    </div>
+                                </Link>
+                                <Link to="/cases" className="tools-dropdown-item" onClick={() => setIsInvestigationsOpen(false)}>
+                                    <Briefcase size={16} className="text-emerald-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Case Management</span>
+                                        <span className="tools-item-desc">Investigation workspaces & evidence</span>
                                     </div>
                                 </Link>
                             </div>
                         )}
                     </div>
 
-                    <NavLink to="/news" className="nav-link-btn">News</NavLink>
-                    <NavLink to="/about" className="nav-link-btn">About Us</NavLink>
+                    {/* 2. INTELLIGENCE */}
+                    <div
+                        className="tools-dropdown-container"
+                        onMouseEnter={() => setIsIntelligenceOpen(true)}
+                        onMouseLeave={() => setIsIntelligenceOpen(false)}
+                    >
+                        <span className={`nav-link-btn ${isIntelligenceOpen ? 'active' : ''}`}>
+                            <span>Intelligence</span>
+                            <ChevronDown size={14} className={`dropdown-arrow ms-1 ${isIntelligenceOpen ? 'rotate' : ''}`} />
+                        </span>
+                        {isIntelligenceOpen && (
+                            <div className="tools-dropdown-menu glass">
+                                <Link to="/tools/signals" className="tools-dropdown-item" onClick={() => setIsIntelligenceOpen(false)}>
+                                    <Activity size={16} className="text-emerald-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Behavioral Intelligence</span>
+                                        <span className="tools-item-desc">Anomaly & cluster tracking</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/market" className="tools-dropdown-item" onClick={() => setIsIntelligenceOpen(false)}>
+                                    <TrendingUp size={16} className="text-indigo-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Risk Engine</span>
+                                        <span className="tools-item-desc">Financial risk scoring</span>
+                                    </div>
+                                </Link>
+                                <Link to="/mempool" className="tools-dropdown-item" onClick={() => setIsIntelligenceOpen(false)}>
+                                    <Radar size={16} className="text-blue-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Monitoring Layer</span>
+                                        <span className="tools-item-desc">Real-time mempool tracking</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/sentinel" className="tools-dropdown-item" onClick={() => setIsIntelligenceOpen(false)}>
+                                    <ShieldCheck size={16} className="text-rose-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Threat Detection</span>
+                                        <span className="tools-item-desc">Autonomous node surveillance</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/whale-watch" className="tools-dropdown-item" onClick={() => setIsIntelligenceOpen(false)}>
+                                    <LineChart size={16} className="text-emerald-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Temporal Intelligence</span>
+                                        <span className="tools-item-desc">High-value time-based analysis</span>
+                                    </div>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 3. COMPLIANCE */}
+                    <div
+                        className="tools-dropdown-container"
+                        onMouseEnter={() => setIsComplianceOpen(true)}
+                        onMouseLeave={() => setIsComplianceOpen(false)}
+                    >
+                        <span className={`nav-link-btn ${isComplianceOpen ? 'active' : ''}`}>
+                            <span>Compliance</span>
+                            <ChevronDown size={14} className={`dropdown-arrow ms-1 ${isComplianceOpen ? 'rotate' : ''}`} />
+                        </span>
+                        {isComplianceOpen && (
+                            <div className="tools-dropdown-menu glass">
+                                <Link to="/tools/security?appMode=ca" className="tools-dropdown-item" onClick={() => setIsComplianceOpen(false)}>
+                                    <Scale size={16} className="text-blue-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Tax Intelligence</span>
+                                        <span className="tools-item-desc">Indian CA Firm audit workflows</span>
+                                    </div>
+                                </Link>
+                                <Link to="/tools/security" className="tools-dropdown-item" onClick={() => setIsComplianceOpen(false)}>
+                                    <Shield size={16} className="text-emerald-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">AML Reports</span>
+                                        <span className="tools-item-desc">Anti-money laundering reporting</span>
+                                    </div>
+                                </Link>
+                                <Link to="/cases" className="tools-dropdown-item" onClick={() => setIsComplianceOpen(false)}>
+                                    <FileSearch size={16} className="text-indigo-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Audit Export</span>
+                                        <span className="tools-item-desc">Download immutable evidence</span>
+                                    </div>
+                                </Link>
+                                <Link to="/gov-ent" className="tools-dropdown-item" onClick={() => setIsComplianceOpen(false)}>
+                                    <Database size={16} className="text-rose-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Compliance Monitoring</span>
+                                        <span className="tools-item-desc">Continuous wallet tracking</span>
+                                    </div>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 4. SOLUTIONS */}
+                    <div
+                        className="tools-dropdown-container"
+                        onMouseEnter={() => setIsSolutionsOpen(true)}
+                        onMouseLeave={() => setIsSolutionsOpen(false)}
+                    >
+                        <span className={`nav-link-btn ${isSolutionsOpen ? 'active' : ''}`}>
+                            <span>Solutions</span>
+                            <ChevronDown size={14} className={`dropdown-arrow ms-1 ${isSolutionsOpen ? 'rotate' : ''}`} />
+                        </span>
+                        {isSolutionsOpen && (
+                            <div className="tools-dropdown-menu glass">
+                                <Link to="/solutions/government" className="tools-dropdown-item" onClick={() => setIsSolutionsOpen(false)}>
+                                    <ShieldAlert size={16} className="text-emerald-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Government Agencies</span>
+                                        <span className="tools-item-desc">National security & oversight</span>
+                                    </div>
+                                </Link>
+                                <Link to="/solutions/law-enforcement" className="tools-dropdown-item" onClick={() => setIsSolutionsOpen(false)}>
+                                    <ShieldCheck size={16} className="text-blue-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Law Enforcement</span>
+                                        <span className="tools-item-desc">Cybercrime investigation tools</span>
+                                    </div>
+                                </Link>
+                                <Link to="/solutions/ca-firms" className="tools-dropdown-item" onClick={() => setIsSolutionsOpen(false)}>
+                                    <Briefcase size={16} className="text-indigo-500" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">CA Firms</span>
+                                        <span className="tools-item-desc">Crypto taxation & compliance</span>
+                                    </div>
+                                </Link>
+                                <Link to="/solutions/financial" className="tools-dropdown-item" onClick={() => setIsSolutionsOpen(false)}>
+                                    <LineChart size={16} className="text-emerald-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Financial Institutions</span>
+                                        <span className="tools-item-desc">VASP integration & risk mitigation</span>
+                                    </div>
+                                </Link>
+                                <Link to="/solutions/enterprise" className="tools-dropdown-item" onClick={() => setIsSolutionsOpen(false)}>
+                                    <Cpu size={16} className="text-rose-400" />
+                                    <div className="tools-item-text">
+                                        <span className="tools-item-title">Enterprise Security</span>
+                                        <span className="tools-item-desc">Internal treasury monitoring</span>
+                                    </div>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+
+                    <NavLink to="/about" className="nav-link-btn">About</NavLink>
                 </nav>
                 <div className="icon-group">
 

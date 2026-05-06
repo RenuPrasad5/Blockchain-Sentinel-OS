@@ -26,7 +26,8 @@ import {
     Briefcase,
     ShieldAlert,
     Scale,
-    Microscope
+    Microscope,
+    LineChart
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
@@ -66,43 +67,56 @@ const Sidebar = () => {
 
     const navItems = [
         { id: 'terminal', title: 'Home', icon: <Globe size={20} />, path: '/' },
-        { 
-            id: 'govent', 
-            title: 'Intelligence Portal', 
-            icon: <Shield size={20} />, 
-            path: '/gov-ent'
-        },
-        { 
-            id: 'forensics', 
-            title: 'Forensic Lab', 
-            icon: <Microscope size={20} />, 
-            path: '/forensic-lab'
-        },
-        { id: 'enterprise', title: 'Enforcement', icon: <ShieldAlert size={20} />, path: '/government' },
-        { id: 'usecases', title: 'Agency Solutions', icon: <Briefcase size={20} />, path: '/use-cases' },
-        { id: 'cc', title: 'Dashboard', icon: <Cpu size={20} />, path: '/dashboard' },
-        { id: 'encyclopedia', title: 'Encyclopedia', icon: <Database size={20} />, path: '/encyclopedia' },
-        { id: 'research', title: 'Research', icon: <FileSearch size={20} />, path: '/research' },
-        { id: 'hub', title: 'Blockchain Hub', icon: <Layers size={20} />, path: '/blockchain-hub' },
-        { id: 'mempool', title: 'Mempool Hub', icon: <Activity size={20} />, path: '/mempool' },
+        { id: 'command_center', title: 'Command Center', icon: <Cpu size={20} />, path: '/command-center' },
         {
-            id: 'tools',
-            title: 'Tools',
-            icon: <Wrench size={20} />,
-            path: '/tools',
+            id: 'investigations',
+            title: 'Investigations',
+            icon: <Microscope size={20} />,
+            path: '/investigations',
             subItems: [
-                { title: 'AI Sentinel', icon: <ShieldCheck size={18} />, path: '/tools/sentinel' },
-                { title: 'Surveillance', icon: <Radar size={18} />, path: '/tools/whale-watch' },
-                { title: 'Risk Intel', icon: <TrendingUp size={18} />, path: '/tools/market' },
-                { title: 'Suspicious Indicators', icon: <Activity size={18} />, path: '/tools/signals' },
-                { title: 'Compliance & AML', icon: <Shield size={18} />, path: '/tools/security' },
                 { title: 'Wallet Analyzer', icon: <FileSearch size={18} />, path: '/tools/analyzer' },
+                { title: 'Multi-Hop Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
                 { title: 'Case Management', icon: <Briefcase size={18} />, path: '/cases' },
-                { title: 'Forensic Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
             ]
         },
-        { id: 'community', title: 'Community', icon: <Users2 size={20} />, path: '/community' },
-        { id: 'trust', title: 'Trust Center', icon: <ShieldCheck size={20} />, path: '/trust' },
+        {
+            id: 'intelligence',
+            title: 'Intelligence',
+            icon: <Activity size={20} />,
+            path: '/intelligence',
+            subItems: [
+                { title: 'Behavioral Intelligence', icon: <Activity size={18} />, path: '/tools/signals' },
+                { title: 'Risk Engine', icon: <TrendingUp size={18} />, path: '/tools/market' },
+                { title: 'Monitoring Layer', icon: <Radar size={18} />, path: '/mempool' },
+                { title: 'Threat Detection', icon: <ShieldCheck size={18} />, path: '/tools/sentinel' },
+                { title: 'Temporal Intelligence', icon: <LineChart size={18} />, path: '/tools/whale-watch' },
+            ]
+        },
+        {
+            id: 'compliance',
+            title: 'Compliance',
+            icon: <Scale size={20} />,
+            path: '/compliance',
+            subItems: [
+                { title: 'Tax Intelligence', icon: <Scale size={18} />, path: '/tools/security?appMode=ca' },
+                { title: 'AML Reports', icon: <Shield size={18} />, path: '/tools/security' },
+                { title: 'Audit Export', icon: <FileSearch size={18} />, path: '/cases' },
+                { title: 'Compliance Monitoring', icon: <Database size={18} />, path: '/gov-ent' },
+            ]
+        },
+        {
+            id: 'solutions',
+            title: 'Solutions',
+            icon: <Briefcase size={20} />,
+            path: '/solutions',
+            subItems: [
+                { title: 'Government Agencies', icon: <ShieldAlert size={18} />, path: '/solutions/government' },
+                { title: 'Law Enforcement', icon: <ShieldCheck size={18} />, path: '/solutions/law-enforcement' },
+                { title: 'CA Firms', icon: <Briefcase size={18} />, path: '/solutions/ca-firms' },
+                { title: 'Financial Institutions', icon: <LineChart size={18} />, path: '/solutions/financial' },
+                { title: 'Enterprise Security', icon: <Cpu size={18} />, path: '/solutions/enterprise' },
+            ]
+        },
         { id: 'news', title: 'News Feed', icon: <Newspaper size={20} />, path: '/news' },
         { id: 'about', title: 'About Us', icon: <Info size={20} />, path: '/about' },
     ];

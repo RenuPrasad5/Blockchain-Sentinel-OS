@@ -143,7 +143,7 @@ const WalletAnalyzer = () => {
                 <div className="flex flex-col mb-8">
                     <div className="flex items-center justify-between mb-4">
                         <div>
-                            <h1 className="text-4xl font-black text-white tracking-tight uppercase tracking-wide">Dynamic Intelligence Dashboard</h1>
+                            <h1 className="text-4xl font-black text-white tracking-tight uppercase tracking-wide">Dynamic Intelligence Workspace</h1>
                             <p className="text-slate-400 text-sm mt-1">
                                 {mode === 'live' 
                                     ? "Real-time blockchain surveillance (latest blocks)" 

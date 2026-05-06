@@ -337,26 +337,18 @@ app.get('/wallet-live/:address', async (req, res) => {
         }
 
         console.log(`📡 Live Forensic Scan: ${address}`);
-        const latestBlock = await provider.getBlockNumber();
-        const liveTransactions = [];
-        const blocksScanned = 50;
-
-        for (let i = 0; i < blocksScanned; i++) {
-            const block = await provider.getBlock(latestBlock - i, true);
-            if (block && block.prefetchedTransactions) {
-                block.prefetchedTransactions.forEach(tx => {
-                    if (tx.from?.toLowerCase() === normalizedAddress || tx.to?.toLowerCase() === normalizedAddress) {
-                        liveTransactions.push({
-                            hash: tx.hash,
-                            from: tx.from,
-                            to: tx.to || 'Contract Creation',
-                            value: ethers.formatEther(tx.value),
-                            timestamp: block.timestamp
-                        });
-                    }
-                });
-            }
-            if (i < blocksScanned - 1) await new Promise(r => setTimeout(r, 300));
+        let liveTransactions = [];
+        try {
+            const txs = await ChainAdapter.fetchTransactions(address, 'ETH');
+            liveTransactions = txs.map(tx => ({
+                hash: tx.hash,
+                from: tx.from,
+                to: tx.to || 'Contract Creation',
+                value: ethers.formatEther(tx.value),
+                timestamp: parseInt(tx.timeStamp)
+            })).slice(0, 50);
+        } catch (e) {
+            console.error("Etherscan Live Fetch failed, falling back to DB:", e.message);
         }
 
         let activeTransactions = liveTransactions;
@@ -1145,9 +1137,12 @@ app.get('/trace/:wallet', async (req, res) => {
                         totalVolume += txValueEth;
                     }
                     
-                    // Recursive trace outbound
-                    if (fromAddr === address && toAddr && !isContract) {
-                        await traceAddress(toAddr, depth + 1);
+                    // Recursive trace outbound (limit branching factor to 3 per node to prevent browser timeouts)
+                    if (fromAddr === address && toAddr && !isContract && depth < maxDepth && nodesMap.size < maxNodes) {
+                        const outEdges = Array.from(edgesMap.values()).filter(e => e.source === address);
+                        if (outEdges.length < 3) {
+                            await traceAddress(toAddr, depth + 1);
+                        }
                     }
                 }
             } catch (err) {

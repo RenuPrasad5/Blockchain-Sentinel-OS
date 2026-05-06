@@ -45,6 +45,8 @@ import ReactGA from 'react-ga4';
 
 import ForensicLab from './pages/intelligence-portal/ForensicLab';
 import Cases from './pages/Cases';
+import SolutionPage from './pages/SolutionPage';
+import CommandCenter from './pages/CommandCenter';
 import { useMonitor } from './hooks/useMonitor';
 
 function App() {
@@ -63,8 +65,8 @@ function App() {
   // Initialize global blockchain monitor
   useMonitor();
 
-  const fullWidthPaths = ['/', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/tools/analyzer', '/forensic-lab', '/cases'];
-  const isFullWidth = fullWidthPaths.includes(location.pathname);
+  const fullWidthPaths = ['/', '/command-center', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/tools/analyzer', '/forensic-lab', '/cases', '/solutions/government', '/solutions/law-enforcement', '/solutions/ca-firms', '/solutions/financial', '/solutions/enterprise'];
+  const isFullWidth = fullWidthPaths.includes(location.pathname) || location.pathname.startsWith('/solutions');
   const isAuthPage = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/auth');
 
   const { user } = useAuth();
@@ -138,6 +140,8 @@ function App() {
               />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/news" element={<News />} />
+              <Route path="/solutions/:id" element={<SolutionPage />} />
+              <Route path="/command-center" element={<CommandCenter />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/help-center" element={<HelpCenter />} />
