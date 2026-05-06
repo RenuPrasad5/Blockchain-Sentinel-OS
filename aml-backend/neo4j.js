@@ -11,17 +11,21 @@ const driver = neo4j.driver(
 export const createTransactionGraph = async (txData) => {
     const session = driver.session({ database: process.env.NEO4J_DATABASE || 'neo4j' });
     try {
-        const { from, to, value, hash, timestamp } = txData;
+        const { 
+            from, to, value, hash, timestamp, 
+            fromType = 'Wallet', toType = 'Wallet', 
+            relType = 'SENT', classification = 'Unknown', riskLevel = 'Low' 
+        } = txData;
         
-        // MERGE ensures we don't create duplicate nodes for the same wallet
-        // SET allows updating node properties if needed
         const cypher = `
-            MERGE (a:Wallet {address: $from})
-            MERGE (b:Wallet {address: $to})
-            MERGE (a)-[r:SENT {hash: $hash}]->(b)
+            MERGE (a:${fromType} {address: $from})
+            MERGE (b:${toType} {address: $to})
+            MERGE (a)-[r:${relType} {hash: $hash}]->(b)
             ON CREATE SET 
                 r.value = $value,
-                r.timestamp = $timestamp
+                r.timestamp = $timestamp,
+                r.classification = $classification,
+                r.riskLevel = $riskLevel
             RETURN a, b, r
         `;
 
@@ -30,10 +34,12 @@ export const createTransactionGraph = async (txData) => {
             to: (to || 'Contract Creation').toLowerCase(),
             value: value.toString(),
             hash: hash,
-            timestamp: neo4j.int(timestamp)
+            timestamp: neo4j.int(timestamp),
+            classification,
+            riskLevel
         });
 
-        console.log(`✅ Graph relationship saved: ${from.substring(0, 10)}... → ${(to || 'Creation').substring(0, 10)}...`);
+        console.log(`✅ Graph relationship saved: ${from.substring(0, 10)}... → ${(to || 'Creation').substring(0, 10)}... [${relType}]`);
         return result;
 
     } catch (error) {
@@ -47,7 +53,7 @@ export const getWalletGraph = async (address) => {
     const session = driver.session({ database: process.env.NEO4J_DATABASE || 'neo4j' });
     try {
         const cypher = `
-            MATCH (w:Wallet {address: $address})-[r:SENT]-(neighbor:Wallet)
+            MATCH (w {address: $address})-[r]-(neighbor)
             RETURN w, r, neighbor
             LIMIT 50
         `;
@@ -58,7 +64,9 @@ export const getWalletGraph = async (address) => {
             from: record.get('w').properties.address,
             to: record.get('neighbor').properties.address,
             relationship: record.get('r').type,
-            metadata: record.get('r').properties
+            metadata: record.get('r').properties,
+            fromLabels: record.get('w').labels,
+            toLabels: record.get('neighbor').labels
         }));
 
     } catch (error) {

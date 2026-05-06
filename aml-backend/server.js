@@ -9,6 +9,7 @@ import AMLResult from './models/AMLResult.js';
 import Case from './models/Case.js';
 import { createTransactionGraph, getWalletGraph } from './neo4j.js';
 import PDFDocument from 'pdfkit';
+import ChainAdapter from './ChainAdapter.js';
 
 // Load environment variables
 dotenv.config();
@@ -29,7 +30,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-    origin: ['https://blockchain-sentinel-os.vercel.app', 'http://localhost:5173'],
+    origin: ['https://blockchain-sentinel-os.vercel.app', 'http://localhost:5173', 'http://127.0.0.1:5173'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -180,10 +181,28 @@ const calculateForensicIntel = (transactions, address) => {
 
     const classifiedTransactions = enrichedTransactions.map(tx => {
         const isOutbound = tx.from.toLowerCase() === address.toLowerCase();
-        let classification = "unknown";
-        if (parseFloat(tx.value) > 0) {
-            classification = isOutbound ? "transfer" : "income";
+        let classification = "Normal Transfer";
+        
+        let isExchange = false;
+        try {
+            if (tx.to) isExchange = !!KNOWN_PROTOCOLS[ethers.getAddress(tx.to)];
+        } catch (e) {}
+        
+        if (tx.isContractInteraction) {
+            classification = "Contract Interaction";
+        } else if (isExchange) {
+            classification = "Exchange Deposit";
+        } else if (parseFloat(tx.value) > 10) {
+            classification = "High Value Transfer";
+        } else if (timePatterns && timePatterns.length > 0) {
+            classification = "Rapid Movement Pattern";
+        } else if (parseFloat(tx.value) > 0) {
+            classification = isOutbound ? "Outbound Transfer" : "Inbound Transfer";
         }
+        
+        tx.classification = classification;
+        tx.type = classification; // For PDF backwards compatibility
+        
         return {
             hash: tx.hash,
             classification,
@@ -564,6 +583,15 @@ app.get('/report/:wallet', async (req, res) => {
         res.setHeader('Content-Disposition', `inline; filename=SENTINEL_DOSSIER_${wallet.substring(0, 8)}.pdf`);
         doc.pipe(res);
 
+        // Fetch Trace Data
+        let traceData = null;
+        try {
+            const traceResponse = await fetch(`http://localhost:${PORT}/trace/${wallet}?depth=2&limit=20`);
+            if (traceResponse.ok) {
+                traceData = await traceResponse.json();
+            }
+        } catch(e) {}
+
         if (req.query.appMode === 'ca') {
             const primaryColor = '#0d5c34'; // Green for financial/CA
             const textColor = '#1e293b';
@@ -837,8 +865,31 @@ app.get('/report/:wallet', async (req, res) => {
         const cpUnique = [...new Set(data.transactions.map(t => t.counterpartyLabel))].slice(0, 3);
         cpUnique.forEach(cp => writeText(`- ${cp}`, { indent: 40 }));
 
-        // --- 8. TIME BEHAVIOR ANALYSIS ---
-        sectionTitle("7. TIME BEHAVIOR ANALYSIS");
+        // --- 8. MULTI-HOP INTELLIGENCE SUMMARY ---
+        if (traceData && traceData.nodes && traceData.nodes.length > 1) {
+            sectionTitle("7. MULTI-HOP INTELLIGENCE SUMMARY");
+            
+            const highRiskHops = traceData.edges.filter(e => e.riskLevel === 'High').length;
+            const exchanges = traceData.nodes.filter(n => n.type === 'Exchange').length;
+            const contracts = traceData.nodes.filter(n => n.type === 'Contract').length;
+            
+            doc.fontSize(9).font(FONT_REGULAR);
+            writeText(`• Recursive Depth Reached: 2 Hops`, { indent: 20 });
+            writeText(`• Total Entities Discovered: ${traceData.nodes.length} nodes`, { indent: 20 });
+            writeText(`• Suspicious Layered Patterns: ${highRiskHops} high-risk edges`, { indent: 20 });
+            writeText(`• Exchange Deposit Links: ${exchanges} nodes`, { indent: 20 });
+            writeText(`• Contract Interaction Links: ${contracts} nodes`, { indent: 20 });
+            
+            if (highRiskHops > 0) {
+                doc.moveDown(0.5);
+                doc.fillColor(accentRed).font(FONT_BOLD);
+                writeText("FORENSIC FINDING: Complex fund movement detected beyond 1st-degree connections, indicating possible laundering or evasion patterns.", { indent: 20 });
+                doc.fillColor(textColor).font(FONT_REGULAR);
+            }
+        }
+
+        // --- 9. TIME BEHAVIOR ANALYSIS ---
+        sectionTitle("8. TIME BEHAVIOR ANALYSIS");
         const timeAnalysis = data.stats.timePatterns?.length > 0 ? data.stats.timePatterns.join(", ") : "Standard organic distribution";
         writeText(`• Temporal Anomalies: ${timeAnalysis}`, { indent: 20 });
 
@@ -993,93 +1044,143 @@ app.delete('/cases/:id', async (req, res) => {
 app.get('/trace/:wallet', async (req, res) => {
     const { wallet } = req.params;
     if (!wallet) return res.status(400).json({ error: 'Wallet address required' });
-    const initialAddress = wallet.toLowerCase();
+    const rootWallet = wallet.toLowerCase();
 
-    const maxDepth = 3;
-    const maxNodes = 50;
-
-    const visited = new Set();
-    const nodes = [];
-    const edges = [];
-
-    const getNodeType = (addr, depth) => {
-        if (addr === initialAddress) return 'source';
-        if (depth === maxDepth) return 'endpoint';
-        return 'intermediate';
-    };
-
-    const trace = async (addr, depth) => {
-        if (depth > maxDepth || visited.has(addr) || nodes.length >= maxNodes) {
-            return;
-        }
-
-        visited.add(addr);
-
-        if (!nodes.find(n => n.id === addr)) {
-            nodes.push({
-                id: addr,
-                type: getNodeType(addr, depth),
-                label: addr.substring(0, 6) + '...' + addr.substring(38),
-                depth
-            });
-        }
-
-        if (depth === maxDepth || nodes.length >= maxNodes) {
-            return;
-        }
-
-        const txs = await Transaction.find({
-            $or: [{ from: addr }, { to: addr }]
-        }).limit(20);
-
-        for (const tx of txs) {
-            if (nodes.length >= maxNodes) break;
-
-            const from = tx.from.toLowerCase();
-            const to = tx.to.toLowerCase();
-            
-            if (from === to) continue;
-
-            const cp = from === addr ? to : from;
-
-            if (!edges.find(e => (e.from === from && e.to === to) || (e.from === to && e.to === from))) {
-                edges.push({
-                    id: tx.hash || `edge-${from}-${to}-${Date.now()}`,
-                    from,
-                    to,
-                    value: tx.value,
-                    timestamp: tx.timestamp
-                });
-            }
-
-            await trace(cp, depth + 1);
-        }
-    };
+    const maxDepth = parseInt(req.query.depth) || 3;
+    const maxNodes = parseInt(req.query.limit) || 50;
 
     try {
-        await trace(initialAddress, 1);
+        const nodesMap = new Map();
+        const edgesMap = new Map();
+        const classifications = [];
+        let totalVolume = 0;
+        let highRiskHops = 0;
+        
+        const visited = new Set();
+        
+        const traceAddress = async (address, depth) => {
+            if (depth > maxDepth || nodesMap.size >= maxNodes || visited.has(address)) return;
+            visited.add(address);
+            
+            try {
+                const txs = await ChainAdapter.fetchTransactions(address, 'ETH');
+                
+                for (const tx of txs) {
+                    if (nodesMap.size >= maxNodes) break;
+                    
+                    const fromAddr = tx.from.toLowerCase();
+                    const toAddr = (tx.to || '').toLowerCase();
+                    
+                    // Classification logic
+                    const isContract = toAddr === "" || tx.input !== "0x";
+                    const txValueEth = parseFloat(ethers.formatEther(tx.value));
+                    const isHighValue = txValueEth > 10;
+                    
+                    let isKnownExchange = false;
+                    try {
+                        if (toAddr) isKnownExchange = !!KNOWN_PROTOCOLS[ethers.getAddress(toAddr)];
+                    } catch(e) {}
 
-        if (edges.length === 0) {
-            const int1 = "0x" + Math.random().toString(36).substring(2, 10).padEnd(40, "0");
-            const int2 = "0x" + Math.random().toString(36).substring(2, 10).padEnd(40, "0");
+                    let classification = "Normal Transfer";
+                    let riskLevel = "Low";
+                    let relType = "SENT";
+                    let toType = "Wallet";
+                    
+                    if (isContract) {
+                        classification = "Contract Interaction";
+                        relType = "INTERACTED_WITH";
+                        toType = "Contract";
+                    } else if (isKnownExchange) {
+                        classification = "Exchange Deposit";
+                        toType = "Exchange";
+                    }
+                    
+                    if (isHighValue) {
+                        classification = "High Value Transfer";
+                        riskLevel = "Medium";
+                    }
+                    if (depth >= 2) {
+                        classification = "Layered Fund Movement";
+                        riskLevel = "High";
+                        highRiskHops++;
+                    }
 
-            nodes.push({ id: int1, type: 'intermediate', label: int1.substring(0, 6) + '...' + int1.substring(38), depth: 2 });
-            nodes.push({ id: int2, type: 'intermediate', label: int2.substring(0, 6) + '...' + int2.substring(38), depth: 2 });
-
-            edges.push({ id: 'edge-sim-1', from: initialAddress, to: int1, value: '3.14', timestamp: Math.floor(Date.now()/1000) });
-            edges.push({ id: 'edge-sim-2', from: initialAddress, to: int2, value: '0.85', timestamp: Math.floor(Date.now()/1000) });
-
-            const end1 = "0x" + Math.random().toString(36).substring(2, 10).padEnd(40, "0");
-            const end2 = "0x" + Math.random().toString(36).substring(2, 10).padEnd(40, "0");
-
-            nodes.push({ id: end1, type: 'endpoint', label: end1.substring(0, 6) + '...' + end1.substring(38), depth: 3 });
-            nodes.push({ id: end2, type: 'endpoint', label: end2.substring(0, 6) + '...' + end2.substring(38), depth: 3 });
-
-            edges.push({ id: 'edge-sim-3', from: int1, to: end1, value: '2.5', timestamp: Math.floor(Date.now()/1000) });
-            edges.push({ id: 'edge-sim-4', from: int2, to: end2, value: '0.75', timestamp: Math.floor(Date.now()/1000) });
+                    if (!nodesMap.has(fromAddr)) {
+                        nodesMap.set(fromAddr, { id: fromAddr, type: fromAddr === rootWallet ? 'Root' : 'Wallet' });
+                    }
+                    if (toAddr && !nodesMap.has(toAddr)) {
+                        nodesMap.set(toAddr, { id: toAddr, type: toType });
+                    } else if (!toAddr && !nodesMap.has('Contract Creation')) {
+                        nodesMap.set('Contract Creation', { id: 'Contract Creation', type: 'Contract' });
+                    }
+                    
+                    const edgeId = tx.hash;
+                    if (!edgesMap.has(edgeId)) {
+                        const target = toAddr || 'Contract Creation';
+                        edgesMap.set(edgeId, {
+                            id: edgeId,
+                            source: fromAddr,
+                            target: target,
+                            value: txValueEth.toString(),
+                            timestamp: parseInt(tx.timeStamp),
+                            classification,
+                            riskLevel
+                        });
+                        
+                        // Async Neo4j update
+                        createTransactionGraph({
+                            from: fromAddr,
+                            to: target,
+                            value: txValueEth.toString(),
+                            hash: tx.hash,
+                            timestamp: tx.timeStamp,
+                            fromType: fromAddr === rootWallet ? 'Wallet' : 'Wallet',
+                            toType: toType,
+                            relType: relType,
+                            classification,
+                            riskLevel
+                        }).catch(() => {});
+                        
+                        classifications.push({ hash: tx.hash, classification });
+                        totalVolume += txValueEth;
+                    }
+                    
+                    // Recursive trace outbound
+                    if (fromAddr === address && toAddr && !isContract) {
+                        await traceAddress(toAddr, depth + 1);
+                    }
+                }
+            } catch (err) {
+                console.error("Trace error at depth", depth, err);
+            }
+        };
+        
+        await traceAddress(rootWallet, 1);
+        
+        // Add rapid movement pattern check
+        const edgesArray = Array.from(edgesMap.values());
+        const timestamps = edgesArray.map(e => e.timestamp).sort((a,b) => b-a);
+        let rapidCount = 0;
+        for (let i = 0; i < timestamps.length - 1; i++) {
+            if (Math.abs(timestamps[i] - timestamps[i+1]) < 60) rapidCount++;
         }
-
-        res.status(200).json({ nodes, edges });
+        if (rapidCount > 5) {
+            classifications.push({ pattern: "Rapid Movement Pattern", count: rapidCount });
+        }
+        
+        res.status(200).json({
+            rootWallet,
+            nodes: Array.from(nodesMap.values()),
+            edges: edgesArray,
+            stats: {
+                totalNodes: nodesMap.size,
+                totalEdges: edgesMap.size,
+                totalVolume: totalVolume.toFixed(4) + ' ETH',
+                highRiskHops
+            },
+            classifications
+        });
+        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
