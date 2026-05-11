@@ -68,8 +68,21 @@ const useModeStore = create((set, get) => ({
             }
         }));
     },
-    regulatoryMode: false,
-    setRegulatoryMode: (val) => set({ regulatoryMode: val }),
+    watchlist: [],
+    addToWatchlist: (wallet) => set((state) => ({ watchlist: [...state.watchlist, { ...wallet, id: Date.now(), timestamp: new Date() }] })),
+    removeFromWatchlist: (id) => set((state) => ({ watchlist: state.watchlist.filter(w => w.id !== id) })),
+    
+    indiaComplianceMode: localStorage.getItem('indiaComplianceMode') === 'true',
+    setIndiaComplianceMode: (val) => {
+        localStorage.setItem('indiaComplianceMode', val);
+        set({ indiaComplianceMode: val });
+    },
+    
+    entityLabels: {},
+    setEntityLabel: (address, label) => set((state) => ({
+        entityLabels: { ...state.entityLabels, [address.toLowerCase()]: label }
+    })),
+    
     activeMenu: 'Terminal',
     setActiveMenu: (val) => set({ activeMenu: val })
 }));

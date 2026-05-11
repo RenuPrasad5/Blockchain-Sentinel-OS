@@ -220,7 +220,7 @@ const Dashboard = () => {
                         <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
                         <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">Sovereign Intelligence Portal</span>
                     </div>
-                    <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tight uppercase">Dashboard</h1>
+                    <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tight uppercase">Intelligence Command</h1>
                 </div>
 
                 <div className="flex-1 max-w-2xl relative">

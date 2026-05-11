@@ -48,6 +48,8 @@ import Cases from './pages/Cases';
 import SolutionPage from './pages/SolutionPage';
 import CommandCenter from './pages/CommandCenter';
 import { useMonitor } from './hooks/useMonitor';
+import Watchlist from './pages/Watchlist';
+import IndiaCompliance from './pages/IndiaCompliance';
 
 function App() {
   const navigate = useNavigate();
@@ -65,7 +67,7 @@ function App() {
   // Initialize global blockchain monitor
   useMonitor();
 
-  const fullWidthPaths = ['/', '/command-center', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/tools/analyzer', '/forensic-lab', '/cases', '/solutions/government', '/solutions/law-enforcement', '/solutions/ca-firms', '/solutions/financial', '/solutions/enterprise'];
+  const fullWidthPaths = ['/', '/command-center', '/news', '/encyclopedia', '/research', '/tools', '/market', '/intelligence', '/community', '/trust', '/dashboard', '/blockchain-hub', '/blockchain-ecosystem', '/mempool', '/government', '/use-cases', '/tools/market', '/tools/signals', '/tools/security', '/tools/visualizer', '/tools/whale-watch', '/tools/sentinel', '/tools/analyzer', '/forensic-lab', '/cases', '/solutions/government', '/solutions/law-enforcement', '/solutions/ca-firms', '/solutions/financial', '/solutions/enterprise', '/watchlist', '/india-compliance'];
   const isFullWidth = fullWidthPaths.includes(location.pathname) || location.pathname.startsWith('/solutions');
   const isAuthPage = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/auth');
 
@@ -157,6 +159,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Cases />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/watchlist"
+                element={
+                  <ProtectedRoute>
+                    <Watchlist />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/india-compliance"
+                element={
+                  <ProtectedRoute>
+                    <IndiaCompliance />
                   </ProtectedRoute>
                 }
               />

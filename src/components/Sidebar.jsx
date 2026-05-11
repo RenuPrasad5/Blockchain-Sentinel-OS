@@ -27,7 +27,9 @@ import {
     ShieldAlert,
     Scale,
     Microscope,
-    LineChart
+    LineChart,
+    Eye,
+    Flag
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import useModeStore from '../store/modeStore';
@@ -75,6 +77,7 @@ const Sidebar = () => {
             path: '/investigations',
             subItems: [
                 { title: 'Wallet Analyzer', icon: <FileSearch size={18} />, path: '/tools/analyzer' },
+                { title: 'Watchlist Monitoring', icon: <Eye size={18} />, path: '/watchlist' },
                 { title: 'Multi-Hop Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
                 { title: 'Case Management', icon: <Briefcase size={18} />, path: '/cases' },
             ]
@@ -98,6 +101,7 @@ const Sidebar = () => {
             icon: <Scale size={20} />,
             path: '/compliance',
             subItems: [
+                { title: 'India Compliance', icon: <Flag size={18} />, path: '/india-compliance' },
                 { title: 'Tax Intelligence', icon: <Scale size={18} />, path: '/tools/security?appMode=ca' },
                 { title: 'AML Reports', icon: <Shield size={18} />, path: '/tools/security' },
                 { title: 'Audit Export', icon: <FileSearch size={18} />, path: '/cases' },

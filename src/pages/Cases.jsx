@@ -26,6 +26,10 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { db, auth } from '../firebase/config';
 import { collection, query, where, onSnapshot, orderBy, deleteDoc, doc, updateDoc, addDoc } from 'firebase/firestore';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import ForensicReportPDF from '../components/reports/ForensicReportPDF';
+import AnnotationModal from '../components/modals/AnnotationModal';
+import { Download } from 'lucide-react';
 
 const Cases = () => {
     const [view, setView] = useState('list'); // 'list' | 'create' | 'detail'
@@ -51,6 +55,10 @@ const Cases = () => {
     const [evWallet, setEvWallet] = useState('');
     const [evRiskScore, setEvRiskScore] = useState(50);
     const [evSnapshot, setEvSnapshot] = useState('');
+
+    // Annotation Modal State
+    const [isAnnotationModalOpen, setIsAnnotationModalOpen] = useState(false);
+    const [annotationTarget, setAnnotationTarget] = useState(null);
 
     useEffect(() => {
         const unsubscribeAuth = auth.onAuthStateChanged(user => {
@@ -287,6 +295,34 @@ const Cases = () => {
             setEvSnapshot('');
         } catch (err) {
             alert("Error logging evidence: " + err.message);
+        }
+    };
+
+    const saveAnnotationToCase = async (annotationData) => {
+        if (!selectedCase || !annotationTarget) return;
+
+        try {
+            const ref = doc(db, 'cases', selectedCase._id);
+            const timelineEv = {
+                id: Math.random().toString(36).substring(2),
+                event: "Report Generated",
+                detail: `Annotation Applied: ${annotationData.label} (${annotationData.confidence}% confidence) tagged to node ${annotationTarget.substring(0, 8)}...`,
+                timestamp: new Date().toISOString()
+            };
+
+            // Attach annotation to specific evidence entry if available, or general notes
+            const noteObj = {
+                id: Math.random().toString(36).substring(2),
+                content: `[ANNOTATION: ${annotationData.label}] Node: ${annotationTarget}. Confidence: ${annotationData.confidence}%. Notes: ${annotationData.notes}`,
+                timestamp: new Date().toISOString()
+            };
+
+            await updateDoc(ref, {
+                notes: [noteObj, ...(selectedCase.notes || [])],
+                timeline: [timelineEv, ...(selectedCase.timeline || [])]
+            });
+        } catch (err) {
+            alert("Error logging annotation: " + err.message);
         }
     };
 
@@ -609,6 +645,32 @@ const Cases = () => {
                                     </div>
                                 </div>
 
+                                    <div className="flex items-center gap-3">
+                                    {/* PDF Export Logic */}
+                                    <PDFDownloadLink 
+                                        document={
+                                            <ForensicReportPDF 
+                                                data={{
+                                                    caseUid: selectedCase.caseId || 'SYSTEM-DF',
+                                                    caseTitle: selectedCase.title,
+                                                    wallet: selectedCase.wallets?.[0] || 'Aggregate Analysis',
+                                                    riskScore: 85,
+                                                    narrative: selectedCase.description + "\n\nTotal case notes: " + (selectedCase.notes?.length || 0),
+                                                    transactions: selectedCase.evidence?.map(e => ({ time: new Date(e.timestamp).toLocaleDateString(), hash: e.wallet, amount: 'N/A', flag: e.riskScore > 70 ? 'CRITICAL' : 'WARNING' }))
+                                                }} 
+                                            />
+                                        } 
+                                        fileName={`FORENSIC_CASE_${selectedCase.caseId || 'NEW'}.pdf`}
+                                    >
+                                        {({ loading }) => (
+                                            <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg transition-all">
+                                                <Download size={14} />
+                                                {loading ? 'Generating...' : 'Export PDF'}
+                                            </button>
+                                        )}
+                                    </PDFDownloadLink>
+                                </div>
+
                                 <div className="flex items-center gap-3 self-end md:self-center">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</label>
                                     <div className="flex bg-[#0b0f19] border border-white/5 rounded-2xl p-1 gap-1">
@@ -665,12 +727,24 @@ const Cases = () => {
                                                     <span className="font-mono text-xs text-white">
                                                         {w.substring(0, 8)}...{w.substring(w.length - 8)}
                                                     </span>
-                                                    <button
-                                                        onClick={() => handleRunAnalysis(w)}
-                                                        className="flex items-center gap-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
-                                                    >
-                                                        <Activity size={12} /> Scan
-                                                    </button>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <button
+                                                            onClick={() => {
+                                                                setAnnotationTarget(w);
+                                                                setIsAnnotationModalOpen(true);
+                                                            }}
+                                                            className="flex items-center gap-1 bg-white/5 hover:bg-indigo-500/20 text-slate-300 hover:text-indigo-300 px-2 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all border border-white/5"
+                                                            title="Add Annotation"
+                                                        >
+                                                            <Tag size={12} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleRunAnalysis(w)}
+                                                            className="flex items-center gap-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
+                                                        >
+                                                            <Activity size={12} /> Scan
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ))}
                                             {(!selectedCase.wallets || selectedCase.wallets.length === 0) && (
@@ -846,6 +920,14 @@ const Cases = () => {
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* Annotation Modal Instance */}
+            <AnnotationModal 
+                isOpen={isAnnotationModalOpen}
+                onClose={() => setIsAnnotationModalOpen(false)}
+                onSave={saveAnnotationToCase}
+                entity={annotationTarget}
+            />
         </div>
     );
 };

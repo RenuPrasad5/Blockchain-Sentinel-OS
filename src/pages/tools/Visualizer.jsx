@@ -4,6 +4,8 @@ import { Search, ArrowRight, Shield, Globe, RefreshCw, Layers, ExternalLink, X, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { db, auth } from '../../firebase/config';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import DecisionEngine from '../../components/tools/DecisionEngine';
+import { Sliders, Bookmark, Filter, BarChart2, CheckSquare } from 'lucide-react';
 
 const Visualizer = () => {
     const [searchParams] = useSearchParams();
@@ -17,6 +19,13 @@ const Visualizer = () => {
     const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState('');
     const [newTag, setNewTag] = useState('Suspicious');
+
+    // Advanced Trace Settings
+    const [hopDepth, setHopDepth] = useState(3);
+    const [threshold, setThreshold] = useState(0.1);
+    const [showFilters, setShowFilters] = useState(false);
+    const [investigationTabs, setInvestigationTabs] = useState(['Main Visualizer']);
+    const [activeTab, setActiveTab] = useState('Main Visualizer');
 
     const fetchTrace = async (targetAddr, isExpand = false) => {
         if (!targetAddr.trim()) return;
@@ -220,6 +229,13 @@ const Visualizer = () => {
                         />
                     </div>
                     <button
+                        type="button"
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={`px-4 py-3.5 border ${showFilters ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-400' : 'bg-white/5 border-white/5 text-slate-400'} rounded-2xl transition-all`}
+                    >
+                        <Sliders size={18} />
+                    </button>
+                    <button
                         type="submit"
                         className="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2"
                     >
@@ -227,6 +243,63 @@ const Visualizer = () => {
                         <span>Trace Flow</span>
                     </button>
                 </form>
+
+                <AnimatePresence>
+                    {showFilters && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#0b0f19] border border-white/5 p-5 rounded-3xl shadow-inner z-0 relative -mt-4 pt-8"
+                        >
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Max Hop Depth: {hopDepth}</label>
+                                <input type="range" min="1" max="5" value={hopDepth} onChange={e => setHopDepth(e.target.value)} className="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg" />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Min Transaction Value (ETH)</label>
+                                <input type="number" step="0.1" min="0" value={threshold} onChange={e => setThreshold(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-indigo-500/50" />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Path Selection Strategy</label>
+                                <select className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-indigo-500/50">
+                                    <option>Recursive Deep Trace</option>
+                                    <option>High Risk Only</option>
+                                    <option>Volume Aggregate</option>
+                                </select>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Sticky Investigator Toolbar / Breadcrumbs */}
+                <div className="sticky top-20 z-40 flex items-center justify-between bg-[#0f172a]/80 backdrop-blur-md border border-white/5 px-4 py-3 rounded-2xl shadow-xl">
+                    <div className="flex items-center gap-2">
+                        {investigationTabs.map(tab => (
+                            <button 
+                                key={tab} 
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-white/5 text-slate-400 hover:text-white'}`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                        <button 
+                            className="p-1.5 text-slate-500 hover:text-indigo-400 transition-colors"
+                            onClick={() => setInvestigationTabs([...investigationTabs, `Tab ${investigationTabs.length + 1}`])}
+                        >
+                            <Plus size={14} />
+                        </button>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-[9px] font-bold text-slate-300 px-3 py-1.5 rounded-lg uppercase border border-white/5 transition-all">
+                            <Bookmark size={12} /> Bookmark
+                        </button>
+                        <button className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-[9px] font-bold text-slate-300 px-3 py-1.5 rounded-lg uppercase border border-white/5 transition-all">
+                            <Filter size={12} /> Quick Evidence
+                        </button>
+                    </div>
+                </div>
 
                 {/* Main Graph Content */}
                 {loading ? (
@@ -239,7 +312,12 @@ const Visualizer = () => {
                         {error}
                     </div>
                 ) : graphData ? (
-                    <div className="space-y-6 flex gap-6 flex-col lg:flex-row">
+                    <div className="space-y-6">
+                        
+                        {/* Dynamic Decision Engine Mounted Above Graph */}
+                        <DecisionEngine graphData={graphData} />
+
+                        <div className="space-y-6 flex gap-6 flex-col lg:flex-row">
                         <div className="flex-1 space-y-6">
                             {/* Legend */}
                             <div className="flex flex-wrap items-center gap-6 bg-[#0b0f19]/40 backdrop-blur-md border border-white/5 px-6 py-4 rounded-2xl text-xs font-bold uppercase tracking-wide">
@@ -442,6 +520,7 @@ const Visualizer = () => {
                             )}
                         </AnimatePresence>
                     </div>
+                </div>
                 ) : (
                     <div className="text-center py-24 border border-white/5 bg-[#0b0f19]/20 rounded-[2.5rem]">
                         <Shield className="mx-auto text-slate-700 mb-4 animate-pulse" size={56} />
