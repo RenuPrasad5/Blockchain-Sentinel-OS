@@ -393,6 +393,227 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* WHY BLOCKCHAIN SENTINEL OS (COMPARISON SECTION) */}
+            <section className="px-4 py-24 max-w-7xl mx-auto border-t border-slate-900 relative overflow-hidden">
+                {/* Dynamic ambient background dots */}
+                <div className="absolute inset-0 pointer-events-none opacity-[0.03]">
+                    <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                </div>
+
+                <div className="text-center space-y-4 mb-20 relative z-10">
+                    <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em]">
+                            INVESTIGATION-FIRST PLATFORM
+                        </span>
+                    </div>
+                    <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight leading-[1.1]">
+                        Why Blockchain Sentinel
+                    </h3>
+                    <p className="text-slate-400 text-sm max-w-2xl mx-auto font-medium leading-relaxed">
+                        We engineered an intelligence command system from the ground up. Sentinel OS doesn't just track ledgers; it enables full-spectrum operational auditing and cryptographic prosecution support.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto relative z-10">
+                    
+                    {/* TRADITIONAL EXPLORERS (RED CONTRAST) */}
+                    <motion.div 
+                        whileHover={{ y: -4 }}
+                        className="bg-[#0a0f1b]/40 border border-rose-950/20 rounded-3xl p-8 relative group transition-all"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-b from-rose-500/[0.01] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-rose-900/20 to-transparent opacity-50" />
+
+                        <div className="flex items-center justify-between mb-8 border-b border-slate-900 pb-6">
+                            <div>
+                                <span className="text-[8px] font-mono font-bold text-rose-500/80 uppercase tracking-widest block mb-1">TRADITIONAL TOOLS</span>
+                                <h4 className="text-lg font-black text-slate-400 tracking-wide uppercase">Blockchain Explorers</h4>
+                            </div>
+                            <div className="w-10 h-10 rounded-xl bg-rose-950/10 border border-rose-900/20 flex items-center justify-center text-rose-500/50">
+                                <Eye size={18} />
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            {[
+                                { title: 'Raw Transaction Viewing', desc: 'Displays flat list of hashes requiring manual, linear interpretation.', icon: Eye },
+                                { title: 'Simple Wallet Lookup', desc: 'Provides single point balance queries without flow vectors.', icon: Search },
+                                { title: 'Generic Dashboards', desc: 'Displays basic network metrics devoid of threat intelligence vectors.', icon: Database },
+                                { title: 'Basic CSV Exports', desc: 'Raw data dumps without chronological verification or custody chains.', icon: Download },
+                                { title: 'Transaction Browsing', desc: 'Limited to chronological ledger inspection for casual observers.', icon: Globe }
+                            ].map((item, idx) => (
+                                <div key={idx} className="flex items-start gap-4 group/row">
+                                    <div className="flex-shrink-0 mt-1">
+                                        <div className="w-5 h-5 rounded-full border border-rose-950/30 bg-rose-950/10 flex items-center justify-center text-rose-600/80 text-[10px] font-black font-mono">
+                                            ×
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1 group-hover/row:text-slate-300 transition-colors">{item.title}</h5>
+                                        <p className="text-[10px] text-slate-600 leading-relaxed font-medium">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    {/* SENTINEL OS (BLUE/CYAN PREMIUM CONTRAST) */}
+                    <motion.div 
+                        whileHover={{ y: -6, scale: 1.005 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="bg-[#0d1425]/80 border border-blue-500/20 rounded-3xl p-8 relative group shadow-[0_20px_50px_-15px_rgba(59,130,246,0.05)] transition-all hover:border-blue-500/40 hover:shadow-[0_20px_50px_-15px_rgba(59,130,246,0.1)]"
+                    >
+                        {/* Background Neon Pulse Accent */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/[0.02] via-indigo-500/[0.01] to-transparent opacity-100 transition-opacity pointer-events-none" />
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 via-cyan-400 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                        
+                        {/* Glowing Orb overlay */}
+                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-blue-500/20 transition-colors" />
+
+                        <div className="flex items-center justify-between mb-8 border-b border-slate-800/80 pb-6 relative z-10">
+                            <div>
+                                <div className="text-[8px] font-mono font-black text-blue-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-500/30 inline-block tracking-widest uppercase mb-2">
+                                    OPERATIONAL FORENSICS
+                                </div>
+                                <h4 className="text-lg font-black text-white tracking-wider uppercase">Blockchain Sentinel OS</h4>
+                            </div>
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)] group-hover:scale-105 transition-transform">
+                                <ShieldCheck size={22} />
+                            </div>
+                        </div>
+
+                        <div className="space-y-6 relative z-10">
+                            {[
+                                { title: 'Investigation Workflows', desc: 'Dynamic, graph-based interfaces tracking entity relationship models in real-time.', icon: Network },
+                                { title: 'Multi-Hop Tracing Intelligence', desc: 'Automatic, multi-layer recursive crawlers parsing Layer 1/2 asset jumps.', icon: Share2 },
+                                { title: 'Case-Centric Investigations', desc: 'Isolated sandbox containers holding targeted entities, tags, metadata and notes.', icon: Briefcase },
+                                { title: 'Evidence-Grade Reporting', desc: 'Cryptographically sealed PDF dossiers featuring full audit parameters prepared for legal submittal.', icon: FileText },
+                                { title: 'Compliance & Forensic Loops', desc: 'Comprehensive KYT telemetry, 1% TDS VDA compliant metrics, and heuristic weights.', icon: Scale }
+                            ].map((item, idx) => (
+                                <div key={idx} className="flex items-start gap-4 group/row">
+                                    <div className="flex-shrink-0 mt-1">
+                                        <div className="w-5 h-5 rounded-full border border-blue-500/30 bg-blue-950/50 flex items-center justify-center text-blue-400 text-[9px] font-black shadow-[0_0_10px_rgba(59,130,246,0.2)] group-hover/row:bg-blue-500 group-hover/row:text-slate-950 transition-all font-mono">
+                                            ✓
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 className="text-white text-xs font-black uppercase tracking-wider mb-1 group-hover/row:text-blue-400 transition-colors">{item.title}</h5>
+                                        <p className="text-[10px] text-slate-400 leading-relaxed font-medium">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                </div>
+            </section>
+
+            {/* REAL-WORLD USE CASES SECTION */}
+            <section className="px-4 py-24 max-w-7xl mx-auto border-t border-slate-900 relative overflow-hidden">
+                {/* Ambient Background Glow */}
+                <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
+                <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
+                
+                <div className="text-center space-y-4 mb-20 relative z-10">
+                    <div className="inline-flex items-center gap-2 bg-slate-900/60 border border-slate-800/80 px-3 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                        <span className="text-[9px] font-black text-cyan-400 uppercase tracking-[0.2em]">
+                            Operational Playbooks
+                        </span>
+                    </div>
+                    <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight leading-[1.1]">
+                        Real-World Investigation Use Cases
+                    </h3>
+                    <p className="text-slate-400 text-sm max-w-2xl mx-auto font-medium leading-relaxed">
+                        Designed for investigators, compliance teams, CA firms, and cybercrime analysts. Convert raw telemetry into actionable case resolutions.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+                    {[
+                        {
+                            title: 'Suspicious Wallet Investigation',
+                            summary: 'Trace multi-hop wallet activity connected to high-frequency structuring behaviors or dust anomalies.',
+                            outcome: 'Isolated 4 interconnected proxy nodes and mapped recursive transfers within minutes.',
+                            severity: 'CRITICAL',
+                            severityClass: 'text-rose-400 bg-rose-950/30 border-rose-500/30',
+                            glowClass: 'from-rose-500/[0.02]',
+                            icon: FileSearch
+                        },
+                        {
+                            title: 'Exchange Exposure Analysis',
+                            summary: 'Monitor direct asset transfers and proximity exposure profiles relative to sanctioned pools.',
+                            outcome: 'Synthesized a comprehensive KYT risk coefficient rating for immediate entity clearing.',
+                            severity: 'HIGH RISK',
+                            severityClass: 'text-orange-400 bg-orange-950/30 border-orange-500/30',
+                            glowClass: 'from-orange-500/[0.02]',
+                            icon: Globe
+                        },
+                        {
+                            title: 'Crypto Tax Review & Audit',
+                            summary: 'Perform granular historical tracking of DeFi yields, computing precise local compliance liabilities.',
+                            outcome: 'Generated full-scope cost basis accounting with 100% audit-ready documentation.',
+                            severity: 'COMPLIANT',
+                            severityClass: 'text-emerald-400 bg-emerald-950/30 border-emerald-500/30',
+                            glowClass: 'from-emerald-500/[0.02]',
+                            icon: Scale
+                        },
+                        {
+                            title: 'Cybercrime Fund Flow Tracing',
+                            summary: 'Map multi-layer egress dissipation paths to identify hacker payload exits and bridge jumpers.',
+                            outcome: 'Traced 450+ ETH equivalents through 12 deep layers down to sovereign vault hashes.',
+                            severity: 'IMMEDIATE',
+                            severityClass: 'text-blue-400 bg-blue-950/30 border-blue-500/30',
+                            glowClass: 'from-blue-500/[0.02]',
+                            icon: Network
+                        }
+                    ].map((scenario, idx) => (
+                        <motion.div
+                            key={idx}
+                            whileHover={{ y: -6 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                            className="bg-[#0d1425]/40 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between transition-all relative group hover:border-slate-700 hover:shadow-[0_15px_30px_rgba(0,0,0,0.4)]"
+                        >
+                            {/* Animated inner dynamic glow backdrop */}
+                            <div className={`absolute inset-0 bg-gradient-to-b ${scenario.glowClass} to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none`} />
+                            
+                            {/* Top accent bar line on card hover */}
+                            <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-slate-700 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="w-10 h-10 rounded-xl border bg-[#080d19] border-slate-800 text-slate-400 flex items-center justify-center group-hover:text-white group-hover:border-slate-600 transition-colors">
+                                        <scenario.icon size={18} />
+                                    </div>
+                                    <span className={`text-[8px] font-black font-mono tracking-[0.15em] px-2 py-0.5 rounded border uppercase shadow-[0_0_10px_rgba(0,0,0,0.5)] transition-colors duration-300 ${scenario.severityClass}`}>
+                                        {scenario.severity}
+                                    </span>
+                                </div>
+
+                                <h4 className="text-white font-black text-xs uppercase tracking-wider mb-3 leading-snug group-hover:text-white transition-colors">
+                                    {scenario.title}
+                                </h4>
+                                
+                                <p className="text-[11px] text-slate-400 leading-relaxed mb-6 font-medium">
+                                    {scenario.summary}
+                                </p>
+                            </div>
+
+                            <div className="border-t border-slate-800/60 pt-4 space-y-2 relative z-10">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-1 h-1 rounded-full bg-slate-600 group-hover:bg-blue-500 transition-colors" />
+                                    <span className="text-[8px] font-mono font-bold text-slate-500 uppercase tracking-widest">Operational Result</span>
+                                </div>
+                                <p className="text-[10px] text-slate-300 leading-relaxed font-medium group-hover:text-slate-200 transition-colors">
+                                    {scenario.outcome}
+                                </p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
             {/* FORENSIC REPORT PREVIEW */}
             <section className="px-4 py-24 max-w-7xl mx-auto border-t border-slate-900 relative overflow-hidden">
                 {/* Background glowing nodes */}
@@ -565,6 +786,80 @@ const Home = () => {
                     </div>
 
                 </div>
+            </section>
+
+            {/* REQUEST INVESTIGATOR ACCESS CTA SECTION */}
+            <section className="px-4 py-24 max-w-6xl mx-auto border-t border-slate-900 relative overflow-hidden">
+                {/* Absolute Background Decorative Grids */}
+                <div className="absolute inset-0 opacity-[0.05] pointer-events-none">
+                    <svg className="w-full h-full">
+                        <defs>
+                            <pattern id="ctaGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#3b82f6" strokeWidth="1" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#ctaGrid)" />
+                    </svg>
+                </div>
+                
+                {/* Glowing cyan/indigo light aura behind the card */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 blur-[80px] pointer-events-none" />
+
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    className="relative bg-[#0d1425]/60 border border-slate-800/80 rounded-3xl p-10 md:p-16 text-center backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden hover:border-slate-700/80 transition-colors group"
+                >
+                    {/* Border top neon laser line */}
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-75" />
+
+                    <div className="relative z-10 space-y-8 max-w-3xl mx-auto">
+                        <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">
+                                ENTERPRISE DEPLOYMENT
+                            </span>
+                        </div>
+
+                        <h3 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1]">
+                            Access The Next Generation Of <br className="hidden md:block" /> Blockchain Investigation Infrastructure
+                        </h3>
+
+                        <p className="text-base md:text-lg text-slate-400 font-medium leading-relaxed">
+                            Provision sovereign instances for authorized investigators, compliance teams, and CA firms. Deploy comprehensive forensic workflows and advanced intelligence operations to your unit today.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                            <button 
+                                onClick={() => launchWorkspace('Provisioning Investigator Access Token...', '/command-center')}
+                                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-[0_0_30px_-5px_rgba(59,130,246,0.5)] hover:shadow-[0_0_40px_rgba(99,102,241,0.4)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 border border-white/10"
+                            >
+                                <ShieldCheck size={16} />
+                                Request Access
+                            </button>
+                            
+                            <button 
+                                onClick={() => launchWorkspace('Accessing Demonstration Terminal...', '/command-center')}
+                                className="w-full sm:w-auto px-8 py-4 bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-md"
+                            >
+                                <Activity size={16} />
+                                Schedule Live Demo
+                            </button>
+                        </div>
+
+                        <div className="pt-6 flex items-center justify-center gap-8 text-[9px] font-mono font-black text-slate-500 border-t border-slate-900 mt-8">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 rounded-full bg-blue-500" />
+                                ISO-27001 COMPLIANT STACK
+                            </div>
+                            <div className="hidden sm:flex items-center gap-2">
+                                <div className="w-1 h-1 rounded-full bg-purple-500" />
+                                AES-256 ENCRYPTED QUERIES
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
             </section>
 
             <div className="w-full max-w-full overflow-hidden"><RoadmapSection /></div>
