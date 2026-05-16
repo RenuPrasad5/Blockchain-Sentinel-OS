@@ -44,6 +44,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ReactGA from 'react-ga4';
 
 import ForensicLab from './pages/intelligence-portal/ForensicLab';
+
 import Cases from './pages/Cases';
 import SolutionPage from './pages/SolutionPage';
 import CommandCenter from './pages/CommandCenter';
@@ -106,6 +107,7 @@ function App() {
               <Route path="/library/:topicId" element={<TopicDetails />} />
               <Route path="/market" element={<Market />} />
               <Route path="/intelligence" element={<Market />} />
+
               <Route path="/tools" element={<Tools />} />
               <Route path="/tools/market" element={<MarketIntel />} />
               <Route path="/tools/signals" element={<ChainSignals />} />

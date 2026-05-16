@@ -1,179 +1,117 @@
-import React, { useState } from 'react';
-import { Mail, Phone, Clock, ShieldAlert, HelpCircle, FileText, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { db } from '../firebase/config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import './SupportSection.css';
+import React from 'react';
+import { Activity, ChevronRight, Hexagon, Terminal, Network, ShieldAlert } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const SupportSection = () => {
-    const navigate = useNavigate();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState({
-        email: '',
-        issueType: 'Bug Report',
-        message: ''
-    });
-
-    const handleReportSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        try {
-            await addDoc(collection(db, 'support_issues'), {
-                ...formData,
-                type: 'report_issue',
-                createdAt: serverTimestamp()
-            });
-            alert('Issue reported successfully!');
-            setIsModalOpen(false);
-            setFormData({ email: '', issueType: 'Bug Report', message: '' });
-        } catch (error) {
-            console.error("Error reporting issue: ", error);
-            alert('Error reporting issue. Please try again.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     return (
-        <section id="support-section" className="support-section container">
-            <div className="support-wrapper">
-                <div className="support-grid">
-                    {/* Left Side: Support Info */}
-                    <div className="support-info">
-                        <div className="support-header">
-                            <span className="support-badge">Global Support</span>
-                            <h2 className="support-title">Blockchain Intelligence Support & Help Desk</h2>
-                            <p className="support-desc">
-                                Institutional intelligence requires professional assistance. Our dedicated team is available for high-priority inquiries.
-                            </p>
-                        </div>
-
-                        <div className="info-list">
-                            <div className="info-item">
-                                <div className="info-icon">
-                                    <Mail size={20} />
-                                </div>
-                                <div className="info-content">
-                                    <label>Email Intelligence</label>
-                                    <p>support@blockchain-sentinel-os.vercel.app</p>
-                                </div>
-                            </div>
-                            <div className="info-item">
-                                <div className="info-icon">
-                                    <Phone size={20} />
-                                </div>
-                                <div className="info-content">
-                                    <label>Institutional Line</label>
-                                    <p>Secure Digital Channel Only</p>
-                                </div>
-                            </div>
-                            <div className="info-item">
-                                <div className="info-icon">
-                                    <Clock size={20} />
-                                </div>
-                                <div className="info-content">
-                                    <label>Availability</label>
-                                    <p>Active Intelligence Monitoring</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="security-notice">
-                            <ShieldAlert size={18} className="security-icon" />
-                            <p>
-                                <strong>Security Protocol:</strong> Blockchain Intelligence analysts will <strong>never</strong> request your private keys, seed phrases, or password via any support channel.
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Right Side: Two Cards */}
-                    <div className="support-categories">
-                        <div className="category-grid">
-                            <div className="category-card">
-                                <HelpCircle className="category-icon" />
-                                <h3>Help Center</h3>
-                                <p>Access deep documentation and specialized assistance pools.</p>
-                                <button
-                                    className="category-btn"
-                                    onClick={() => navigate('/help-center')}
-                                >
-                                    Open Center
-                                </button>
-                            </div>
-                            <div className="category-card">
-                                <FileText className="category-icon" />
-                                <h3>Report Issue</h3>
-                                <p>Direct transmission for bug reports or technical anomalies.</p>
-                                <button
-                                    className="category-btn"
-                                    onClick={() => {
-                                        const waitlist = document.getElementById('waitlist-section');
-                                        if (waitlist) waitlist.scrollIntoView({ behavior: 'smooth' });
-                                    }}
-                                >
-                                    Report Now
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <footer className="w-full bg-[#070A13] border-t border-[#1E293B] relative overflow-hidden pt-16 pb-8 px-4 sm:px-6 lg:px-8">
+            {/* Subtle grid pattern background */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03]">
+                <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
             </div>
 
-            {/* Report Issue Modal */}
-            {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <button className="modal-close" onClick={() => setIsModalOpen(false)}>
-                            <X size={20} />
-                        </button>
-                        <h2 className="modal-title">Report Issue</h2>
-                        <p className="modal-desc">Provide details regarding the technical encounter.</p>
+            <div className="max-w-7xl mx-auto relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+                    {/* Column 1: Brand & Status */}
+                    <div className="flex flex-col space-y-6">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 p-[1px]">
+                                <div className="w-full h-full bg-[#0B0F19] rounded-lg flex items-center justify-center">
+                                    <Hexagon size={16} className="text-cyan-400" />
+                                </div>
+                            </div>
+                            <span className="text-white font-black tracking-widest text-sm uppercase">Blockchain Sentinel</span>
+                        </div>
+                        <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
+                            Institutional-grade blockchain forensics and digital intelligence.
+                        </p>
+                        <div className="inline-flex items-center gap-2 bg-[#0B0F19] border border-[#1E293B] px-3 py-1.5 rounded-md w-fit">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+                            <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-wider">
+                                System Status: Active Intelligence Monitoring
+                            </span>
+                        </div>
+                    </div>
 
-                        <form onSubmit={handleReportSubmit}>
-                            <div className="form-group">
-                                <label>Institutional Email</label>
-                                <input
-                                    type="email"
-                                    className="form-input"
-                                    required
-                                    placeholder="Enter your email"
-                                    value={formData.email}
-                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Issue Categorization</label>
-                                <select
-                                    className="form-select"
-                                    value={formData.issueType}
-                                    onChange={e => setFormData({ ...formData, issueType: e.target.value })}
-                                >
-                                    <option>Bug Report</option>
-                                    <option>Technical Error</option>
-                                    <option>Data Anomaly</option>
-                                    <option>Access Issue</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Detailed Intelligence</label>
-                                <textarea
-                                    className="form-textarea"
-                                    required
-                                    placeholder="Describe the issue in detail..."
-                                    value={formData.message}
-                                    onChange={e => setFormData({ ...formData, message: e.target.value })}
-                                ></textarea>
-                            </div>
-                            <button type="submit" className="submit-btn" disabled={isSubmitting}>
-                                {isSubmitting ? 'Transmitting...' : 'Submit Report'}
-                            </button>
-                        </form>
+                    {/* Column 2: Platform Solutions */}
+                    <div className="flex flex-col space-y-4">
+                        <h4 className="text-white font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <Terminal size={14} className="text-blue-500" /> Platform Solutions
+                        </h4>
+                        <ul className="space-y-3">
+                            {['Command Center', 'Investigations', 'Live Intelligence Feed', 'Transaction Heatmaps'].map((item, idx) => (
+                                <li key={idx}>
+                                    <Link to="#" className="text-slate-400 hover:text-cyan-400 text-sm font-medium transition-colors flex items-center gap-1 group">
+                                        <ChevronRight size={12} className="opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all text-cyan-500" />
+                                        {item}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Column 3: Support & Help */}
+                    <div className="flex flex-col space-y-4">
+                        <h4 className="text-white font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <Network size={14} className="text-blue-500" /> Support & Help
+                        </h4>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link to="/help-center" className="text-slate-400 hover:text-cyan-400 text-sm font-medium transition-colors flex items-center gap-1 group">
+                                    <ChevronRight size={12} className="opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all text-cyan-500" />
+                                    Help Center (Docs)
+                                </Link>
+                            </li>
+                            <li>
+                                <button className="text-slate-400 hover:text-cyan-400 text-sm font-medium transition-colors flex items-center gap-1 group">
+                                    <ChevronRight size={12} className="opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all text-cyan-500" />
+                                    Report an Issue / Bug Tracker
+                                </button>
+                            </li>
+                            <li>
+                                <a href="mailto:support@blockchain-sentinel-os.vercel.app" className="text-slate-400 hover:text-cyan-400 text-sm font-medium transition-colors flex items-center gap-1 group">
+                                    <ChevronRight size={12} className="opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all text-cyan-500" />
+                                    support@blockchain-sentinel-os.vercel.app
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Column 4: Security & Legal */}
+                    <div className="flex flex-col space-y-4">
+                        <h4 className="text-white font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <ShieldAlert size={14} className="text-blue-500" /> Security & Legal
+                        </h4>
+                        <ul className="space-y-3">
+                            {['Terms of Service', 'Privacy Policy', 'Compliance Standards'].map((item, idx) => (
+                                <li key={idx}>
+                                    <Link to="#" className="text-slate-400 hover:text-cyan-400 text-sm font-medium transition-colors flex items-center gap-1 group">
+                                        <ChevronRight size={12} className="opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all text-cyan-500" />
+                                        {item}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="mt-4 pt-4 border-t border-[#1E293B]">
+                            <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest leading-relaxed">
+                                Institutional Line: <br/> Secure Digital Channel Only
+                            </p>
+                        </div>
                     </div>
                 </div>
-            )}
-        </section>
+
+                {/* Bottom Row */}
+                <div className="pt-8 border-t border-[#1E293B] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="text-xs text-slate-500 font-medium">
+                        © 2026 Blockchain Sentinel. All Rights Reserved.
+                    </p>
+                    <p className="text-xs text-slate-500 font-mono uppercase tracking-widest flex items-center gap-2">
+                        <Activity size={12} className="text-blue-500" />
+                        Built for Secure Web3 Ecosystems
+                    </p>
+                </div>
+            </div>
+        </footer>
     );
 };
 

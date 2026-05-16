@@ -10,6 +10,9 @@ import RoadmapSection from '../components/RoadmapSection';
 import SupportSection from '../components/SupportSection';
 import ServiceMarquee from '../components/ServiceMarquee';
 import NeuralDataNetwork from '../components/ui/NeuralDataNetwork';
+import BlockchainCrimeIntelligence from '../components/landing/BlockchainCrimeIntelligence';
+import ThreatIntelligenceStats from '../components/landing/ThreatIntelligenceStats';
+import InvestigationInsights from '../components/landing/InvestigationInsights';
 
 const LoadingOverlay = ({ visible, label }) => (
     <AnimatePresence>
@@ -69,14 +72,14 @@ const Home = () => {
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-blue-600/5 blur-[100px] pointer-events-none z-0" />
 
             {/* HERO SECTION */}
-            <section className="relative flex flex-col items-center justify-center px-4 pb-20 pt-12 z-10" style={{ minHeight: '85vh' }}>
+            <section className="relative flex flex-col px-4 pb-20 pt-12 z-10" style={{ minHeight: '85vh' }}>
 
                 <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center max-w-6xl mx-auto relative z-10 flex flex-col items-center"
+                    className="text-left w-full max-w-7xl mx-auto relative z-10 flex flex-col items-start"
                 >
-                    <div className="flex items-center justify-center gap-2 mb-6 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full">
+                    <div className="inline-flex items-center gap-2 mb-6 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                         <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">
                             Sovereign Digital Financial Intelligence OS
@@ -92,7 +95,7 @@ const Home = () => {
                     </p>
 
                     {/* CALLS TO ACTION */}
-                    <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full max-w-md justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full justify-start">
                         <button
                             onClick={() => launchWorkspace('Initializing Central Workspace...', '/command-center')}
                             className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
@@ -107,184 +110,117 @@ const Home = () => {
                         </button>
                     </div>
 
-                    {/* LIVE INVESTIGATION WORKFLOW VISUALIZATION */}
-                    <div className="w-full bg-[#0d1425]/40 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-6 opacity-5"><Activity size={80} className="text-blue-500" /></div>
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 mb-8 text-center flex items-center justify-center gap-2">
-                            <Network size={14} /> LIVE FORENSIC INVESTIGATION WORKFLOW
-                        </h3>
+                    {/* ADVANCED INVESTIGATION WORKFLOW VISUALIZATION */}
+                    <div className="w-full mt-4 pt-8 border-t border-slate-800/50">
+                        <div className="relative w-full">
+                            {/* Desktop Animated Connector Line */}
+                            <div className="hidden lg:block absolute top-[36px] left-[8%] right-[8%] h-[2px] z-0">
+                                <svg className="w-full h-full overflow-visible">
+                                    <line x1="0%" y1="0" x2="100%" y2="0" stroke="#1e293b" strokeWidth="2" strokeDasharray="6 4" />
+                                    <motion.line 
+                                        x1="0%" y1="0" x2="100%" y2="0" 
+                                        stroke="url(#workflowGradient)" strokeWidth="2"
+                                        animate={{ strokeDashoffset: [0, -24] }}
+                                        transition={{ repeat: Infinity, ease: "linear", duration: 1.5 }}
+                                        strokeDasharray="12 12"
+                                    />
+                                    <defs>
+                                        <linearGradient id="workflowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#3b82f6" />
+                                            <stop offset="50%" stopColor="#8b5cf6" />
+                                            <stop offset="100%" stopColor="#ec4899" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 relative">
-                            {/* Connector Line on Desktop */}
-                            <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-[1px] border-t border-dashed border-slate-800 z-0" />
-
-                            {[
-                                { step: '01', title: 'Target Wallet', desc: 'Suspect entry point classification & profiling', icon: Search, color: 'blue' },
-                                { step: '02', title: 'Multi-Hop Trace', desc: 'Recursive fund flow outbound mapping', icon: Share2, color: 'purple' },
-                                { step: '03', title: 'Risk Analysis', desc: 'Heuristic anomaly detection & score sync', icon: ShieldAlert, color: 'rose' },
-                                { step: '04', title: 'Evidence Report', desc: 'Admissible PDF dossier compilation', icon: FileText, color: 'indigo' },
-                                { step: '05', title: 'Case Archive', desc: 'Encrypted storage in multi-tenant logs', icon: Database, color: 'emerald' }
-                            ].map((node, i) => (
-                                <div key={i} className="flex flex-col items-center relative z-10 group">
-                                    <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center mb-4 transition-all ${node.color === 'blue' ? 'bg-blue-950/40 border-blue-500/30 text-blue-400' :
-                                        node.color === 'purple' ? 'bg-purple-950/40 border-purple-500/30 text-purple-400' :
-                                            node.color === 'rose' ? 'bg-rose-950/40 border-rose-500/30 text-rose-400' :
-                                                node.color === 'indigo' ? 'bg-indigo-950/40 border-indigo-500/30 text-indigo-400' :
-                                                    'bg-emerald-950/40 border-emerald-500/30 text-emerald-400'
-                                        }`}>
-                                        <node.icon size={22} className="group-hover:scale-110 transition-transform" />
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-y-16 lg:gap-8 relative z-10">
+                                {[
+                                    {
+                                        step: '01',
+                                        title: 'Input Wallet Address',
+                                        desc: 'Target suspected entry points by routing address payloads into validation systems.',
+                                        term: 'TARGET PROFILING',
+                                        icon: FileSearch,
+                                        glow: 'from-blue-500 to-cyan-500'
+                                    },
+                                    {
+                                        step: '02',
+                                        title: 'Trace Multi-Hop Fund Flow',
+                                        desc: 'Deploy crawler cycles to reconstruct outbound branching layers across on-chain paths.',
+                                        term: 'RECURSIVE MAPPING',
+                                        icon: Share2,
+                                        glow: 'from-blue-600 to-purple-600'
+                                    },
+                                    {
+                                        step: '03',
+                                        title: 'Analyze Risk & Patterns',
+                                        desc: 'Trigger custom heuristic filters against cluster anomalies and asset dispersion bursts.',
+                                        term: 'RISK WEIGHT AUDIT',
+                                        icon: ShieldAlert,
+                                        glow: 'from-purple-600 to-indigo-600'
+                                    },
+                                    {
+                                        step: '04',
+                                        title: 'Create Investigation Case',
+                                        desc: 'Encapsulate profiling trails into isolated containers mapped via sovereign database storage.',
+                                        term: 'CASE SYNCHRONIZATION',
+                                        icon: Briefcase,
+                                        glow: 'from-indigo-600 to-pink-600'
+                                    },
+                                    {
+                                        step: '05',
+                                        title: 'Export Evidence Report',
+                                        desc: 'Synthesize tamper-proof timelines, charts, and proofs into signed forensic dossiers.',
+                                        term: 'DOSSIER COMPILATION',
+                                        icon: FileText,
+                                        glow: 'from-pink-600 to-rose-600'
+                                    }
+                                ].map((wf, idx) => (
+                                    <div key={idx} className="flex flex-col items-center group relative">
+                                        {idx < 4 && (
+                                            <div className="lg:hidden absolute bottom-[-48px] left-1/2 -translate-x-1/2 w-[1px] h-12 bg-gradient-to-b from-slate-800 to-transparent z-0 pointer-events-none" />
+                                        )}
+                                        <div className="relative mb-6 flex items-center justify-center z-10">
+                                            <div className="absolute w-20 h-20 bg-slate-950/80 border border-slate-800/60 rounded-full group-hover:border-slate-600 transition-colors z-0 flex items-center justify-center">
+                                                <div className="absolute inset-0 w-full h-full rounded-full bg-blue-500/0 group-hover:bg-blue-500/5 scale-90 group-hover:scale-110 transition-all duration-500 pointer-events-none" />
+                                            </div>
+                                            <motion.div
+                                                whileHover={{ scale: 1.1, rotate: 2 }}
+                                                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                                                className={`relative w-14 h-14 rounded-full bg-gradient-to-br ${wf.glow} p-[1.5px] z-10 shadow-[0_0_30px_-5px_rgba(0,0,0,0.7)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.2)]`}
+                                            >
+                                                <div className="w-full h-full rounded-full bg-[#070b14] flex items-center justify-center group-hover:bg-[#0a0f1c] transition-colors text-slate-400 group-hover:text-white">
+                                                    <wf.icon size={20} className="group-hover:scale-110 transition-transform duration-300" />
+                                                </div>
+                                            </motion.div>
+                                            <div className="absolute -bottom-2 bg-[#0a0f1c] border border-slate-800 px-2 py-0.5 rounded font-mono text-[8px] font-black tracking-widest text-slate-500 group-hover:text-blue-400 group-hover:border-blue-900/60 z-20 transition-colors shadow-xl shadow-slate-950">
+                                                PHASE-{wf.step}
+                                            </div>
+                                        </div>
+                                        <div className="text-center flex flex-col items-center px-4 relative z-10">
+                                            <span className="text-[8px] font-mono font-bold uppercase tracking-[0.15em] text-slate-500 mb-2">
+                                                {wf.term}
+                                            </span>
+                                            <h4 className="text-white font-black text-xs uppercase tracking-wider mb-3 leading-tight max-w-[160px] group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300">
+                                                {wf.title}
+                                            </h4>
+                                            <div className="w-6 h-[1px] bg-slate-800 mb-4 group-hover:w-12 group-hover:bg-blue-500/60 transition-all duration-500" />
+                                            <p className="text-[10px] text-slate-400 font-medium leading-relaxed max-w-[200px]">
+                                                {wf.desc}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <span className="text-[10px] font-black uppercase text-slate-500 mb-1">{node.step}</span>
-                                    <h4 className="text-white font-bold text-xs mb-1 uppercase tracking-wider">{node.title}</h4>
-                                    <p className="text-[10px] text-slate-500 font-medium leading-relaxed max-w-[150px]">{node.desc}</p>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
 
                 </motion.div>
             </section>
 
-            {/* HOW INVESTIGATIONS WORK */}
-            <section id="workflow-section" className="px-4 py-24 max-w-7xl mx-auto border-t border-slate-900 relative overflow-hidden">
-                {/* Background Forensic Grid */}
-                <div className="absolute inset-0 pointer-events-none opacity-5">
-                    <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-                </div>
-
-                <div className="text-center space-y-4 mb-20 relative z-10">
-                    <div className="inline-flex items-center gap-2 mb-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em]">
-                            INVESTIGATION WORKFLOW
-                        </span>
-                    </div>
-                    <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight leading-[1.1]">
-                        How Blockchain Sentinel Investigations Work
-                    </h3>
-                    <p className="text-slate-400 text-sm max-w-2xl mx-auto font-medium">
-                        Run full-scope forensic operational cycles, not simple exploration routines. Reconstruct complex assets, compute dynamic risk states, and archive evidence logs.
-                    </p>
-                </div>
-
-                <div className="relative max-w-6xl mx-auto">
-                    {/* Desktop Animated Connector Line */}
-                    <div className="hidden lg:block absolute top-[36px] left-[8%] right-[8%] h-[2px] z-0">
-                        <svg className="w-full h-full overflow-visible">
-                            {/* Base Dashed Track */}
-                            <line x1="0%" y1="0" x2="100%" y2="0" stroke="#1e293b" strokeWidth="2" strokeDasharray="6 4" />
-                            {/* High-frequency Energy Pulse Line */}
-                            <motion.line 
-                                x1="0%" y1="0" x2="100%" y2="0" 
-                                stroke="url(#workflowGradient)" strokeWidth="2"
-                                animate={{ strokeDashoffset: [0, -24] }}
-                                transition={{ repeat: Infinity, ease: "linear", duration: 1.5 }}
-                                strokeDasharray="12 12"
-                            />
-                            <defs>
-                                <linearGradient id="workflowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stopColor="#3b82f6" />
-                                    <stop offset="50%" stopColor="#8b5cf6" />
-                                    <stop offset="100%" stopColor="#ec4899" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-y-16 lg:gap-8 relative z-10">
-                        {[
-                            {
-                                step: '01',
-                                title: 'Input Wallet Address',
-                                desc: 'Target suspected entry points by routing address payloads into validation systems.',
-                                term: 'TARGET PROFILING',
-                                icon: FileSearch,
-                                glow: 'from-blue-500 to-cyan-500'
-                            },
-                            {
-                                step: '02',
-                                title: 'Trace Multi-Hop Fund Flow',
-                                desc: 'Deploy crawler cycles to reconstruct outbound branching layers across on-chain paths.',
-                                term: 'RECURSIVE MAPPING',
-                                icon: Share2,
-                                glow: 'from-blue-600 to-purple-600'
-                            },
-                            {
-                                step: '03',
-                                title: 'Analyze Risk & Patterns',
-                                desc: 'Trigger custom heuristic filters against cluster anomalies and asset dispersion bursts.',
-                                term: 'RISK WEIGHT AUDIT',
-                                icon: ShieldAlert,
-                                glow: 'from-purple-600 to-indigo-600'
-                            },
-                            {
-                                step: '04',
-                                title: 'Create Investigation Case',
-                                desc: 'Encapsulate profiling trails into isolated containers mapped via sovereign database storage.',
-                                term: 'CASE SYNCHRONIZATION',
-                                icon: Briefcase,
-                                glow: 'from-indigo-600 to-pink-600'
-                            },
-                            {
-                                step: '05',
-                                title: 'Export Evidence Report',
-                                desc: 'Synthesize tamper-proof timelines, charts, and proofs into signed forensic dossiers.',
-                                term: 'DOSSIER COMPILATION',
-                                icon: FileText,
-                                glow: 'from-pink-600 to-rose-600'
-                            }
-                        ].map((wf, idx) => (
-                            <div key={idx} className="flex flex-col items-center group relative">
-                                {/* Mobile connector connector lines inside the column wrapper */}
-                                {idx < 4 && (
-                                    <div className="lg:hidden absolute bottom-[-48px] left-1/2 -translate-x-1/2 w-[1px] h-12 bg-gradient-to-b from-slate-800 to-transparent z-0 pointer-events-none" />
-                                )}
-
-                                {/* Dynamic Glow Node Container */}
-                                <div className="relative mb-6 flex items-center justify-center z-10">
-                                    {/* External Halo effect */}
-                                    <div className="absolute w-20 h-20 bg-slate-950/80 border border-slate-800/60 rounded-full group-hover:border-slate-600 transition-colors z-0 flex items-center justify-center">
-                                        <div className="absolute inset-0 w-full h-full rounded-full bg-blue-500/0 group-hover:bg-blue-500/5 scale-90 group-hover:scale-110 transition-all duration-500 pointer-events-none" />
-                                    </div>
-                                    
-                                    {/* Active node Core Icon */}
-                                    <motion.div
-                                        whileHover={{ scale: 1.1, rotate: 2 }}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                        className={`relative w-14 h-14 rounded-full bg-gradient-to-br ${wf.glow} p-[1.5px] z-10 shadow-[0_0_30px_-5px_rgba(0,0,0,0.7)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.2)]`}
-                                    >
-                                        <div className="w-full h-full rounded-full bg-[#070b14] flex items-center justify-center group-hover:bg-[#0a0f1c] transition-colors text-slate-400 group-hover:text-white">
-                                            <wf.icon size={20} className="group-hover:scale-110 transition-transform duration-300" />
-                                        </div>
-                                    </motion.div>
-
-                                    {/* Step Index Tag */}
-                                    <div className="absolute -bottom-2 bg-[#0a0f1c] border border-slate-800 px-2 py-0.5 rounded font-mono text-[8px] font-black tracking-widest text-slate-500 group-hover:text-blue-400 group-hover:border-blue-900/60 z-20 transition-colors shadow-xl shadow-slate-950">
-                                        PHASE-{wf.step}
-                                    </div>
-                                </div>
-
-                                {/* Info payload */}
-                                <div className="text-center flex flex-col items-center px-4 relative z-10">
-                                    <span className="text-[8px] font-mono font-bold uppercase tracking-[0.15em] text-slate-500 mb-2">
-                                        {wf.term}
-                                    </span>
-                                    <h4 className="text-white font-black text-xs uppercase tracking-wider mb-3 leading-tight max-w-[160px] group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300">
-                                        {wf.title}
-                                    </h4>
-                                    <div className="w-6 h-[1px] bg-slate-800 mb-4 group-hover:w-12 group-hover:bg-blue-500/60 transition-all duration-500" />
-                                    <p className="text-[10px] text-slate-400 font-medium leading-relaxed max-w-[200px]">
-                                        {wf.desc}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
             {/* WHO IT IS BUILT FOR */}
-            <section className="px-4 py-24 max-w-7xl mx-auto border-t border-slate-900 relative">
+            <section className="px-4 py-24 max-w-7xl mx-auto relative border-t border-slate-900">
                 {/* Background Glowing Accents */}
                 <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-96 h-96 bg-blue-500/5 rounded-full blur-[80px] pointer-events-none" />
                 <div className="absolute top-1/2 right-1/3 -translate-y-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-[80px] pointer-events-none" />
@@ -392,6 +328,12 @@ const Home = () => {
                     ))}
                 </div>
             </section>
+
+            {/* LIVE INTELLIGENCE FEED */}
+            <BlockchainCrimeIntelligence />
+
+            {/* THREAT INTELLIGENCE STATS */}
+            <ThreatIntelligenceStats />
 
             {/* WHY BLOCKCHAIN SENTINEL OS (COMPARISON SECTION) */}
             <section className="px-4 py-24 max-w-7xl mx-auto border-t border-slate-900 relative overflow-hidden">
@@ -788,79 +730,10 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* REQUEST INVESTIGATOR ACCESS CTA SECTION */}
-            <section className="px-4 py-24 max-w-6xl mx-auto border-t border-slate-900 relative overflow-hidden">
-                {/* Absolute Background Decorative Grids */}
-                <div className="absolute inset-0 opacity-[0.05] pointer-events-none">
-                    <svg className="w-full h-full">
-                        <defs>
-                            <pattern id="ctaGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#3b82f6" strokeWidth="1" />
-                            </pattern>
-                        </defs>
-                        <rect width="100%" height="100%" fill="url(#ctaGrid)" />
-                    </svg>
-                </div>
-                
-                {/* Glowing cyan/indigo light aura behind the card */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 blur-[80px] pointer-events-none" />
+            {/* INVESTIGATION INSIGHTS (KNOWLEDGE BASE) */}
+            <InvestigationInsights />
 
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    className="relative bg-[#0d1425]/60 border border-slate-800/80 rounded-3xl p-10 md:p-16 text-center backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden hover:border-slate-700/80 transition-colors group"
-                >
-                    {/* Border top neon laser line */}
-                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-75" />
 
-                    <div className="relative z-10 space-y-8 max-w-3xl mx-auto">
-                        <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">
-                                ENTERPRISE DEPLOYMENT
-                            </span>
-                        </div>
-
-                        <h3 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1]">
-                            Access The Next Generation Of <br className="hidden md:block" /> Blockchain Investigation Infrastructure
-                        </h3>
-
-                        <p className="text-base md:text-lg text-slate-400 font-medium leading-relaxed">
-                            Provision sovereign instances for authorized investigators, compliance teams, and CA firms. Deploy comprehensive forensic workflows and advanced intelligence operations to your unit today.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                            <button 
-                                onClick={() => launchWorkspace('Provisioning Investigator Access Token...', '/command-center')}
-                                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-[0_0_30px_-5px_rgba(59,130,246,0.5)] hover:shadow-[0_0_40px_rgba(99,102,241,0.4)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 border border-white/10"
-                            >
-                                <ShieldCheck size={16} />
-                                Request Access
-                            </button>
-                            
-                            <button 
-                                onClick={() => launchWorkspace('Accessing Demonstration Terminal...', '/command-center')}
-                                className="w-full sm:w-auto px-8 py-4 bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-md"
-                            >
-                                <Activity size={16} />
-                                Schedule Live Demo
-                            </button>
-                        </div>
-
-                        <div className="pt-6 flex items-center justify-center gap-8 text-[9px] font-mono font-black text-slate-500 border-t border-slate-900 mt-8">
-                            <div className="flex items-center gap-2">
-                                <div className="w-1 h-1 rounded-full bg-blue-500" />
-                                ISO-27001 COMPLIANT STACK
-                            </div>
-                            <div className="hidden sm:flex items-center gap-2">
-                                <div className="w-1 h-1 rounded-full bg-purple-500" />
-                                AES-256 ENCRYPTED QUERIES
-                            </div>
-                        </div>
-                    </div>
-                </motion.div>
-            </section>
 
             <div className="w-full max-w-full overflow-hidden"><RoadmapSection /></div>
             <div className="w-full max-w-full overflow-hidden"><ServiceMarquee /></div>
