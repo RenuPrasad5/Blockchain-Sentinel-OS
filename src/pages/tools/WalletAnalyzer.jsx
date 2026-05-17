@@ -137,19 +137,18 @@ const WalletAnalyzer = () => {
     const netProfitLoss = totalInflow - totalOutflow;
 
     return (
-        <div className="min-h-screen bg-[#050505] text-slate-200 p-8 pt-24">
+        <div className="min-h-screen bg-[#050505] text-slate-200 p-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header Section */}
-                <div className="flex flex-col mb-8">
-                    <div className="flex items-center justify-between mb-4">
-                        <div>
-                            <h1 className="text-4xl font-black text-white tracking-tight uppercase tracking-wide">Dynamic Intelligence Workspace</h1>
-                            <p className="text-slate-400 text-sm mt-1">
-                                {mode === 'live' 
-                                    ? "Real-time blockchain surveillance (latest blocks)" 
-                                    : "Comprehensive forensic history (Full Etherscan audit)"}
-                            </p>
+                <header className="inv-page-header">
+                    <div>
+                        <div className="inv-page-subtitle">
+                            <FileSearch size={14} className="text-indigo-500" />
+                            Dynamic Intelligence Workspace
                         </div>
+                        <h1 className="inv-page-title">Wallet Analyzer</h1>
+                    </div>
+                    <div className="flex flex-col items-end gap-3">
                         <div className="flex bg-[#111] p-1 rounded-xl border border-white/5">
                             <button 
                                 onClick={() => setMode('live')}
@@ -164,26 +163,24 @@ const WalletAnalyzer = () => {
                                 History Mode
                             </button>
                         </div>
+                        <div className="flex bg-[#111]/60 p-1.5 rounded-2xl border border-white/5 w-fit gap-1 backdrop-blur-md shadow-2xl">
+                            {[
+                                { id: 'gov', label: 'Government', icon: <Globe size={14} /> },
+                                { id: 'ca', label: 'CA', icon: <DollarSign size={14} /> },
+                                { id: 'enterprise', label: 'Enterprise', icon: <Briefcase size={14} /> }
+                            ].map(m => (
+                                <button
+                                    key={m.id}
+                                    onClick={() => setAppMode(m.id)}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${appMode === m.id ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 shadow-lg' : 'text-slate-500 border border-transparent hover:text-slate-300 hover:bg-white/5'}`}
+                                >
+                                    {m.icon}
+                                    <span>{m.label}</span>
+                                </button>
+                            ))}
+                        </div>
                     </div>
-
-                    {/* Mode Selector */}
-                    <div className="flex bg-[#111]/60 p-1.5 rounded-2xl border border-white/5 w-fit mb-6 gap-1 backdrop-blur-md shadow-2xl">
-                        {[
-                            { id: 'gov', label: 'Government Mode', icon: <Globe size={14} /> },
-                            { id: 'ca', label: 'CA Mode', icon: <DollarSign size={14} /> },
-                            { id: 'enterprise', label: 'Enterprise Mode', icon: <Briefcase size={14} /> }
-                        ].map(m => (
-                            <button
-                                key={m.id}
-                                onClick={() => setAppMode(m.id)}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${appMode === m.id ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 shadow-lg' : 'text-slate-500 border border-transparent hover:text-slate-300 hover:bg-white/5'}`}
-                            >
-                                {m.icon}
-                                <span>{m.label}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                </header>
 
                 {/* Search Box */}
                 <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-3xl mb-8 shadow-2xl">

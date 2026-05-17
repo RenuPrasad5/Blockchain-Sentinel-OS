@@ -63,13 +63,13 @@ const InvestigationAuditTrail = () => {
 
     return (
         <div className="audit-trail-wrapper workstation-mode">
-            <header className="audit-header">
+            <header className="inv-page-header">
                 <div>
-                    <div className="audit-subtitle">
+                    <div className="inv-page-subtitle">
                         <Activity size={14} className="text-blue-500" />
                         System Logging
                     </div>
-                    <h1 className="audit-title">Investigation Audit Trail</h1>
+                    <h1 className="inv-page-title">Investigation Audit Trail</h1>
                 </div>
                 <div className="audit-filters">
                     <button className={`audit-filter-btn ${filter === 'ALL' ? 'active' : ''}`} onClick={() => setFilter('ALL')}>ALL ACTIVITY</button>

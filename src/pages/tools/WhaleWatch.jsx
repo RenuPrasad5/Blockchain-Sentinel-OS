@@ -272,7 +272,7 @@ const WhaleWatch = () => {
 
     return (
         <div className="tools-terminal-wrapper full-width-terminal">
-            <header className="section-desc-box pt-12">
+            <header className="section-desc-box pt-6">
                 <div className="terminal-container">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>

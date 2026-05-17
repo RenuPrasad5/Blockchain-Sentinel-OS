@@ -195,24 +195,16 @@ const Visualizer = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#030712] text-slate-200 p-6 pt-24 relative overflow-hidden">
+        <div className="min-h-screen bg-[#030712] text-slate-200 p-8 relative overflow-hidden">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
-                <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-white/5 pb-8">
+                <header className="inv-page-header">
                     <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2.5 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400">
-                                <Layers size={28} />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                                    <span className="text-[10px] font-black text-indigo-400 tracking-[0.3em] uppercase">Forensic Command Center</span>
-                                </div>
-                                <h1 className="text-4xl font-black text-white tracking-tight uppercase tracking-wide">Multi-Hop Fund Flow Visualizer</h1>
-                            </div>
+                        <div className="inv-page-subtitle">
+                            <Layers size={14} className="text-indigo-500" />
+                            Forensic Command Center
                         </div>
-                        <p className="text-slate-400 text-sm">Recursively trace the full on-chain flow of funds to uncover money trails.</p>
+                        <h1 className="inv-page-title">Multi-Hop Fund Flow Visualizer</h1>
                     </div>
                 </header>
 

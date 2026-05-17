@@ -75,20 +75,20 @@ const Watchlist = () => {
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 p-6 lg:p-8">
             {/* Header */}
-            <header className="flex justify-between items-center mb-8 border-b border-slate-800 pb-6">
+            <header className="inv-page-header">
                 <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <Eye className="text-indigo-500" size={28} />
-                        <h1 className="text-3xl font-black text-white tracking-tight uppercase font-heading">Watchlist Monitoring</h1>
+                    <div className="inv-page-subtitle">
+                        <Eye size={14} className="text-indigo-500" />
+                        System Monitoring
                     </div>
-                    <p className="text-slate-500 text-sm">Real-time active surveillance of selected blockchain entities.</p>
+                    <h1 className="inv-page-title">Watchlist Monitoring</h1>
                 </div>
                 
                 <button 
                     onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-lg shadow-indigo-900/30 active:scale-95"
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-lg shadow-indigo-900/30 active:scale-95 text-xs tracking-widest uppercase"
                 >
-                    <Plus size={18} />
+                    <Plus size={16} />
                     <span>Target Acquisition</span>
                 </button>
             </header>

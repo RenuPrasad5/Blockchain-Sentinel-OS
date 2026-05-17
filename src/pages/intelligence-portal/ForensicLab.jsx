@@ -296,19 +296,18 @@ const ForensicLab = () => {
             <header className="forensic-header">
                 <div className="header-left-section">
                     <div className="lab-branding">
-                        <div className="lab-icon-box">
-                            <Database className="text-blue-500" size={28} />
-                        </div>
-                        <div className="title-block">
-                            <div className="system-identifier">
-                                <div className="pulse-dot-blue"></div>
-                                <span>SOVEREIGN INTELLIGENCE UNIT</span>
-                                <div className="live-status-pill">
-                                    <div className="pulse-dot-green"></div>
-                                    <span>LIVE FEED</span>
-                                </div>
+                        <div>
+                            <div className="inv-page-subtitle">
+                                <Database size={14} className="text-blue-500" />
+                                Sovereign Intelligence Unit
+                                {analysisData && (
+                                    <div className="ml-2 flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded text-[8px] uppercase font-bold">
+                                        <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></div>
+                                        Live Feed
+                                    </div>
+                                )}
                             </div>
-                            <h1 className="lab-title">Forensic Lab</h1>
+                            <h1 className="inv-page-title">Forensic Lab</h1>
                         </div>
                     </div>
 

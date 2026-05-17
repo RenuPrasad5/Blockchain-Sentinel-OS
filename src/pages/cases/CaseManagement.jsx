@@ -92,18 +92,13 @@ const CaseManagement = () => {
 
     return (
         <div className="case-management-wrapper workstation-mode">
-            <header className="case-header">
-                <div className="flex items-center gap-6">
-                    <div className="case-icon-box">
-                        <Briefcase className="text-blue-500" size={28} />
+            <header className="inv-page-header">
+                <div>
+                    <div className="inv-page-subtitle">
+                        <Briefcase size={14} className="text-blue-500" />
+                        Forensic Command Center
                     </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                             <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Forensic Command Center</span>
-                        </div>
-                        <h1 className="case-title">Operational Workspace</h1>
-                    </div>
+                    <h1 className="inv-page-title">Operational Workspace</h1>
                 </div>
 
                 <div className="case-actions">

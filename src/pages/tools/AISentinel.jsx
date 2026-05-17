@@ -30,7 +30,7 @@ const AISentinel = () => {
     };
 
     return (
-        <div className="sentinel-container pt-12">
+        <div className="sentinel-container pt-6">
             <div className="cyber-grid"></div>
 
             <header className="sentinel-header terminal-container">
