@@ -1,0 +1,190 @@
+.audit-trail-wrapper {
+    padding: 30px;
+    height: 100%;
+    color: var(--text-color);
+    background: transparent;
+    overflow-y: auto;
+}
+
+.audit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 20px;
+}
+
+.audit-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    color: #e2e8f0;
+    margin: 5px 0 0 0;
+}
+
+.audit-subtitle {
+    font-size: 0.75rem;
+    color: #64748b;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.audit-filters {
+    display: flex;
+    gap: 10px;
+}
+
+.audit-filter-btn {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+.audit-filter-btn:hover, .audit-filter-btn.active {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+}
+
+.timeline-container {
+    position: relative;
+    padding-left: 30px;
+    max-width: 900px;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.audit-event-card {
+    position: relative;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.audit-event-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.audit-event-card::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 24px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3b82f6;
+    border: 2px solid #0f172a;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.audit-event-card.high-risk::before {
+    background: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.audit-event-card.medium-risk::before {
+    background: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.audit-event-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.audit-event-type {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.audit-event-type.high-risk {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.audit-event-type.medium-risk {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.audit-timestamp {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.audit-summary {
+    font-size: 0.9rem;
+    color: #e2e8f0;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.audit-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 12px;
+    flex-wrap: wrap;
+}
+
+.audit-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.audit-meta-item code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #38bdf8;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.no-logs-msg {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+    font-size: 0.9rem;
+    background: rgba(15, 23, 42, 0.3);
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+}

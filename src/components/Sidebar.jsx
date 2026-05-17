@@ -80,6 +80,7 @@ const Sidebar = () => {
                 { title: 'Watchlist Monitoring', icon: <Eye size={18} />, path: '/watchlist' },
                 { title: 'Multi-Hop Visualizer', icon: <Share2 size={18} />, path: '/tools/visualizer' },
                 { title: 'Case Management', icon: <Briefcase size={18} />, path: '/cases' },
+                { title: 'Audit Trail', icon: <Activity size={18} />, path: '/cases/audit-trail' },
             ]
         },
         {

@@ -44,6 +44,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ReactGA from 'react-ga4';
 
 import ForensicLab from './pages/intelligence-portal/ForensicLab';
+import InvestigationAuditTrail from './pages/cases/InvestigationAuditTrail';
 
 import Cases from './pages/Cases';
 import SolutionPage from './pages/SolutionPage';
@@ -156,6 +157,7 @@ function App() {
               <Route path="/gov-ent" element={<Dashboard />} />
               <Route path="/use-cases" element={<UseCases />} />
               <Route path="/forensic-lab" element={<ForensicLab />} />
+              <Route path="/cases/audit-trail" element={<ProtectedRoute><InvestigationAuditTrail /></ProtectedRoute>} />
               <Route
                 path="/cases"
                 element={

@@ -7,6 +7,7 @@ import Transaction from './models/Transaction.js';
 import WalletCache from './models/WalletCache.js';
 import AMLResult from './models/AMLResult.js';
 import Case from './models/Case.js';
+import AuditLog from './models/AuditLog.js';
 import { createTransactionGraph, getWalletGraph } from './neo4j.js';
 import PDFDocument from 'pdfkit';
 import ChainAdapter from './ChainAdapter.js';
@@ -248,6 +249,55 @@ const calculateForensicIntel = (transactions, address) => {
 
 app.get('/', (req, res) => {
     res.status(200).send('AML Backend Running');
+});
+
+/**
+ * @route POST /audit
+ * @desc Create an investigation audit log entry
+ */
+app.post('/audit', async (req, res) => {
+    try {
+        const { eventType, walletAddress, caseId, investigatorId, actionSummary, riskLevel } = req.body;
+        const log = new AuditLog({
+            eventType, walletAddress, caseId, investigatorId, actionSummary, riskLevel
+        });
+        await log.save();
+        res.status(201).json(log);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
+ * @route GET /audit/:investigatorId
+ * @desc Get audit logs for an investigator
+ */
+app.get('/audit/:investigatorId', async (req, res) => {
+    try {
+        const { investigatorId } = req.params;
+        let query = {};
+        if (investigatorId !== 'all') {
+            query.investigatorId = investigatorId;
+        }
+        const logs = await AuditLog.find(query).sort({ timestamp: -1 }).limit(150);
+        res.status(200).json(logs);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
+ * @route GET /audit/case/:caseId
+ * @desc Get audit logs for a specific case
+ */
+app.get('/audit/case/:caseId', async (req, res) => {
+    try {
+        const { caseId } = req.params;
+        const logs = await AuditLog.find({ caseId }).sort({ timestamp: -1 }).limit(100);
+        res.status(200).json(logs);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 /**
